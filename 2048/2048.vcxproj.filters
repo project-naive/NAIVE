@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{4797f4c0-7fac-4c31-850f-76c0a8b279ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Core">
+      <UniqueIdentifier>{187c7136-fb05-46a0-b867-1995d9629a87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering">
+      <UniqueIdentifier>{c7e5bca0-0ce4-48c1-bac6-8a4495e47bb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Core\Init">
+      <UniqueIdentifier>{d6f8ba2f-8dc5-4675-a488-9a588c52dc49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Text">
+      <UniqueIdentifier>{e3d9b733-8bc4-4823-b36c-9a413203b900}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Shaders">
+      <UniqueIdentifier>{af33ad14-1644-44eb-8e1c-d47657184cb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Misc">
+      <UniqueIdentifier>{659fc1a5-b40d-49bf-bdeb-fbc9cc73f04e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Engine\Core\Init\Display.cpp">
+      <Filter>Engine\Core\Init</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Core\Init\Global.cpp">
+      <Filter>Engine\Core\Init</Filter>
+    </ClCompile>
+    <ClCompile Include="FTF.cpp">
+      <Filter>Engine\Rendering\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="2048\main.cpp">
+      <Filter>Misc</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Engine\Core\Init\Display.h">
+      <Filter>Engine\Core\Init</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Init\Global.h">
+      <Filter>Engine\Core\Init</Filter>
+    </ClInclude>
+    <ClInclude Include="FTF.h">
+      <Filter>Engine\Rendering\Text</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
