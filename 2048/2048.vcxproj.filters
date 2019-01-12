@@ -29,6 +29,9 @@
     <Filter Include="Engine\Rendering\Managers">
       <UniqueIdentifier>{1ee51cb3-16b4-4f93-acbb-d075337eae54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MyLibrary">
+      <UniqueIdentifier>{dad0bc0b-7799-4235-834b-6eaa75428276}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Core\Init\Display.cpp">
@@ -43,7 +46,13 @@
     <ClCompile Include="Engine\Rendering\Text\FTF.cpp">
       <Filter>Engine\Rendering\Text</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Rendering\Managers\TextManager.cpp">
+    <ClCompile Include="Engine\Rendering\Managers\Text.cpp">
+      <Filter>Engine\Rendering\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Rendering\Managers\Shader.cpp">
+      <Filter>Engine\Rendering\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Rendering\Managers\Flow.cpp">
       <Filter>Engine\Rendering\Managers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -57,7 +66,13 @@
     <ClInclude Include="Engine\Rendering\Text\FTF.h">
       <Filter>Engine\Rendering\Text</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Rendering\Managers\TextManager.h">
+    <ClInclude Include="Engine\Rendering\Managers\Text.h">
+      <Filter>Engine\Rendering\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Rendering\Managers\Shader.h">
+      <Filter>Engine\Rendering\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Rendering\Managers\Flow.h">
       <Filter>Engine\Rendering\Managers</Filter>
     </ClInclude>
   </ItemGroup>

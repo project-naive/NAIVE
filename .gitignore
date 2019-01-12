@@ -303,6 +303,7 @@ __pycache__/
 [Bb]uild/
 [Ii]ntermediates/
 [Tt]est/
+MyLibrary/
 .leu
 *.png
 *.dll

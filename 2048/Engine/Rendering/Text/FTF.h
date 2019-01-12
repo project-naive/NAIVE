@@ -20,7 +20,6 @@ namespace Rendering {
 		bool unload_face(const size_t index);
 		FT_Face& get_face(size_t index);
 
-	private:
 		//face_count includes unloaded indexes
 		FT_Face* faces = nullptr;
 		size_t face_count = 0;
@@ -28,6 +27,7 @@ namespace Rendering {
 		size_t* unloaded = 0;
 		size_t unload_count = 0;
 		size_t unload_cache = 0;
+	private:
 		bool resize_faces();
 	public:
 		bool reserve_faces(size_t size);

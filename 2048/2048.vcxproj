@@ -140,13 +140,17 @@
     <ClCompile Include="2048\main.cpp" />
     <ClCompile Include="Engine\Core\Init\Display.cpp" />
     <ClCompile Include="Engine\Core\Init\Global.cpp" />
-    <ClCompile Include="Engine\Rendering\Managers\TextManager.cpp" />
+    <ClCompile Include="Engine\Rendering\Managers\Flow.cpp" />
+    <ClCompile Include="Engine\Rendering\Managers\Shader.cpp" />
+    <ClCompile Include="Engine\Rendering\Managers\Text.cpp" />
     <ClCompile Include="Engine\Rendering\Text\FTF.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Core\Init\Display.h" />
     <ClInclude Include="Engine\Core\Init\Global.h" />
-    <ClInclude Include="Engine\Rendering\Managers\TextManager.h" />
+    <ClInclude Include="Engine\Rendering\Managers\Flow.h" />
+    <ClInclude Include="Engine\Rendering\Managers\Shader.h" />
+    <ClInclude Include="Engine\Rendering\Managers\Text.h" />
     <ClInclude Include="Engine\Rendering\Text\FTF.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

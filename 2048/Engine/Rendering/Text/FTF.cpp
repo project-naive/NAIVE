@@ -47,7 +47,7 @@ namespace Rendering {
 		delete[] faces;
 	}
 
-	uint64_t FTFonts::load_face(const FT_Byte* data, size_t size, size_t index) {
+	size_t FTFonts::load_face(const FT_Byte* data, size_t size, size_t index) {
 		if (unload_count) {
 			size_t rtn = unloaded[unload_count - 1];
 			FT_Error err = FT_New_Memory_Face(library, data, FT_Long(size), FT_Long(index), &faces[rtn]);
@@ -58,7 +58,11 @@ namespace Rendering {
 			unload_count--;
 			return rtn;
 		}
-		if (face_cache == face_count) resize_faces();
+		if (face_cache == face_count) { 
+			if (!resize_faces()) {
+				return -1;
+			}
+		}
 		size_t rtn = face_count;
 		FT_Error err = FT_New_Memory_Face(library, data, FT_Long(size), FT_Long(index), &faces[rtn]);
 		if (err) {
@@ -72,7 +76,7 @@ namespace Rendering {
 	bool Rendering::FTFonts::unload_face(const size_t index) {
 		if (index >= face_count) return false;
 		try {
-			if (unload_count + 1 > unload_cache) {
+			if (unload_count == unload_cache) {
 				size_t new_unload_cache = size_t(unload_cache * 1.618);
 				new_unload_cache++;
 				size_t* new_buffer = new size_t[new_unload_cache];
@@ -102,11 +106,11 @@ namespace Rendering {
 			size_t new_face_cache = size_t(face_cache * 1.618);
 			new_face_cache++;
 			FT_Face* new_buffer = new FT_Face[new_face_cache];
-			face_cache = new_face_cache;
 			for (size_t i = 0; i < face_count; i++) {
 				new_buffer[i] = faces[i];
 			}
 			std::swap(faces, new_buffer);
+			face_cache = new_face_cache;
 			delete[] new_buffer;
 			return true;
 		} catch (...) {
