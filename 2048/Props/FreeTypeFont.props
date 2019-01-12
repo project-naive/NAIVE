@@ -8,8 +8,13 @@
   </PropertyGroup>
   <PropertyGroup>
     <IncludePath>$(FTF_dir)include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="FTF_dir">
       <Value>$(FTF_dir)</Value>

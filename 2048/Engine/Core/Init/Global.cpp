@@ -14,7 +14,7 @@ namespace Global {
 	void Init() {
 		glfwSetErrorCallback(Callback::error);
 		if (!glfwInit()) {
-			std::cerr << "Error initializing glfw!" << std::endl;
+			std::cerr << "Error initializing glfw!\n" << std::endl;
 			exit(EXIT_FAILURE);
 		}
 		if (Display::fullscreen) {
@@ -28,7 +28,7 @@ namespace Global {
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 			Display::mainWindow = glfwCreateWindow(Display::width, Display::height, game_title, nullptr, nullptr);
 			if (!Display::mainWindow) {
-				std::cerr << "Error creating window!" << std::endl;
+				std::cerr << "Error creating window!\n" << std::endl;
 				glfwTerminate();
 				exit(EXIT_FAILURE);
 			}
@@ -48,14 +48,14 @@ namespace Global {
 		GLenum glewinit = glewInit();
 		if (glewinit!=GLEW_OK) {
 			std::cerr << "Error initializing glew!:\n"
-				<< glewGetErrorString(glewinit) << std::endl;
+				<< glewGetErrorString(glewinit) <<'\n'<< std::endl;
 			glfwTerminate();
 			exit(EXIT_FAILURE);
 		}
 		if (glewIsSupported("GL_VERSION_3_3")) {
-			std::cout << "OpenGL supports version 3.3!\n ";
+			std::cout << "OpenGL supports version 3.3!\n" << std::endl;
 		} else {
-			std::cout << " OpenGL 3.3 not supported!\n ";
+			std::cout << " OpenGL 3.3 not supported!\n" << std::endl;
 		}
 	}
 
@@ -65,7 +65,7 @@ namespace Global {
 
 	namespace Callback {
 		void error(int err_code, const char* info) {
-			std::cerr << "Error " << err_code << ":\n" << info << std::endl;
+			std::cerr << "Error " << err_code << ":\n" << info <<'\n'<< std::endl;
 		}
 	}
 }

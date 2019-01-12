@@ -5,6 +5,8 @@
   <PropertyGroup>
     <LibraryPath>$(FTF_dir)lib\$(PlatformTarget)\$(USE_DEBUG);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup>
+    <Link />
+  </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

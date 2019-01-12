@@ -26,6 +26,9 @@
     <Filter Include="Misc">
       <UniqueIdentifier>{659fc1a5-b40d-49bf-bdeb-fbc9cc73f04e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Rendering\Managers">
+      <UniqueIdentifier>{1ee51cb3-16b4-4f93-acbb-d075337eae54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Core\Init\Display.cpp">
@@ -34,11 +37,14 @@
     <ClCompile Include="Engine\Core\Init\Global.cpp">
       <Filter>Engine\Core\Init</Filter>
     </ClCompile>
-    <ClCompile Include="FTF.cpp">
-      <Filter>Engine\Rendering\Text</Filter>
-    </ClCompile>
     <ClCompile Include="2048\main.cpp">
       <Filter>Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Rendering\Text\FTF.cpp">
+      <Filter>Engine\Rendering\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Rendering\Managers\TextManager.cpp">
+      <Filter>Engine\Rendering\Managers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -48,8 +54,11 @@
     <ClInclude Include="Engine\Core\Init\Global.h">
       <Filter>Engine\Core\Init</Filter>
     </ClInclude>
-    <ClInclude Include="FTF.h">
+    <ClInclude Include="Engine\Rendering\Text\FTF.h">
       <Filter>Engine\Rendering\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Rendering\Managers\TextManager.h">
+      <Filter>Engine\Rendering\Managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

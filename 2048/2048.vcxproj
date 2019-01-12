@@ -75,9 +75,9 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="Props\UTF-8 compiler.props" />
+    <Import Project="Props\FreeTypeFont.props" />
     <Import Project="Props\FTF_debug.props" />
     <Import Project="Props\OpenGL debug.props" />
-    <Import Project="Props\FreeTypeFont.props" />
     <Import Project="Props\OpenGL.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,12 +140,14 @@
     <ClCompile Include="2048\main.cpp" />
     <ClCompile Include="Engine\Core\Init\Display.cpp" />
     <ClCompile Include="Engine\Core\Init\Global.cpp" />
-    <ClCompile Include="FTF.cpp" />
+    <ClCompile Include="Engine\Rendering\Managers\TextManager.cpp" />
+    <ClCompile Include="Engine\Rendering\Text\FTF.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Core\Init\Display.h" />
     <ClInclude Include="Engine\Core\Init\Global.h" />
-    <ClInclude Include="FTF.h" />
+    <ClInclude Include="Engine\Rendering\Managers\TextManager.h" />
+    <ClInclude Include="Engine\Rendering\Text\FTF.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
