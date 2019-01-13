@@ -14,17 +14,11 @@
     <Filter Include="Engine\Rendering">
       <UniqueIdentifier>{c7e5bca0-0ce4-48c1-bac6-8a4495e47bb9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Core\Init">
-      <UniqueIdentifier>{d6f8ba2f-8dc5-4675-a488-9a588c52dc49}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Rendering\Text">
       <UniqueIdentifier>{e3d9b733-8bc4-4823-b36c-9a413203b900}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Rendering\Shaders">
       <UniqueIdentifier>{af33ad14-1644-44eb-8e1c-d47657184cb6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Misc">
-      <UniqueIdentifier>{659fc1a5-b40d-49bf-bdeb-fbc9cc73f04e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Rendering\Managers">
       <UniqueIdentifier>{1ee51cb3-16b4-4f93-acbb-d075337eae54}</UniqueIdentifier>
@@ -44,20 +38,17 @@
     <Filter Include="Engine\Rendering\Models\RoundedSquare">
       <UniqueIdentifier>{ae92a82e-ccfe-4001-a711-aa41fac57e7e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Flow">
+    <Filter Include="2048">
+      <UniqueIdentifier>{640718d9-4218-4928-98de-579fa4134912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2048\States">
       <UniqueIdentifier>{7f0c047e-74ae-40d6-ae5d-20204c0bb82a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2048\States\Simple">
+      <UniqueIdentifier>{ac847e0b-e02e-4b14-b033-9dbef15826be}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Core\Init\Display.cpp">
-      <Filter>Engine\Core\Init</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Init\Global.cpp">
-      <Filter>Engine\Core\Init</Filter>
-    </ClCompile>
-    <ClCompile Include="2048\main.cpp">
-      <Filter>Misc</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Rendering\Text\FTF.cpp">
       <Filter>Engine\Rendering\Text</Filter>
     </ClCompile>
@@ -85,17 +76,26 @@
     <ClCompile Include="Engine\Rendering\Managers\VertexAttributeManager.cpp">
       <Filter>Engine\Rendering\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="2048\Flow\FlowManager.cpp">
-      <Filter>Flow</Filter>
+    <ClCompile Include="Engine\Core\Game.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="2048\Game_2048.cpp">
+      <Filter>2048</Filter>
+    </ClCompile>
+    <ClCompile Include="2048\main.cpp">
+      <Filter>2048</Filter>
+    </ClCompile>
+    <ClCompile Include="2048\States\StateManager.cpp">
+      <Filter>2048\States</Filter>
+    </ClCompile>
+    <ClCompile Include="2048\States\Simple\Simple.cpp">
+      <Filter>2048\States\Simple</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Rendering\Managers\ModelManager.cpp">
+      <Filter>Engine\Rendering\Managers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Core\Init\Display.h">
-      <Filter>Engine\Core\Init</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Init\Global.h">
-      <Filter>Engine\Core\Init</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Rendering\Text\FTF.h">
       <Filter>Engine\Rendering\Text</Filter>
     </ClInclude>
@@ -123,8 +123,26 @@
     <ClInclude Include="Engine\Rendering\Managers\VertexAttributeManager.h">
       <Filter>Engine\Rendering\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="2048\Flow\FlowManager.h">
-      <Filter>Flow</Filter>
+    <ClInclude Include="Engine\Core\State.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Game.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="2048\Game_2048.h">
+      <Filter>2048</Filter>
+    </ClInclude>
+    <ClInclude Include="2048\States\StateManager.h">
+      <Filter>2048\States</Filter>
+    </ClInclude>
+    <ClInclude Include="2048\States\Simple\Simple.h">
+      <Filter>2048\States\Simple</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Rendering\Managers\ModelManager.h">
+      <Filter>Engine\Rendering\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Rendering\Managers\Manager.h">
+      <Filter>Engine\Rendering\Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

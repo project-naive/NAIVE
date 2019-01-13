@@ -2,18 +2,19 @@
 
 #include "..\Shaders\Naive\Naive.h"
 
-namespace Rendering {
-	namespace Manager {
-		::Rendering::Shader* Shader::shaders[NumOfTypes]{};
-		Shader::Shader() {
-			shaders[Naive] = new ::Rendering::Shaders::Naive;
-		}
-		Shader::~Shader() {
-			for (size_t i = 0; i < NumOfTypes; i++) {
-				delete shaders[i];
+namespace Engine {
+	namespace Rendering {
+		namespace Managers {
+			void Shader::Init() {
+				DefaultShaders[Naive] = new ::Engine::Rendering::Shaders::Naive;
+			}
+			void Shader::Destroy() {
+				for (size_t i = 0; i < Shader::NumOfTypes; i++) {
+					delete DefaultShaders[i];
+					DefaultShaders[i] = nullptr;
+				}
 			}
 		}
 	}
 }
-
 

@@ -137,10 +137,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="2048\Flow\FlowManager.cpp" />
+    <ClCompile Include="2048\Game_2048.cpp" />
     <ClCompile Include="2048\main.cpp" />
-    <ClCompile Include="Engine\Core\Init\Display.cpp" />
-    <ClCompile Include="Engine\Core\Init\Global.cpp" />
+    <ClCompile Include="2048\States\Simple\Simple.cpp" />
+    <ClCompile Include="2048\States\StateManager.cpp" />
+    <ClCompile Include="Engine\Core\Game.cpp" />
+    <ClCompile Include="Engine\Rendering\Managers\ModelManager.cpp" />
     <ClCompile Include="Engine\Rendering\Managers\ShaderManager.cpp" />
     <ClCompile Include="Engine\Rendering\Managers\TextManager.cpp" />
     <ClCompile Include="Engine\Rendering\Managers\VertexAttributeManager.cpp" />
@@ -152,9 +154,13 @@
     <ClCompile Include="Engine\Rendering\Text\FTF.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="2048\Flow\FlowManager.h" />
-    <ClInclude Include="Engine\Core\Init\Display.h" />
-    <ClInclude Include="Engine\Core\Init\Global.h" />
+    <ClInclude Include="2048\Game_2048.h" />
+    <ClInclude Include="2048\States\Simple\Simple.h" />
+    <ClInclude Include="2048\States\StateManager.h" />
+    <ClInclude Include="Engine\Core\Game.h" />
+    <ClInclude Include="Engine\Core\State.h" />
+    <ClInclude Include="Engine\Rendering\Managers\Manager.h" />
+    <ClInclude Include="Engine\Rendering\Managers\ModelManager.h" />
     <ClInclude Include="Engine\Rendering\Managers\ShaderManager.h" />
     <ClInclude Include="Engine\Rendering\Managers\TextManager.h" />
     <ClInclude Include="Engine\Rendering\Managers\VertexAttributeManager.h" />

@@ -2,8 +2,10 @@
 #include <fstream>
 #include <vector>
 
-#include "..\Engine\Core\Init\Global.h"
-#include "..\Engine\Core\Init\Display.h"
+//#include "..\Engine\Core\Init\Global.h"
+//#include "..\Engine\Core\Init\Display.h"
+
+#include "Game_2048.h"
 
 #include "..\Engine\Rendering\Managers\TextManager.h"
 #include "..\Engine\Rendering\Managers\VertexAttributeManager.h"
@@ -11,16 +13,24 @@
 
 #include "..\Engine\Rendering\Models\Triangle\Triangle.h"
 
-using namespace Global;
+int argc_m;
+char** argv_m;
+char** env_m;
 
 int main(int argc, char* argv[], char* env[]) {
 	argc_m = argc;
 	argv_m = argv;
 	env_m = env;
-	Init();
-//	Rendering::Manager::Text TextManager;
-	Rendering::Manager::Shader ShaderManager;
-	Rendering::Manager::VertexAttribute Vertexes;
+	Engine::Core::WindowInfo window{ Engine::Core::Default::default_window() };
+	window.width = 512;
+	window.height = 512;
+	window.game_title = "2048";
+	window.Refresh = Game_2048::Refresh;
+	Game_2048 this_game{ window };
+//	Init();
+//	Rendering::Managers::Text TextManager;
+//	Engine::Rendering::Managers::Shader ShaderManager;
+//	Engine::Rendering::Managers::VertexAttribute Vertexes;
 //	std::ifstream ifs;
 //	ifs.open(".\\Resources\\fonts\\arial.ttf");
 //	ifs.seekg(0, std::ios::end);
@@ -31,29 +41,15 @@ int main(int argc, char* argv[], char* env[]) {
 //	ifs.close();
 //	size_t index = TextManager.loadFace(str.data(), size);
 //	TextManager.genCharTexture(0, 128, 48);
-	Rendering::Models::Triangle Triangle_Model;
-	Triangle_Model.VertexData[0] = {
-		glm::vec3(-1.0f,1.0f,1.0f),
-		glm::vec4(1.0f,1.0f,1.0f,1.0f) 
-	};
-	Triangle_Model.VertexData[1] = {
-		glm::vec3(1.0f,-1.0f,1.0f),
-		glm::vec4(1.0f,1.0f,1.0f,1.0f)
-	};
-	Triangle_Model.VertexData[2] = {
-		glm::vec3(-1.0f,-1.0f,1.0f),
-	    glm::vec4(1.0f,1.0f,1.0f,1.0f)
-	};
 	glfwPollEvents();
 	while(1){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		Triangle_Model.Draw();
-		glfwSwapBuffers(Display::mainWindow);
-		glfwWaitEvents();
+		this_game.state->Draw();
+		glfwPollEvents();
 	}
 	system("pause");
-	CleanUp();
+//	CleanUp();
 	return 0;
 }
 

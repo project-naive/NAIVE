@@ -1,6 +1,7 @@
 #include "Model.h"
 
-namespace Rendering {
+namespace Engine {
+	namespace Rendering {
 
+	}
 }
-
