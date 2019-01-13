@@ -1,4 +1,4 @@
-#include "Text.h"
+#include "TextManager.h"
 
 #include <iostream>
 

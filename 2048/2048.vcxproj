@@ -137,21 +137,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="2048\Flow\FlowManager.cpp" />
     <ClCompile Include="2048\main.cpp" />
     <ClCompile Include="Engine\Core\Init\Display.cpp" />
     <ClCompile Include="Engine\Core\Init\Global.cpp" />
-    <ClCompile Include="Engine\Rendering\Managers\Flow.cpp" />
-    <ClCompile Include="Engine\Rendering\Managers\Shader.cpp" />
-    <ClCompile Include="Engine\Rendering\Managers\Text.cpp" />
+    <ClCompile Include="Engine\Rendering\Managers\ShaderManager.cpp" />
+    <ClCompile Include="Engine\Rendering\Managers\TextManager.cpp" />
+    <ClCompile Include="Engine\Rendering\Managers\VertexAttributeManager.cpp" />
+    <ClCompile Include="Engine\Rendering\Models\Model.cpp" />
+    <ClCompile Include="Engine\Rendering\Models\Text\Text.cpp" />
+    <ClCompile Include="Engine\Rendering\Models\Triangle\Triangle.cpp" />
+    <ClCompile Include="Engine\Rendering\Shaders\Naive\Naive.cpp" />
+    <ClCompile Include="Engine\Rendering\Shaders\Shader.cpp" />
     <ClCompile Include="Engine\Rendering\Text\FTF.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="2048\Flow\FlowManager.h" />
     <ClInclude Include="Engine\Core\Init\Display.h" />
     <ClInclude Include="Engine\Core\Init\Global.h" />
-    <ClInclude Include="Engine\Rendering\Managers\Flow.h" />
-    <ClInclude Include="Engine\Rendering\Managers\Shader.h" />
-    <ClInclude Include="Engine\Rendering\Managers\Text.h" />
+    <ClInclude Include="Engine\Rendering\Managers\ShaderManager.h" />
+    <ClInclude Include="Engine\Rendering\Managers\TextManager.h" />
+    <ClInclude Include="Engine\Rendering\Managers\VertexAttributeManager.h" />
+    <ClInclude Include="Engine\Rendering\Models\Model.h" />
+    <ClInclude Include="Engine\Rendering\Models\Text\Text.h" />
+    <ClInclude Include="Engine\Rendering\Models\Triangle\Triangle.h" />
+    <ClInclude Include="Engine\Rendering\Shaders\Naive\Naive.h" />
+    <ClInclude Include="Engine\Rendering\Shaders\Shader.h" />
     <ClInclude Include="Engine\Rendering\Text\FTF.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Engine\Rendering\Shaders\Naive\Naive.frag" />
+    <None Include="Engine\Rendering\Shaders\Naive\Naive.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -29,8 +29,23 @@
     <Filter Include="Engine\Rendering\Managers">
       <UniqueIdentifier>{1ee51cb3-16b4-4f93-acbb-d075337eae54}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MyLibrary">
-      <UniqueIdentifier>{dad0bc0b-7799-4235-834b-6eaa75428276}</UniqueIdentifier>
+    <Filter Include="Engine\Rendering\Shaders\Naive">
+      <UniqueIdentifier>{c23f52bd-6f1d-4e91-a801-43d2a5023fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Models">
+      <UniqueIdentifier>{04016a5f-42eb-4c48-86e4-73c3b8455309}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Models\Text">
+      <UniqueIdentifier>{8d13826a-59dd-48ad-806e-24e43eefaefe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Models\Triangle">
+      <UniqueIdentifier>{625ca24b-b798-4aed-9b6b-ebbe0e8c2158}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering\Models\RoundedSquare">
+      <UniqueIdentifier>{ae92a82e-ccfe-4001-a711-aa41fac57e7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Flow">
+      <UniqueIdentifier>{7f0c047e-74ae-40d6-ae5d-20204c0bb82a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -46,14 +61,32 @@
     <ClCompile Include="Engine\Rendering\Text\FTF.cpp">
       <Filter>Engine\Rendering\Text</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Rendering\Managers\Text.cpp">
+    <ClCompile Include="Engine\Rendering\Shaders\Naive\Naive.cpp">
+      <Filter>Engine\Rendering\Shaders\Naive</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Rendering\Shaders\Shader.cpp">
+      <Filter>Engine\Rendering\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Rendering\Models\Model.cpp">
+      <Filter>Engine\Rendering\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Rendering\Models\Text\Text.cpp">
+      <Filter>Engine\Rendering\Models\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Rendering\Models\Triangle\Triangle.cpp">
+      <Filter>Engine\Rendering\Models\Triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Rendering\Managers\TextManager.cpp">
       <Filter>Engine\Rendering\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Rendering\Managers\Shader.cpp">
+    <ClCompile Include="Engine\Rendering\Managers\ShaderManager.cpp">
       <Filter>Engine\Rendering\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Rendering\Managers\Flow.cpp">
+    <ClCompile Include="Engine\Rendering\Managers\VertexAttributeManager.cpp">
       <Filter>Engine\Rendering\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="2048\Flow\FlowManager.cpp">
+      <Filter>Flow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -66,14 +99,40 @@
     <ClInclude Include="Engine\Rendering\Text\FTF.h">
       <Filter>Engine\Rendering\Text</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Rendering\Managers\Text.h">
+    <ClInclude Include="Engine\Rendering\Shaders\Shader.h">
+      <Filter>Engine\Rendering\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Rendering\Shaders\Naive\Naive.h">
+      <Filter>Engine\Rendering\Shaders\Naive</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Rendering\Models\Model.h">
+      <Filter>Engine\Rendering\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Rendering\Models\Text\Text.h">
+      <Filter>Engine\Rendering\Models\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Rendering\Models\Triangle\Triangle.h">
+      <Filter>Engine\Rendering\Models\Triangle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Rendering\Managers\TextManager.h">
       <Filter>Engine\Rendering\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Rendering\Managers\Shader.h">
+    <ClInclude Include="Engine\Rendering\Managers\ShaderManager.h">
       <Filter>Engine\Rendering\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Rendering\Managers\Flow.h">
+    <ClInclude Include="Engine\Rendering\Managers\VertexAttributeManager.h">
       <Filter>Engine\Rendering\Managers</Filter>
     </ClInclude>
+    <ClInclude Include="2048\Flow\FlowManager.h">
+      <Filter>Flow</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Engine\Rendering\Shaders\Naive\Naive.vert">
+      <Filter>Engine\Rendering\Shaders\Naive</Filter>
+    </None>
+    <None Include="Engine\Rendering\Shaders\Naive\Naive.frag">
+      <Filter>Engine\Rendering\Shaders\Naive</Filter>
+    </None>
   </ItemGroup>
 </Project>

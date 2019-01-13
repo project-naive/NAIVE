@@ -24,8 +24,9 @@ namespace Global {
 		} else {
 			glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
 			glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 			Display::mainWindow = glfwCreateWindow(Display::width, Display::height, game_title, nullptr, nullptr);
 			if (!Display::mainWindow) {
 				std::cerr << "Error creating window!\n" << std::endl;
@@ -52,11 +53,12 @@ namespace Global {
 			glfwTerminate();
 			exit(EXIT_FAILURE);
 		}
-		if (glewIsSupported("GL_VERSION_3_3")) {
-			std::cout << "OpenGL supports version 3.3!\n" << std::endl;
+		if (glewIsSupported("GL_VERSION_4_4")) {
+			std::cout << "OpenGL supports version 4.4!\n" << std::endl;
 		} else {
-			std::cout << " OpenGL 3.3 not supported!\n" << std::endl;
+			std::cout << " OpenGL 4.4 not supported!\n" << std::endl;
 		}
+		glViewport(0, 0, Display::width, Display::height);
 	}
 
 	void CleanUp() {
