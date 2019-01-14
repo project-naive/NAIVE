@@ -13,20 +13,15 @@
 #include <GL\glew.h>
 #include <glm\glm.hpp>
 
-#include "Manager.h"
-
 namespace Engine {
-	namespace Rendering {
+	namespace Graphics {
 		namespace Managers {
-			class Text:public Manager {
+			class Text {
 			public:
-				void Init() override {
-					font = new FTFonts;
-				}
-				void Destroy() override;
-
+				Text() = default;
+				~Text();
 				//The Instance Manager of FreeTypeFont APIs
-				FTFonts* font = nullptr;
+				FTFonts font = FTFonts();
 				//The face index interface with the manager
 				size_t* font_index = nullptr;
 

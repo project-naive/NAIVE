@@ -7,12 +7,6 @@
 
 #include "Game_2048.h"
 
-#include "..\Engine\Rendering\Managers\TextManager.h"
-#include "..\Engine\Rendering\Managers\VertexAttributeManager.h"
-#include "..\Engine\Rendering\Managers\ShaderManager.h"
-
-#include "..\Engine\Rendering\Models\Triangle\Triangle.h"
-
 int argc_m;
 char** argv_m;
 char** env_m;
@@ -24,13 +18,13 @@ int main(int argc, char* argv[], char* env[]) {
 	Engine::Core::WindowInfo window{ Engine::Core::Default::default_window() };
 	window.width = 512;
 	window.height = 512;
-	window.game_title = "2048";
+	window.title = "2048";
 	window.Refresh = Game_2048::Refresh;
 	Game_2048 this_game{ window };
 //	Init();
-//	Rendering::Managers::Text TextManager;
-//	Engine::Rendering::Managers::Shader ShaderManager;
-//	Engine::Rendering::Managers::VertexAttribute Vertexes;
+//	Graphics::Managers::Text TextManager;
+//	Engine::Graphics::Managers::Shader ShaderManager;
+//	Engine::Graphics::Managers::VertexAttribute Vertexes;
 //	std::ifstream ifs;
 //	ifs.open(".\\Resources\\fonts\\arial.ttf");
 //	ifs.seekg(0, std::ios::end);

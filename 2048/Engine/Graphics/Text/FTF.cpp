@@ -4,7 +4,7 @@
 #include <algorithm>
 
 namespace Engine {
-	namespace Rendering {
+	namespace Graphics {
 		FTFonts::FTFonts() {
 			FT_Error err = FT_Init_FreeType(&library);
 			if (err) {
@@ -72,7 +72,7 @@ namespace Engine {
 			return rtn;
 		}
 
-		bool Rendering::FTFonts::unload_face(const size_t index) {
+		bool Graphics::FTFonts::unload_face(const size_t index) {
 			if (index >= face_count) return false;
 			try {
 				if (unload_count == unload_cache) {

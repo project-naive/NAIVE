@@ -4,7 +4,7 @@
 #include <iostream>
 
 namespace Engine {
-	namespace Rendering {
+	namespace Graphics {
 		GLuint Shader::CreateShader(GLenum shaderType, const char* shadercode, GLint length) const {
 			const GLuint shader = glCreateShader(shaderType);
 			if (!shader) {

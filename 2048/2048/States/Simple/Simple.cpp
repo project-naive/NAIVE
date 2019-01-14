@@ -3,12 +3,12 @@
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 
-#include "..\..\..\Engine\Rendering\Models\Triangle\Triangle.h"
+#include "..\..\..\Engine\Graphics\Models\Triangle\Triangle.h"
 
 namespace States {
 	Simple::Simple(Game_2048* parent) {
 		this->parent = parent;
-		TriangleModel = new Engine::Rendering::Models::Triangle(this);
+		TriangleModel = new Engine::Graphics::Models::Triangle(this);
 	}
 	void Simple::Init() {
 

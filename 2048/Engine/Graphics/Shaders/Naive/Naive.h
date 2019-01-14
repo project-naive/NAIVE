@@ -3,7 +3,7 @@
 #include "..\Shader.h"
 
 namespace Engine {
-	namespace Rendering {
+	namespace Graphics {
 		namespace Shaders {
 			class Naive: public Shader {
 			public:
@@ -11,8 +11,8 @@ namespace Engine {
 					CreateProgram();
 				}
 				GLuint CreateProgram() override;
-				const char* fragment_shader_path = ".\\Engine\\Rendering\\Shaders\\Naive\\Naive.frag";
-				const char* vertex_shader_path = ".\\Engine\\Rendering\\Shaders\\Naive\\Naive.vert";
+				const char* fragment_shader_path = ".\\Engine\\Graphics\\Shaders\\Naive\\Naive.frag";
+				const char* vertex_shader_path = ".\\Engine\\Graphics\\Shaders\\Naive\\Naive.vert";
 			};
 		}
 	}

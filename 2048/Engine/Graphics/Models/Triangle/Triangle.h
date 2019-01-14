@@ -4,7 +4,7 @@
 #include <glm\glm.hpp>
 
 namespace Engine {
-	namespace Rendering {
+	namespace Graphics {
 		namespace Models {
 			class Triangle: public Model {
 			public:

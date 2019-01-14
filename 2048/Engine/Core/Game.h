@@ -5,17 +5,16 @@
 #include <GL\glew.h>
 #include <glfw\glfw3.h>
 
-#include "..\Rendering\Managers\TextManager.h"
-#include "..\Rendering\Managers\ShaderManager.h"
-#include "..\Rendering\Managers\VertexAttributeManager.h"
-#include "..\Rendering\Managers\ModelManager.h"
+#include "..\Graphics\Managers\TextManager.h"
+#include "..\Graphics\Managers\ShaderManager.h"
+#include "..\Graphics\Managers\ModelManager.h"
 
 namespace Engine {
 	namespace Core {
 		class Game;
 		typedef struct {
 			GLFWwindow* Window     = nullptr;
-			const char* game_title = nullptr;
+			const char* title = nullptr;
 			bool idle              = false;
 			bool resizable         = true;
 			size_t width           = 0;
@@ -46,14 +45,20 @@ namespace Engine {
 			const size_t default_height;
 			WindowInfo display;
 
-			Rendering::Managers::Text* TextManager = nullptr;
-			Rendering::Managers::Shader* ShaderManager = nullptr;
-			Rendering::Managers::VertexAttribute* VertexAttributeManager = nullptr;
+			Graphics::Managers::Text* TextManager = nullptr;
+			Graphics::Managers::Shader* ShaderManager = nullptr;
 //			Other managers here
 		};
 
 		namespace Default {
 			void glfwErrorCallback(int err_code, const char* info);
+			GLvoid APIENTRY debugCallback(GLenum source,
+										  GLenum type,
+										  GLuint id,
+										  GLenum severity,
+										  GLsizei length,
+										  const GLchar* message,
+										  const void* userParam);
 			void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 			namespace WindowCallback {
 				void Close(GLFWwindow* window);
@@ -79,10 +84,4 @@ namespace Engine {
 	}
 }
 
-GLvoid APIENTRY debugCallback(GLenum source,
-							  GLenum type,
-							  GLuint id,
-							  GLenum severity,
-							  GLsizei length,
-							  const GLchar* message,
-							  const void* userParam);
+

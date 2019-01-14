@@ -11,33 +11,6 @@
     <Filter Include="Engine\Core">
       <UniqueIdentifier>{187c7136-fb05-46a0-b867-1995d9629a87}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Rendering">
-      <UniqueIdentifier>{c7e5bca0-0ce4-48c1-bac6-8a4495e47bb9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Rendering\Text">
-      <UniqueIdentifier>{e3d9b733-8bc4-4823-b36c-9a413203b900}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Rendering\Shaders">
-      <UniqueIdentifier>{af33ad14-1644-44eb-8e1c-d47657184cb6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Rendering\Managers">
-      <UniqueIdentifier>{1ee51cb3-16b4-4f93-acbb-d075337eae54}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Rendering\Shaders\Naive">
-      <UniqueIdentifier>{c23f52bd-6f1d-4e91-a801-43d2a5023fae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Rendering\Models">
-      <UniqueIdentifier>{04016a5f-42eb-4c48-86e4-73c3b8455309}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Rendering\Models\Text">
-      <UniqueIdentifier>{8d13826a-59dd-48ad-806e-24e43eefaefe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Rendering\Models\Triangle">
-      <UniqueIdentifier>{625ca24b-b798-4aed-9b6b-ebbe0e8c2158}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Rendering\Models\RoundedSquare">
-      <UniqueIdentifier>{ae92a82e-ccfe-4001-a711-aa41fac57e7e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="2048">
       <UniqueIdentifier>{640718d9-4218-4928-98de-579fa4134912}</UniqueIdentifier>
     </Filter>
@@ -47,35 +20,41 @@
     <Filter Include="2048\States\Simple">
       <UniqueIdentifier>{ac847e0b-e02e-4b14-b033-9dbef15826be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Graphics">
+      <UniqueIdentifier>{c7e5bca0-0ce4-48c1-bac6-8a4495e47bb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Text">
+      <UniqueIdentifier>{e3d9b733-8bc4-4823-b36c-9a413203b900}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Shaders">
+      <UniqueIdentifier>{af33ad14-1644-44eb-8e1c-d47657184cb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Shaders\Naive">
+      <UniqueIdentifier>{c23f52bd-6f1d-4e91-a801-43d2a5023fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Managers">
+      <UniqueIdentifier>{1ee51cb3-16b4-4f93-acbb-d075337eae54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Models">
+      <UniqueIdentifier>{04016a5f-42eb-4c48-86e4-73c3b8455309}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Models\Text">
+      <UniqueIdentifier>{8d13826a-59dd-48ad-806e-24e43eefaefe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Models\Triangle">
+      <UniqueIdentifier>{625ca24b-b798-4aed-9b6b-ebbe0e8c2158}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Models\RoundedSquare">
+      <UniqueIdentifier>{ae92a82e-ccfe-4001-a711-aa41fac57e7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Managers\Init">
+      <UniqueIdentifier>{53b7bdc6-db96-4683-86ae-45724c8158ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Context">
+      <UniqueIdentifier>{074ebee9-fd31-49a8-8a0f-eb41b59f858c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Rendering\Text\FTF.cpp">
-      <Filter>Engine\Rendering\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Rendering\Shaders\Naive\Naive.cpp">
-      <Filter>Engine\Rendering\Shaders\Naive</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Rendering\Shaders\Shader.cpp">
-      <Filter>Engine\Rendering\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Rendering\Models\Model.cpp">
-      <Filter>Engine\Rendering\Models</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Rendering\Models\Text\Text.cpp">
-      <Filter>Engine\Rendering\Models\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Rendering\Models\Triangle\Triangle.cpp">
-      <Filter>Engine\Rendering\Models\Triangle</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Rendering\Managers\TextManager.cpp">
-      <Filter>Engine\Rendering\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Rendering\Managers\ShaderManager.cpp">
-      <Filter>Engine\Rendering\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Rendering\Managers\VertexAttributeManager.cpp">
-      <Filter>Engine\Rendering\Managers</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Core\Game.cpp">
       <Filter>Engine\Core</Filter>
     </ClCompile>
@@ -91,38 +70,41 @@
     <ClCompile Include="2048\States\Simple\Simple.cpp">
       <Filter>2048\States\Simple</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Rendering\Managers\ModelManager.cpp">
-      <Filter>Engine\Rendering\Managers</Filter>
+    <ClCompile Include="Engine\Graphics\Managers\ModelManager.cpp">
+      <Filter>Engine\Graphics\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Managers\TextManager.cpp">
+      <Filter>Engine\Graphics\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Models\Model.cpp">
+      <Filter>Engine\Graphics\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Models\Text\Text.cpp">
+      <Filter>Engine\Graphics\Models\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Models\Triangle\Triangle.cpp">
+      <Filter>Engine\Graphics\Models\Triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Shaders\Naive\Naive.cpp">
+      <Filter>Engine\Graphics\Shaders\Naive</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Shaders\Shader.cpp">
+      <Filter>Engine\Graphics\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Text\FTF.cpp">
+      <Filter>Engine\Graphics\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Managers\ShaderManager.cpp">
+      <Filter>Engine\Graphics\Managers\Init</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Managers\ContextManager.cpp">
+      <Filter>Engine\Graphics\Managers\Init</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Context\Context.cpp">
+      <Filter>Engine\Graphics\Context</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Rendering\Text\FTF.h">
-      <Filter>Engine\Rendering\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Rendering\Shaders\Shader.h">
-      <Filter>Engine\Rendering\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Rendering\Shaders\Naive\Naive.h">
-      <Filter>Engine\Rendering\Shaders\Naive</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Rendering\Models\Model.h">
-      <Filter>Engine\Rendering\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Rendering\Models\Text\Text.h">
-      <Filter>Engine\Rendering\Models\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Rendering\Models\Triangle\Triangle.h">
-      <Filter>Engine\Rendering\Models\Triangle</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Rendering\Managers\TextManager.h">
-      <Filter>Engine\Rendering\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Rendering\Managers\ShaderManager.h">
-      <Filter>Engine\Rendering\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Rendering\Managers\VertexAttributeManager.h">
-      <Filter>Engine\Rendering\Managers</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Core\State.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
@@ -138,19 +120,46 @@
     <ClInclude Include="2048\States\Simple\Simple.h">
       <Filter>2048\States\Simple</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Rendering\Managers\ModelManager.h">
-      <Filter>Engine\Rendering\Managers</Filter>
+    <ClInclude Include="Engine\Graphics\Managers\ModelManager.h">
+      <Filter>Engine\Graphics\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Rendering\Managers\Manager.h">
-      <Filter>Engine\Rendering\Managers</Filter>
+    <ClInclude Include="Engine\Graphics\Managers\TextManager.h">
+      <Filter>Engine\Graphics\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Models\Model.h">
+      <Filter>Engine\Graphics\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Models\Text\Text.h">
+      <Filter>Engine\Graphics\Models\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Models\Triangle\Triangle.h">
+      <Filter>Engine\Graphics\Models\Triangle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Shaders\Naive\Naive.h">
+      <Filter>Engine\Graphics\Shaders\Naive</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Shaders\Shader.h">
+      <Filter>Engine\Graphics\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Text\FTF.h">
+      <Filter>Engine\Graphics\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Managers\ShaderManager.h">
+      <Filter>Engine\Graphics\Managers\Init</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Managers\ContextManager.h">
+      <Filter>Engine\Graphics\Managers\Init</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Context\Context.h">
+      <Filter>Engine\Graphics\Context</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Rendering\Shaders\Naive\Naive.vert">
-      <Filter>Engine\Rendering\Shaders\Naive</Filter>
+    <None Include="Engine\Graphics\Shaders\Naive\Naive.frag">
+      <Filter>Engine\Graphics\Shaders\Naive</Filter>
     </None>
-    <None Include="Engine\Rendering\Shaders\Naive\Naive.frag">
-      <Filter>Engine\Rendering\Shaders\Naive</Filter>
+    <None Include="Engine\Graphics\Shaders\Naive\Naive.vert">
+      <Filter>Engine\Graphics\Shaders\Naive</Filter>
     </None>
   </ItemGroup>
 </Project>

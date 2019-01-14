@@ -10,7 +10,7 @@
 #include <GL\glew.h>
 
 namespace Engine {
-	namespace Rendering {
+	namespace Graphics {
 		class Shader {
 		public:
 			Shader() = default;

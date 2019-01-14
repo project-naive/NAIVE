@@ -7,24 +7,24 @@
 #pragma once
 
 #include "..\Shaders\Shader.h"
-#include "Manager.h"
 
 namespace Engine {
-	namespace Rendering {
+	namespace Graphics {
 		namespace Managers {
 			//A class that manages all the
-			class Shader: public Manager {
+			class Shader {
 			public:
+				Shader();
+				~Shader();
 				enum ShaderType { Naive, NumOfTypes };
 				GLuint GetProgram(ShaderType type) {
 					if (!DefaultShaders || type >= NumOfTypes || !DefaultShaders[type]) return 0;
 					return DefaultShaders[type]->program;
 				}
 			private:
-				Engine::Rendering::Shader* DefaultShaders[NumOfTypes]{};
-			public:
-				void Init() override;
-				void Destroy() override;
+				Shader(const Shader&)=delete;
+				Shader& operator=(const Shader&)=delete;
+				Engine::Graphics::Shader* DefaultShaders[NumOfTypes]{};
 			};
 		}
 	}

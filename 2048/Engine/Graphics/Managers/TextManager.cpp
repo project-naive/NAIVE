@@ -6,11 +6,10 @@
 
 
 namespace Engine {
-	namespace Rendering {
+	namespace Graphics {
 		namespace Managers {
-			void Text::Destroy() {
-				delete font;
-				font = nullptr;
+			Text::Text() {}
+			Text::~Text() {
 				std::sort(unloaded, unloaded + unload_count);
 				size_t j = 0;
 				for (size_t i = 0; i < texture_count; i++) {
@@ -25,14 +24,7 @@ namespace Engine {
 				delete[] FontTextures;
 				delete[] unloaded;
 				delete[] font_index;
-				FontTextures = nullptr;
-				unloaded = nullptr;
-				font_index = nullptr;
-				unload_cache = 0;
-				unload_count = 0;
-				texture_cache = 0;
-				texture_count = 0;
- 			}
+			}
 
 			bool Text::reserve_texture(size_t size) {
 				if (!size) return false;
@@ -81,7 +73,7 @@ namespace Engine {
 			}
 
 			size_t Text::loadFace(const char* data, size_t size, size_t index) {
-				size_t new_font_index = font->load_face((const FT_Byte*)data, size, index);
+				size_t new_font_index = font.load_face((const FT_Byte*)data, size, index);
 				if (new_font_index == size_t(-1)) {
 					return -1;
 				}
@@ -101,8 +93,8 @@ namespace Engine {
 				return rtn;
 			}
 
-			bool Rendering::Managers::Text::unloadFace(size_t texture_index) {
-				if (!font->unload_face(font_index[texture_index])) {
+			bool Graphics::Managers::Text::unloadFace(size_t texture_index) {
+				if (!font.unload_face(font_index[texture_index])) {
 					return false;
 				}
 				font_index[texture_index] = -1;
@@ -128,7 +120,7 @@ namespace Engine {
 					delete[] new_buffer;
 				}
 				if (font_index[texture_index] != size_t(-1)) {
-					if (!font->unload_face(font_index[texture_index])) {
+					if (!font.unload_face(font_index[texture_index])) {
 						return false;
 					}
 					font_index[texture_index] = -1;
@@ -147,7 +139,7 @@ namespace Engine {
 				unsigned number,
 				unsigned pixel_height,
 				size_t texture_index) {
-				FT_Face face = font->faces[font_index[texture_index]];
+				FT_Face face = font.faces[font_index[texture_index]];
 				FT_Error err = FT_Set_Pixel_Sizes(face, 0, pixel_height);
 				if (err) {
 					std::cerr << "Failed to set pixel sizes!\nError code: " << err << '\n' << std::endl;

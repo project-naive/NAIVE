@@ -1,7 +1,7 @@
 #pragma once
 
 #include "..\..\..\Engine\Core\State.h"
-#include "..\..\..\Engine\Rendering\Models\Triangle\Triangle.h"
+#include "..\..\..\Engine\Graphics\Models\Triangle\Triangle.h"
 
 #include "..\..\Game_2048.h"
 
@@ -11,7 +11,7 @@ namespace States {
 	public:
 		Simple(Game_2048* parent);
 		~Simple();
-		Engine::Rendering::Models::Triangle* TriangleModel;
+		Engine::Graphics::Models::Triangle* TriangleModel;
 		void Init() override;
 		void Destroy() override;
 

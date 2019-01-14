@@ -10,7 +10,7 @@ namespace Engine {
 			default_height(windowinfo.height) {
 			display = windowinfo;
 			display.idle = false;
-			if (!display.game_title) display.game_title = "";
+			if (!display.title) display.title = "";
 			glfwSetErrorCallback(Default::glfwErrorCallback);
 			if (!glfwInit()) {
 				std::cerr << "Error initializing glfw!\n" << std::endl;
@@ -25,13 +25,13 @@ namespace Engine {
 				//other things to do for full screen
 			} else {
 				glfwWindowHint(GLFW_RESIZABLE, display.resizable);
-				display.Window = glfwCreateWindow(display.width, display.height, display.game_title, nullptr, nullptr);
+				display.Window = glfwCreateWindow(int(display.width), int(display.height), display.title, nullptr, nullptr);
 				if (!display.Window) {
 					std::cerr << "Error creating window!\n" << std::endl;
 					glfwTerminate();
 					exit(EXIT_FAILURE);
 				}
-				glfwSetWindowAspectRatio(display.Window, default_width, default_height);
+				glfwSetWindowAspectRatio(display.Window, int(default_width), int(default_height));
 			}
 			glfwSetWindowCloseCallback(display.Window, display.Close);
 			glfwSetWindowRefreshCallback(display.Window, display.Refresh);
@@ -57,17 +57,16 @@ namespace Engine {
 				std::cout << " OpenGL 4.4 not supported!\n" << std::endl;
 			}
 			glEnable(GL_DEBUG_OUTPUT);
-			glDebugMessageCallback((GLDEBUGPROC)debugCallback,nullptr);
-			glViewport(0, 0, display.width, display.height);
+			glDebugMessageCallback((GLDEBUGPROC)Default::debugCallback,nullptr);
+			glViewport(0, 0, GLsizei(display.width), GLsizei(display.height));
 
-			TextManager = new Rendering::Managers::Text;
+			TextManager = new Graphics::Managers::Text;
 			TextManager->Init();
-			ShaderManager = new Rendering::Managers::Shader;
+			ShaderManager = new Graphics::Managers::Shader;
 			ShaderManager->Init();
-			VertexAttributeManager = new Rendering::Managers::VertexAttribute;
-			VertexAttributeManager->Init();
 			//other managers here
 		}
+
 		Game::~Game() {
 			if (state) {
 				state->Destroy();
@@ -76,16 +75,25 @@ namespace Engine {
 			glfwTerminate();
 		}
 
-
-GLDEBUGPROC;
-
 		namespace Default {
 
 			void glfwErrorCallback(int err_code, const char* info) {
 				std::cerr << "Error " << err_code << ":\n" << info << '\n' << std::endl;
 			}
 
-
+			GLvoid APIENTRY debugCallback(GLenum source,
+										  GLenum type,
+										  GLuint id,
+										  GLenum severity,
+										  GLsizei length,
+										  const GLchar* message,
+										  const void* userParam) {
+				std::cerr << "OpenGL Error occured!\n\nType:\t\t" << unsigned(type)
+					<< "\nID:\t\t" << unsigned(id)
+					<< "\nSeverity:\t" << unsigned(severity)
+					<< "\nLength:\t" << int(length)
+					<< "\nMessage:\n" << (char*)message << '\n' << std::endl;
+			}
 
 
 			void FrameBufferSizeCallback(GLFWwindow* window, int width, int height) {
@@ -125,16 +133,4 @@ GLDEBUGPROC;
 
 }
 
-GLvoid APIENTRY debugCallback(GLenum source,
-							  GLenum type,
-							  GLuint id,
-							  GLenum severity,
-							  GLsizei length,
-							  const GLchar* message,
-							  const void* userParam) {
-	std::cerr << "OpenGL Error occured!\n\nType:\t\t" << unsigned(type) 
-		<< "\nID:\t\t" << unsigned(id) 
-		<< "\nSeverity:\t" << unsigned(severity) 
-		<< "\nLength:\t" << int(length)
-		<< "\nMessage:\n" << (char*)message << '\n' << std::endl;
-}
+

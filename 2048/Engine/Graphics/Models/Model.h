@@ -4,7 +4,7 @@
 #include "..\..\Core\State.h"
 
 namespace Engine {
-	namespace Rendering {
+	namespace Graphics {
 		class Model {
 		public:
 			GLuint shader = 0;

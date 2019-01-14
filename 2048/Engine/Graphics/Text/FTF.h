@@ -4,7 +4,7 @@
 #include FT_FREETYPE_H
 
 namespace Engine {
-	namespace Rendering {
+	namespace Graphics {
 		class FTFonts {
 		public:
 			FTFonts();

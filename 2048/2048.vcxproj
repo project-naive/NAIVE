@@ -142,16 +142,17 @@
     <ClCompile Include="2048\States\Simple\Simple.cpp" />
     <ClCompile Include="2048\States\StateManager.cpp" />
     <ClCompile Include="Engine\Core\Game.cpp" />
-    <ClCompile Include="Engine\Rendering\Managers\ModelManager.cpp" />
-    <ClCompile Include="Engine\Rendering\Managers\ShaderManager.cpp" />
-    <ClCompile Include="Engine\Rendering\Managers\TextManager.cpp" />
-    <ClCompile Include="Engine\Rendering\Managers\VertexAttributeManager.cpp" />
-    <ClCompile Include="Engine\Rendering\Models\Model.cpp" />
-    <ClCompile Include="Engine\Rendering\Models\Text\Text.cpp" />
-    <ClCompile Include="Engine\Rendering\Models\Triangle\Triangle.cpp" />
-    <ClCompile Include="Engine\Rendering\Shaders\Naive\Naive.cpp" />
-    <ClCompile Include="Engine\Rendering\Shaders\Shader.cpp" />
-    <ClCompile Include="Engine\Rendering\Text\FTF.cpp" />
+    <ClCompile Include="Engine\Graphics\Context\Context.cpp" />
+    <ClCompile Include="Engine\Graphics\Managers\ContextManager.cpp" />
+    <ClCompile Include="Engine\Graphics\Managers\ModelManager.cpp" />
+    <ClCompile Include="Engine\Graphics\Managers\ShaderManager.cpp" />
+    <ClCompile Include="Engine\Graphics\Managers\TextManager.cpp" />
+    <ClCompile Include="Engine\Graphics\Models\Model.cpp" />
+    <ClCompile Include="Engine\Graphics\Models\Text\Text.cpp" />
+    <ClCompile Include="Engine\Graphics\Models\Triangle\Triangle.cpp" />
+    <ClCompile Include="Engine\Graphics\Shaders\Naive\Naive.cpp" />
+    <ClCompile Include="Engine\Graphics\Shaders\Shader.cpp" />
+    <ClCompile Include="Engine\Graphics\Text\FTF.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2048\Game_2048.h" />
@@ -159,21 +160,21 @@
     <ClInclude Include="2048\States\StateManager.h" />
     <ClInclude Include="Engine\Core\Game.h" />
     <ClInclude Include="Engine\Core\State.h" />
-    <ClInclude Include="Engine\Rendering\Managers\Manager.h" />
-    <ClInclude Include="Engine\Rendering\Managers\ModelManager.h" />
-    <ClInclude Include="Engine\Rendering\Managers\ShaderManager.h" />
-    <ClInclude Include="Engine\Rendering\Managers\TextManager.h" />
-    <ClInclude Include="Engine\Rendering\Managers\VertexAttributeManager.h" />
-    <ClInclude Include="Engine\Rendering\Models\Model.h" />
-    <ClInclude Include="Engine\Rendering\Models\Text\Text.h" />
-    <ClInclude Include="Engine\Rendering\Models\Triangle\Triangle.h" />
-    <ClInclude Include="Engine\Rendering\Shaders\Naive\Naive.h" />
-    <ClInclude Include="Engine\Rendering\Shaders\Shader.h" />
-    <ClInclude Include="Engine\Rendering\Text\FTF.h" />
+    <ClInclude Include="Engine\Graphics\Context\Context.h" />
+    <ClInclude Include="Engine\Graphics\Managers\ContextManager.h" />
+    <ClInclude Include="Engine\Graphics\Managers\ModelManager.h" />
+    <ClInclude Include="Engine\Graphics\Managers\ShaderManager.h" />
+    <ClInclude Include="Engine\Graphics\Managers\TextManager.h" />
+    <ClInclude Include="Engine\Graphics\Models\Model.h" />
+    <ClInclude Include="Engine\Graphics\Models\Text\Text.h" />
+    <ClInclude Include="Engine\Graphics\Models\Triangle\Triangle.h" />
+    <ClInclude Include="Engine\Graphics\Shaders\Naive\Naive.h" />
+    <ClInclude Include="Engine\Graphics\Shaders\Shader.h" />
+    <ClInclude Include="Engine\Graphics\Text\FTF.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Rendering\Shaders\Naive\Naive.frag" />
-    <None Include="Engine\Rendering\Shaders\Naive\Naive.vert" />
+    <None Include="Engine\Graphics\Shaders\Naive\Naive.frag" />
+    <None Include="Engine\Graphics\Shaders\Naive\Naive.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

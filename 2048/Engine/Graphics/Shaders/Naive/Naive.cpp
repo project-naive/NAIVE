@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace Engine {
-	namespace Rendering {
+	namespace Graphics {
 		namespace Shaders {
 			GLuint Naive::CreateProgram() {
 				std::ifstream ifs;
@@ -15,7 +15,7 @@ namespace Engine {
 					return 0;
 				}
 				ifs.seekg(0, std::ios::end);
-				GLint size = ifs.tellg();
+				GLint size = GLint(ifs.tellg());
 				std::vector<char> code(size);
 				ifs.seekg(0);
 				ifs.read(&code[0], size);
@@ -30,7 +30,7 @@ namespace Engine {
 					return 0;
 				}
 				ifs.seekg(0, std::ios::end);
-				size = ifs.tellg();
+				size = GLint(ifs.tellg());
 				code.resize(size);
 				ifs.seekg(0);
 				ifs.read(&code[0], size);

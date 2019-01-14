@@ -1,12 +1,11 @@
 #include "Triangle.h"
 
 #include "..\..\Managers\ShaderManager.h"
-#include "..\..\Managers\VertexAttributeManager.h"
 #include "..\..\..\Core\Game.h"
 
 
 namespace Engine {
-	namespace Rendering {
+	namespace Graphics {
 		namespace Models {
 			Triangle::Triangle(Core::State* parent): Model(parent) {
 				shader = parent->parent->ShaderManager->GetProgram(Managers::Shader::Naive);
