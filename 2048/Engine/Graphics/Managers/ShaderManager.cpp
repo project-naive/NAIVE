@@ -6,7 +6,8 @@ namespace Engine {
 	namespace Graphics {
 		namespace Managers {
 			Shader::Shader() {
-				DefaultShaders[Naive] = new ::Engine::Graphics::Shaders::Naive;
+				DefaultShaders[Naive] = new Shaders::Naive;
+				DefaultShaders[Text] = new Shaders::Text;
 			}
 			Shader::~Shader() {
 				for (size_t i = 0; i < Shader::NumOfTypes; i++) {

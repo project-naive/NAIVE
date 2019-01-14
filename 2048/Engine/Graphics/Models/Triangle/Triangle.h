@@ -8,18 +8,15 @@ namespace Engine {
 		namespace Models {
 			class Triangle: public Model {
 			public:
-				Triangle(Core::State* parent);
+				Triangle(const Managers::Shader& given_manager);
 				~Triangle() = default;
 				struct VertexFormat {
 					glm::vec3 position;
 					glm::vec4 color;
 				};
-				VertexFormat VertexData[3]{};
+				VertexFormat VertexData[3] {};
 				void Draw() override;
 				void Update() override;
-				GLuint position_array_attribute = -1;
-				GLuint color_array_attribute = -1;
-
 			};
 		}
 	}

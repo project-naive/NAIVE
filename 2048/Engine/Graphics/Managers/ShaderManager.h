@@ -16,15 +16,15 @@ namespace Engine {
 			public:
 				Shader();
 				~Shader();
-				enum ShaderType { Naive, NumOfTypes };
-				GLuint GetProgram(ShaderType type) {
+				enum ShaderType { Naive, Text, NumOfTypes };
+				GLuint GetProgram(ShaderType type) const {
 					if (!DefaultShaders || type >= NumOfTypes || !DefaultShaders[type]) return 0;
 					return DefaultShaders[type]->program;
 				}
 			private:
 				Shader(const Shader&)=delete;
 				Shader& operator=(const Shader&)=delete;
-				Engine::Graphics::Shader* DefaultShaders[NumOfTypes]{};
+				Graphics::Shader* DefaultShaders[NumOfTypes] {};
 			};
 		}
 	}

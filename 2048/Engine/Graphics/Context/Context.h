@@ -11,7 +11,7 @@ namespace Engine {
 		class Context {
 			friend Managers::Context;
 		public:
-			typedef struct {
+			struct WindowInfo {
 				GLFWwindow* Window        = nullptr;
 				bool resizable            = true;
 				bool idle                 = false;
@@ -19,6 +19,7 @@ namespace Engine {
 				size_t height             = 0;
 				bool fullscreen           = false;
 				const char* title         = nullptr;
+				bool debug                = true;
 				unsigned GL_Version_Major = 3;
 				unsigned GL_Version_Minor = 3;
 				int monitor_count         = 0;
@@ -30,11 +31,10 @@ namespace Engine {
 				GLFWwindowposfun       Pos     = nullptr;
 				GLFWwindowsizefun      Size    = nullptr;
 				GLFWframebuffersizefun FBSize  = nullptr;
-			} WindowInfo;
+			};
 		protected:
 			Context(const WindowInfo& info, GLFWwindow* shared=nullptr);
 			~Context();
-			bool revised = false;
 			WindowInfo display;
 			const size_t default_width;
 			const size_t default_height;
@@ -51,6 +51,18 @@ namespace Engine {
 					void Iconify(GLFWwindow* window, int flag);
 					void Pos(GLFWwindow* window, int width, int height);
 					void Size(GLFWwindow* window, int width, int height);
+				}
+
+				inline Context::WindowInfo default_window() {
+					Context::WindowInfo rtn{};
+					rtn.Close = WindowCallback::Close;
+					rtn.Refresh = WindowCallback::Refresh;
+					rtn.Focus = WindowCallback::Focus;
+					rtn.Iconify = WindowCallback::Iconify;
+					rtn.Pos = WindowCallback::Pos;
+					rtn.Size = WindowCallback::Size;
+					rtn.FBSize = FrameBufferSizeCallback;
+					return rtn;
 				}
 			}
 		}

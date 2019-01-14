@@ -5,12 +5,18 @@
 
 namespace Engine {
 	namespace Graphics {
+		namespace Managers{
+			class Shader;
+		}
 		class Model {
 		public:
-			GLuint shader = 0;
+			GLuint shader;
 			GLuint vao = 0;
 			GLuint* vbos = nullptr;
 			GLuint vbo_count = 0;
+			void Begin() {
+				glUseProgram(shader);
+			};
 			virtual void Draw() = 0;
 			virtual void Update()=0;
 			~Model() {
@@ -18,8 +24,8 @@ namespace Engine {
 				glDeleteBuffers(vbo_count, vbos);
 				delete[] vbos;
 			}
-			Model(Core::State* given_parent):parent(given_parent) {};
-			const Core::State* parent;
+			Model(const Managers::Shader& given_manager):manager(given_manager) {};
+			const Managers::Shader& manager;
 		};
 	}
 }

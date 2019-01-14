@@ -6,36 +6,33 @@
 #include "..\..\..\Engine\Graphics\Models\Triangle\Triangle.h"
 
 namespace States {
-	Simple::Simple(Game_2048* parent) {
-		this->parent = parent;
-		TriangleModel = new Engine::Graphics::Models::Triangle(this);
+	Simple::Simple(Engine::Core::GlobalManagers& given_managers): State(given_managers) {
+		TriangleModel = new Engine::Graphics::Models::Triangle(managers.ShaderManager);
 	}
-	void Simple::Init() {
 
-	}
-	void Simple::Destroy() {
+	Simple::~Simple() {
 		delete TriangleModel;
-		TriangleModel = nullptr;
 	}
 	void Simple::Draw() {
 		TriangleModel->VertexData[0] = {
-			glm::vec3(0.25, -0.25, 0.0),
+			glm::vec3(0.5, -0.5, 0.0),
 			glm::vec4(1, 0, 0, 1)
 		};
 		TriangleModel->VertexData[1] = {
-			glm::vec3(-0.25, -0.25, 0.0),
+			glm::vec3(-0.5, -0.5, 0.0),
 			glm::vec4(0, 1, 0, 1)
 		};
 		TriangleModel->VertexData[2] = {
-			glm::vec3(0.25, 0.25, 0.0),
+			glm::vec3(0.5, 0.5, 0.0),
 			glm::vec4(0, 0, 1, 1)
 		};
+		TriangleModel->Begin();
 		TriangleModel->Draw();
-		glfwSwapBuffers(parent->display.Window);
+		managers.ContextManager.Refresh();
 	}
 	void Simple::Update() {
 		TriangleModel->Draw();
-		glfwSwapBuffers(parent->display.Window);
+		managers.ContextManager.Refresh();
 	}
 	void Simple::Loop() {}
 }

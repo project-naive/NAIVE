@@ -53,6 +53,9 @@
     <Filter Include="Engine\Graphics\Context">
       <UniqueIdentifier>{074ebee9-fd31-49a8-8a0f-eb41b59f858c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Graphics\Shaders\Text">
+      <UniqueIdentifier>{5f25eb91-a484-4ab9-9655-75ccb8762afd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Core\Game.cpp">
@@ -102,6 +105,9 @@
     </ClCompile>
     <ClCompile Include="Engine\Graphics\Context\Context.cpp">
       <Filter>Engine\Graphics\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Shaders\Text\TextShader.cpp">
+      <Filter>Engine\Graphics\Shaders\Text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +159,9 @@
     <ClInclude Include="Engine\Graphics\Context\Context.h">
       <Filter>Engine\Graphics\Context</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Graphics\Shaders\Text\TextShader.h">
+      <Filter>Engine\Graphics\Shaders\Text</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Graphics\Shaders\Naive\Naive.frag">
@@ -160,6 +169,12 @@
     </None>
     <None Include="Engine\Graphics\Shaders\Naive\Naive.vert">
       <Filter>Engine\Graphics\Shaders\Naive</Filter>
+    </None>
+    <None Include="Engine\Graphics\Shaders\Text\Text.vert">
+      <Filter>Engine\Graphics\Shaders\Text</Filter>
+    </None>
+    <None Include="Engine\Graphics\Shaders\Text\Text.frag">
+      <Filter>Engine\Graphics\Shaders\Text</Filter>
     </None>
   </ItemGroup>
 </Project>

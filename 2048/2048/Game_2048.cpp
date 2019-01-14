@@ -3,8 +3,8 @@
 #include "States/Simple/Simple.h"
 
 
-Game_2048::Game_2048(const Engine::Core::WindowInfo& info): Game(info) {
-	state = new States::Simple(this);
+Game_2048::Game_2048(const Engine::Graphics::Context::WindowInfo& info) : Game(info) {
+	state = new States::Simple(Managers);
 //	glfwSetKeyCallback(display.Window, KeyCallback);
 }
 

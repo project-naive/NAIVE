@@ -1,5 +1,7 @@
 #include "Context.h"
 
+#include "..\..\Core\Game.h"
+
 #include <iostream>
 #include <string>
 
@@ -64,7 +66,45 @@ namespace Engine {
 		}
 		bool Context::MakeCurrent() {
 			glfwMakeContextCurrent(display.Window);
+			glViewport(0, 0, GLsizei(display.width), GLsizei(display.height));
+			glLoadIdentity();
 			return true;
+		}
+		namespace Contexts {
+			namespace Default {
+				void FrameBufferSizeCallback(GLFWwindow* window, int width, int height) {
+					Core::Game& cur_game = *(Core::Active_Game);
+					cur_game.notifyFBSize(width, height, cur_game.Managers.ContextManager.GetContext(window));
+				}
+				namespace WindowCallback {
+					void Close(GLFWwindow* window){
+						Core::Game& cur_game = *(Core::Active_Game);
+						cur_game.notifyClose(cur_game.Managers.ContextManager.GetContext(window));
+//						glfwDestroyWindow(window)
+					}
+					void Refresh(GLFWwindow* window){
+//						Core::Game& cur_game = *(Core::Active_Game);
+//						cur_game.notifyRefresh(cur_game.Managers.ContextManager.GetContext(window));
+						glfwSwapBuffers(window);
+					}
+					void Focus(GLFWwindow* window, int flag){
+						Core::Game& cur_game = *(Core::Active_Game);
+						cur_game.notifyFocus(flag, cur_game.Managers.ContextManager.GetContext(window));
+					}
+					void Iconify(GLFWwindow* window, int flag){
+						Core::Game& cur_game = *(Core::Active_Game);
+						cur_game.notifyIconify(flag, cur_game.Managers.ContextManager.GetContext(window));
+					}
+					void Pos(GLFWwindow* window, int width, int height){
+						Core::Game& cur_game = *(Core::Active_Game);
+						cur_game.notifyPos(width, height, cur_game.Managers.ContextManager.GetContext(window));
+					}
+					void Size(GLFWwindow* window, int width, int height){
+						Core::Game& cur_game = *(Core::Active_Game);
+						cur_game.notifySize(width, height, cur_game.Managers.ContextManager.GetContext(window));
+					}
+				}
+			}
 		}
 	}
 }

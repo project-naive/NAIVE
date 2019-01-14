@@ -15,7 +15,7 @@ int main(int argc, char* argv[], char* env[]) {
 	argc_m = argc;
 	argv_m = argv;
 	env_m = env;
-	Engine::Core::WindowInfo window{ Engine::Core::Default::default_window() };
+	Engine::Graphics::Context::WindowInfo window{ Engine::Graphics::Contexts::Default::default_window() };
 	window.width = 512;
 	window.height = 512;
 	window.title = "2048";
@@ -36,7 +36,7 @@ int main(int argc, char* argv[], char* env[]) {
 //	size_t index = TextManager.loadFace(str.data(), size);
 //	TextManager.genCharTexture(0, 128, 48);
 	glfwPollEvents();
-	while(1){
+	while(this_game.running){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		this_game.state->Draw();

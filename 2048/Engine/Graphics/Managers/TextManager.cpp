@@ -1,14 +1,12 @@
 #include "TextManager.h"
 
 #include <iostream>
-
 #include <algorithm>
 
 
 namespace Engine {
 	namespace Graphics {
 		namespace Managers {
-			Text::Text() {}
 			Text::~Text() {
 				std::sort(unloaded, unloaded + unload_count);
 				size_t j = 0;

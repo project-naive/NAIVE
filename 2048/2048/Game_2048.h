@@ -5,7 +5,7 @@
 class Game_2048:
 	public Engine::Core::Game {
 public:
-	Game_2048(const Engine::Core::WindowInfo& info);
+	Game_2048(const Engine::Graphics::Context::WindowInfo& info);
 	~Game_2048();
 	static void Refresh(GLFWwindow* window) {
 		state->Draw();

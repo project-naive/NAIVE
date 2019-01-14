@@ -7,11 +7,12 @@
 namespace Engine {
 	namespace Core {
 		class Game;
+		class GlobalManagers;
 		class State {
 		public:
-			Game* parent = nullptr;
-			virtual void Init() = 0;
-			virtual void Destroy() = 0;
+			State(GlobalManagers& given_managers): managers(given_managers){}
+			GlobalManagers& managers;
+			~State() {};
 
 			virtual void Draw() = 0;
 			virtual void Update() = 0;

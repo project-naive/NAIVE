@@ -7,8 +7,8 @@
 namespace Engine {
 	namespace Graphics {
 		namespace Models {
-			Triangle::Triangle(Core::State* parent): Model(parent) {
-				shader = parent->parent->ShaderManager->GetProgram(Managers::Shader::Naive);
+			Triangle::Triangle(const Managers::Shader& given_manager): Model(given_manager) {
+				shader = manager.GetProgram(Managers::Shader::Naive);
 				vbos = new GLuint[1]{};
 				vbo_count = 1;
 				glGenVertexArrays(1, &vao);
@@ -16,7 +16,6 @@ namespace Engine {
 				glGenBuffers(1, vbos);
 				glBindBuffer(GL_ARRAY_BUFFER,vbos[0]);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(VertexFormat) * 3, nullptr, GL_DYNAMIC_DRAW);
-//				glBufferData(vbos[0], sizeof(VertexFormat) * 3, nullptr, GL_STATIC_DRAW);
 				glEnableVertexAttribArray(0);
 				glVertexAttribPointer(
 	                0,
@@ -42,7 +41,6 @@ namespace Engine {
 			}
 
 			void Triangle::Draw() {
-				glUseProgram(shader);
 				glBindVertexArray(vao);
 				glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VertexFormat) * 3, VertexData);
 				glDrawArrays(GL_TRIANGLES,0,3);
