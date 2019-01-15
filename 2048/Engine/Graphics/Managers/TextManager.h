@@ -13,13 +13,23 @@
 #include <GL\glew.h>
 #include <glm\glm.hpp>
 
+#include "ContextManager.h"
+#include "ShaderManager.h"
+#include "..\Models\Text\Text.h"
+
 namespace Engine {
 	namespace Graphics {
 		namespace Managers {
 			class Text {
 			public:
-				Text() = default;
+				Text(Context& CManager, Shader& SManager):
+					ContextManager(CManager),
+					ShaderManager(SManager), 
+					TextModel(SManager){}
 				~Text();
+				Context& ContextManager;
+				Shader& ShaderManager;
+				Models::Text TextModel;
 				//The Instance Manager of FreeTypeFont APIs
 				FTFonts font = FTFonts();
 				//The face index interface with the manager
@@ -64,7 +74,7 @@ namespace Engine {
 				void genCharTexture(unsigned char_start, unsigned number, unsigned pixel_height, size_t texture_index = 0);
 
 				//Function to render given text
-	//			void renderText(const char* text, size_t texture_index, glm::vec2 pos, glm::vec4 color);
+				void renderText(const uint32_t* text, glm::vec2 pos, glm::vec4 color, size_t font_index = 0, GLfloat scale = 1);
 			};
 		}
 	}

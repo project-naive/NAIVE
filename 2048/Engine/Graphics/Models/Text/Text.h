@@ -11,6 +11,11 @@ namespace Engine {
 			public:
 				Text(const Managers::Shader& given_manager);
 				~Text() = default;
+				struct VertexFormat {
+					GLfloat x, y;
+					GLfloat tex_x, tex_y;
+				};
+				VertexFormat* VetexData = nullptr;
 				void Draw() override;
 				void Update() override;
 			};

@@ -4,7 +4,6 @@
 
 namespace Engine {
 	namespace Core {
-		State* Game::state = nullptr;
 		Game::Game(const Graphics::Context::WindowInfo& windowinfo):
 			Managers(windowinfo){
 			glViewport(0, 0, GLsizei(windowinfo.width), GLsizei(windowinfo.height));
@@ -22,6 +21,7 @@ namespace Engine {
 			Managers.ContextManager.DelContext(contextID);
 			if(Managers.ContextManager.noContext()){
 				glfwTerminate();
+				state->running = false;
 				running = false;
 			}
 			if(Managers.ContextManager.current == contextID){

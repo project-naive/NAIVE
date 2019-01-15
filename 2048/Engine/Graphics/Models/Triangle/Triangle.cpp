@@ -33,16 +33,14 @@ namespace Engine {
 					sizeof(VertexFormat),
 					(void*)offsetof(VertexFormat, VertexFormat::color)
 				);
-				glBindVertexArray(0);
 			}
 
 			void Triangle::Update() {
+				glBindBuffer(GL_ARRAY_BUFFER,vbos[0]);
 				glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VertexFormat) * 3, VertexData);
 			}
 
 			void Triangle::Draw() {
-				glBindVertexArray(vao);
-				glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VertexFormat) * 3, VertexData);
 				glDrawArrays(GL_TRIANGLES,0,3);
 			}
 		}

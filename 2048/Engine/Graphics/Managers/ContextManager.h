@@ -21,6 +21,7 @@ namespace Engine {
 			}
 		}
 		namespace Managers {
+			class Text;
 			class Context {
 			friend Core::GlobalManagers;
 			friend Core::Game;
@@ -34,6 +35,11 @@ namespace Engine {
 				Graphics::Context** Contexts = nullptr;
 				size_t current = -1;
 				Graphics::Context::WindowInfo display;
+			protected:
+				friend Text;
+				size_t d_width = 0;
+				size_t d_height = 0;
+			private:
 				size_t unload_count = 0;
 				size_t* unloaded = nullptr;
 				size_t unload_cache = 0;

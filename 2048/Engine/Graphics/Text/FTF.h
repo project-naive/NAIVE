@@ -10,7 +10,6 @@ namespace Engine {
 			FTFonts();
 			~FTFonts();
 			bool initialized = false;
-		private:
 			FT_Library library;
 		public:
 			FT_Int version_major;

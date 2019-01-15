@@ -1,6 +1,7 @@
 #include "ShaderManager.h"
 
 #include "..\Shaders\Naive\Naive.h"
+#include "..\Shaders\Text\TextShader.h"
 
 namespace Engine {
 	namespace Graphics {

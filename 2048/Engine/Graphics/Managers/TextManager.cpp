@@ -2,7 +2,8 @@
 
 #include <iostream>
 #include <algorithm>
-
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
 
 namespace Engine {
 	namespace Graphics {
@@ -147,6 +148,7 @@ namespace Engine {
 				FontTextures[texture_index].length = number;
 				FontTextures[texture_index].pixel_height = pixel_height;
 				FontTextures[texture_index].glyphs = new GlyphTexture[number];
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 				for (unsigned i = 0; i < number; i++) {
 					err = FT_Load_Char(face, char_start + i, FT_LOAD_RENDER);
 					if (err) {
@@ -176,6 +178,43 @@ namespace Engine {
 						glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
 						GLuint(face->glyph->advance.x)
 					};
+				}
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+			}
+
+			void Text::renderText(const uint32_t* text, glm::vec2 pos, glm::vec4 color, size_t font_index, GLfloat scale) {
+				if(!text) return;
+				GlyphFont& cur_font = FontTextures[font_index];
+				glm::mat4 projection = glm::ortho(0.0f, float(ContextManager.d_width), 0.0f, float(ContextManager.d_height));
+				TextModel.Begin();
+				glActiveTexture(GL_TEXTURE0);
+				glUniform4f(glGetUniformLocation(TextModel.shader, "in_color"), color.x, color.y, color.z, color.w);
+				glUniformMatrix4fv(glGetUniformLocation(TextModel.shader, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+				for(int i = 0; text[i] != 0; i++){
+					uint32_t cur_char = text[i];
+					if(text[i] - cur_font.start < 0 ||
+					   text[i] - cur_font.start >= cur_font.length){
+						cur_char = cur_font.start;
+					}
+					const GlyphTexture& texture = cur_font.glyphs[cur_char];
+					glBindTexture(GL_TEXTURE_2D, texture.TextureID);
+					const GLfloat xPos = pos.x + texture.bearing.x * scale;
+					const GLfloat yPos = pos.y + (texture.bearing.y - texture.size.y) * scale;
+					const GLfloat width = texture.size.x * scale;
+					const GLfloat height = texture.size.y * scale;
+					Models::Text::VertexFormat Vertices[6] = {
+						{xPos,         yPos         , 0.0, 1.0},
+						{xPos + width, yPos         , 1.0, 1.0},
+						{xPos,         yPos + height, 0.0, 0.0},
+                        {xPos + width, yPos         , 1.0, 1.0},
+					    {xPos,         yPos + height, 0.0, 0.0},
+						{xPos + width, yPos + height, 1.0, 0.0}
+					};
+					TextModel.VetexData = Vertices;
+					TextModel.Begin();
+					TextModel.Update();
+					TextModel.Draw();
+					pos.x += (texture.advance >> 6) * scale;
 				}
 			}
 		}

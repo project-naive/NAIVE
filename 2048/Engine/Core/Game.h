@@ -18,7 +18,9 @@ namespace Engine {
 
 		class GlobalManagers{
 		public:
-			GlobalManagers(Graphics::Context::WindowInfo info): ContextManager(info) {}
+			GlobalManagers(Graphics::Context::WindowInfo info):
+				ContextManager(info), 
+				TextManager(ContextManager, ShaderManager){}
 			Graphics::Managers::Context ContextManager;
 			Graphics::Managers::Shader  ShaderManager;
 			Graphics::Managers::Text    TextManager;
@@ -28,13 +30,11 @@ namespace Engine {
 		protected:
 			Game(const Graphics::Context::WindowInfo& info);
 			~Game();
+			State* state = nullptr;
+			bool running = true;
 		public:
 			GlobalManagers Managers;
-			static State* state;
-			bool running = true;
-			virtual bool ShouldEnd() {
-				return glfwWindowShouldClose(Managers.ContextManager.display.Window);
-			};
+			virtual void MainLoop() = 0;
 			//Called from callbacks
 			virtual void notifyClose(size_t contextID = 0);
 			virtual void notifyRefresh(size_t contextID = 0) {}

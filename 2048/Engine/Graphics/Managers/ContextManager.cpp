@@ -17,7 +17,11 @@ namespace Engine {
 				context_count = 1;
 				current = 0;
 				display = Contexts[0]->display;
+				d_width = Contexts[0]->default_width;
+				d_height = Contexts[0]->default_height;
 				if(default_context.debug) EnableDebug(nullptr);
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			}
 			Context::~Context() {
 				for (size_t i = 0; i < context_count; i++) {
@@ -102,6 +106,8 @@ namespace Engine {
 				if(Contexts[ID]->MakeCurrent()){
 					current = ID;
 					display = Contexts[ID]->display;
+					d_width = Contexts[ID]->default_width;
+					d_height = Contexts[ID]->default_height;
 					return true;
 				}
 				return false;

@@ -15,6 +15,7 @@ namespace Engine {
 			GLuint* vbos = nullptr;
 			GLuint vbo_count = 0;
 			void Begin() {
+				glBindVertexArray(vao);
 				glUseProgram(shader);
 			};
 			virtual void Draw() = 0;
