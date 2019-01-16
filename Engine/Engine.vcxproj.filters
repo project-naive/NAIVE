@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{7b9662b5-2b83-4807-a02b-dc0a9e841bd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{afe94a5c-fcc2-43fc-b399-27b2f7299ce4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Context">
+      <UniqueIdentifier>{c6db0730-3c25-40c9-b1cd-f04e1a70a119}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Managers">
+      <UniqueIdentifier>{3159a103-0b3c-4196-9c95-b29c1b3cba37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Models">
+      <UniqueIdentifier>{c63d980f-af80-4531-94e9-d6267c492edd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Shaders">
+      <UniqueIdentifier>{117e7d7a-1707-4aba-9b5d-fff8ce035ad0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Text">
+      <UniqueIdentifier>{42413d04-d7a8-4069-ab20-58ae4a77b0bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Models\Triangle">
+      <UniqueIdentifier>{75a5fa13-baea-4820-b88e-3abed9158cf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Models\Text">
+      <UniqueIdentifier>{a5d48f44-1926-4b6d-b282-5670eb3751a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Shaders\Naive">
+      <UniqueIdentifier>{494fb130-3360-4e72-9a26-214d6fa92d49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Shaders\Text">
+      <UniqueIdentifier>{c82c4c88-9461-4eec-b4f4-b93758469ac4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Fonts">
+      <UniqueIdentifier>{4f5a5d8e-2246-4f9e-a32d-f6c8dcd17a62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\FrameBuffer">
+      <UniqueIdentifier>{a45b9e96-5e5a-4013-a0f1-3400fe1a5bbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Managers\Globals">
+      <UniqueIdentifier>{f3e0ee4a-3730-48ee-b4e4-6f3bc1afdb01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Managers\Context">
+      <UniqueIdentifier>{4c49df26-58dc-440b-bce7-54e1f427da6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Managers\Random">
+      <UniqueIdentifier>{dafe63b9-c044-4fab-8d4f-c4ecaa2a2692}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\Game.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Context\Context.cpp">
+      <Filter>Graphics\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Models\Model.cpp">
+      <Filter>Graphics\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Models\Text\Text.cpp">
+      <Filter>Graphics\Models\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Models\Triangle\Triangle.cpp">
+      <Filter>Graphics\Models\Triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Text\FTF.cpp">
+      <Filter>Graphics\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Shaders\Shader.cpp">
+      <Filter>Graphics\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Shaders\Naive\Naive.cpp">
+      <Filter>Graphics\Shaders\Naive</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Shaders\Text\TextShader.cpp">
+      <Filter>Graphics\Shaders\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\FrameBuffer\FrameBuffer.cpp">
+      <Filter>Graphics\FrameBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Managers\Globals\ContextManager.cpp">
+      <Filter>Graphics\Managers\Globals</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Managers\Context\FBOManager.cpp">
+      <Filter>Graphics\Managers\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Managers\Random\ModelManager.cpp">
+      <Filter>Graphics\Managers\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Managers\Random\ShaderManager.cpp">
+      <Filter>Graphics\Managers\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Managers\Random\TextManager.cpp">
+      <Filter>Graphics\Managers\Random</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\Game.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\State.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Context\Context.h">
+      <Filter>Graphics\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Models\Model.h">
+      <Filter>Graphics\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Models\Text\Text.h">
+      <Filter>Graphics\Models\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Models\Triangle\Triangle.h">
+      <Filter>Graphics\Models\Triangle</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Text\FTF.h">
+      <Filter>Graphics\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Shaders\Shader.h">
+      <Filter>Graphics\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Shaders\Naive\Naive.h">
+      <Filter>Graphics\Shaders\Naive</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Shaders\Text\TextShader.h">
+      <Filter>Graphics\Shaders\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\FrameBuffer\FrameBuffer.h">
+      <Filter>Graphics\FrameBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Managers\Globals\ContextManager.h">
+      <Filter>Graphics\Managers\Globals</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Managers\Context\FBOManager.h">
+      <Filter>Graphics\Managers\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Managers\Random\ModelManager.h">
+      <Filter>Graphics\Managers\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Managers\Random\ShaderManager.h">
+      <Filter>Graphics\Managers\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Managers\Random\TextManager.h">
+      <Filter>Graphics\Managers\Random</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Graphics\Shaders\Naive\Naive.frag">
+      <Filter>Graphics\Shaders\Naive</Filter>
+    </None>
+    <None Include="Graphics\Shaders\Naive\Naive.vert">
+      <Filter>Graphics\Shaders\Naive</Filter>
+    </None>
+    <None Include="Graphics\Shaders\Text\Text.frag">
+      <Filter>Graphics\Shaders\Text</Filter>
+    </None>
+    <None Include="Graphics\Shaders\Text\Text.vert">
+      <Filter>Graphics\Shaders\Text</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Resources\Fonts\Default.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+  </ItemGroup>
+</Project>

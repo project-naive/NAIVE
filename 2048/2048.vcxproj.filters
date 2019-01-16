@@ -5,12 +5,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Engine">
-      <UniqueIdentifier>{4797f4c0-7fac-4c31-850f-76c0a8b279ff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Core">
-      <UniqueIdentifier>{187c7136-fb05-46a0-b867-1995d9629a87}</UniqueIdentifier>
-    </Filter>
     <Filter Include="2048">
       <UniqueIdentifier>{640718d9-4218-4928-98de-579fa4134912}</UniqueIdentifier>
     </Filter>
@@ -20,47 +14,17 @@
     <Filter Include="2048\States\Simple">
       <UniqueIdentifier>{ac847e0b-e02e-4b14-b033-9dbef15826be}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Graphics">
-      <UniqueIdentifier>{c7e5bca0-0ce4-48c1-bac6-8a4495e47bb9}</UniqueIdentifier>
+    <Filter Include="2048\States\Loading">
+      <UniqueIdentifier>{14ef2813-298f-4722-9176-c4196efe72f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Graphics\Text">
-      <UniqueIdentifier>{e3d9b733-8bc4-4823-b36c-9a413203b900}</UniqueIdentifier>
+    <Filter Include="2048\States\State_2048">
+      <UniqueIdentifier>{f7b6e210-f613-4a23-8338-f5b0b69d61f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Graphics\Shaders">
-      <UniqueIdentifier>{af33ad14-1644-44eb-8e1c-d47657184cb6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\Shaders\Naive">
-      <UniqueIdentifier>{c23f52bd-6f1d-4e91-a801-43d2a5023fae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\Managers">
-      <UniqueIdentifier>{1ee51cb3-16b4-4f93-acbb-d075337eae54}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\Models">
-      <UniqueIdentifier>{04016a5f-42eb-4c48-86e4-73c3b8455309}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\Models\Text">
-      <UniqueIdentifier>{8d13826a-59dd-48ad-806e-24e43eefaefe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\Models\Triangle">
-      <UniqueIdentifier>{625ca24b-b798-4aed-9b6b-ebbe0e8c2158}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\Models\RoundedSquare">
-      <UniqueIdentifier>{ae92a82e-ccfe-4001-a711-aa41fac57e7e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\Managers\Init">
-      <UniqueIdentifier>{53b7bdc6-db96-4683-86ae-45724c8158ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\Context">
-      <UniqueIdentifier>{074ebee9-fd31-49a8-8a0f-eb41b59f858c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Graphics\Shaders\Text">
-      <UniqueIdentifier>{5f25eb91-a484-4ab9-9655-75ccb8762afd}</UniqueIdentifier>
+    <Filter Include="2048\States\State_2048\Models">
+      <UniqueIdentifier>{ef1cfbea-3766-40cf-b689-3192ef685cde}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Core\Game.cpp">
-      <Filter>Engine\Core</Filter>
-    </ClCompile>
     <ClCompile Include="2048\Game_2048.cpp">
       <Filter>2048</Filter>
     </ClCompile>
@@ -73,50 +37,22 @@
     <ClCompile Include="2048\States\Simple\Simple.cpp">
       <Filter>2048\States\Simple</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Managers\ModelManager.cpp">
-      <Filter>Engine\Graphics\Managers</Filter>
+    <ClCompile Include="2048\States\Loading\Loading.cpp">
+      <Filter>2048\States\Loading</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Managers\TextManager.cpp">
-      <Filter>Engine\Graphics\Managers</Filter>
+    <ClCompile Include="2048\States\State_2048\State_2048.cpp">
+      <Filter>2048\States\State_2048</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Models\Model.cpp">
-      <Filter>Engine\Graphics\Models</Filter>
+    <ClCompile Include="2048\States\State_2048\Models\Fan\Fan.cpp">
+      <Filter>2048\States\State_2048\Models</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Models\Text\Text.cpp">
-      <Filter>Engine\Graphics\Models\Text</Filter>
+    <ClCompile Include="2048\States\State_2048\Models\Fan\FanShader.cpp">
+      <Filter>2048\States\State_2048\Models</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Models\Triangle\Triangle.cpp">
-      <Filter>Engine\Graphics\Models\Triangle</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Graphics\Shaders\Naive\Naive.cpp">
-      <Filter>Engine\Graphics\Shaders\Naive</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Graphics\Shaders\Shader.cpp">
-      <Filter>Engine\Graphics\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Graphics\Text\FTF.cpp">
-      <Filter>Engine\Graphics\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Graphics\Managers\ShaderManager.cpp">
-      <Filter>Engine\Graphics\Managers\Init</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Graphics\Managers\ContextManager.cpp">
-      <Filter>Engine\Graphics\Managers\Init</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Graphics\Context\Context.cpp">
-      <Filter>Engine\Graphics\Context</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Graphics\Shaders\Text\TextShader.cpp">
-      <Filter>Engine\Graphics\Shaders\Text</Filter>
-    </ClCompile>
+    <ClCompile Include="2048\States\Simple\Models\TextureQuad\TextureQuad.cpp" />
+    <ClCompile Include="2048\States\Simple\Models\TextureQuad\TQShader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Core\State.h">
-      <Filter>Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Game.h">
-      <Filter>Engine\Core</Filter>
-    </ClInclude>
     <ClInclude Include="2048\Game_2048.h">
       <Filter>2048</Filter>
     </ClInclude>
@@ -126,55 +62,29 @@
     <ClInclude Include="2048\States\Simple\Simple.h">
       <Filter>2048\States\Simple</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\Managers\ModelManager.h">
-      <Filter>Engine\Graphics\Managers</Filter>
+    <ClInclude Include="2048\States\Loading\Loading.h">
+      <Filter>2048\States\Loading</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\Managers\TextManager.h">
-      <Filter>Engine\Graphics\Managers</Filter>
+    <ClInclude Include="2048\States\State_2048\State_2048.h">
+      <Filter>2048\States\State_2048</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\Models\Model.h">
-      <Filter>Engine\Graphics\Models</Filter>
+    <ClInclude Include="2048\States\State_2048\Models\Fan\Fan.h">
+      <Filter>2048\States\State_2048\Models</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\Models\Text\Text.h">
-      <Filter>Engine\Graphics\Models\Text</Filter>
+    <ClInclude Include="2048\States\State_2048\Models\Fan\FanShader.h">
+      <Filter>2048\States\State_2048\Models</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\Models\Triangle\Triangle.h">
-      <Filter>Engine\Graphics\Models\Triangle</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Graphics\Shaders\Naive\Naive.h">
-      <Filter>Engine\Graphics\Shaders\Naive</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Graphics\Shaders\Shader.h">
-      <Filter>Engine\Graphics\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Graphics\Text\FTF.h">
-      <Filter>Engine\Graphics\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Graphics\Managers\ShaderManager.h">
-      <Filter>Engine\Graphics\Managers\Init</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Graphics\Managers\ContextManager.h">
-      <Filter>Engine\Graphics\Managers\Init</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Graphics\Context\Context.h">
-      <Filter>Engine\Graphics\Context</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Graphics\Shaders\Text\TextShader.h">
-      <Filter>Engine\Graphics\Shaders\Text</Filter>
-    </ClInclude>
+    <ClInclude Include="2048\States\Simple\Models\TextureQuad\TextureQuad.h" />
+    <ClInclude Include="2048\States\Simple\Models\TextureQuad\TQShader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Graphics\Shaders\Naive\Naive.frag">
-      <Filter>Engine\Graphics\Shaders\Naive</Filter>
+    <None Include="2048\States\State_2048\Models\Fan\Fan.frag">
+      <Filter>2048\States\State_2048\Models</Filter>
     </None>
-    <None Include="Engine\Graphics\Shaders\Naive\Naive.vert">
-      <Filter>Engine\Graphics\Shaders\Naive</Filter>
+    <None Include="2048\States\State_2048\Models\Fan\Fan.vert">
+      <Filter>2048\States\State_2048\Models</Filter>
     </None>
-    <None Include="Engine\Graphics\Shaders\Text\Text.vert">
-      <Filter>Engine\Graphics\Shaders\Text</Filter>
-    </None>
-    <None Include="Engine\Graphics\Shaders\Text\Text.frag">
-      <Filter>Engine\Graphics\Shaders\Text</Filter>
-    </None>
+    <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.vert" />
+    <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.frag" />
   </ItemGroup>
 </Project>
