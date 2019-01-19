@@ -20,14 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Game.cpp" />
+    <ClCompile Include="Graphics\Containers\ContextContainer.cpp" />
     <ClCompile Include="Graphics\Context\Context.cpp" />
-    <ClCompile Include="Graphics\FrameBuffer\FrameBuffer.cpp" />
-    <ClCompile Include="Graphics\Managers\Context\FBOManager.cpp" />
     <ClCompile Include="Graphics\Managers\Globals\ContextManager.cpp" />
     <ClCompile Include="Graphics\Managers\Random\ModelManager.cpp" />
     <ClCompile Include="Graphics\Managers\Random\ShaderManager.cpp" />
     <ClCompile Include="Graphics\Managers\Random\TextManager.cpp" />
-    <ClCompile Include="Graphics\Models\Model.cpp" />
     <ClCompile Include="Graphics\Models\Text\Text.cpp" />
     <ClCompile Include="Graphics\Models\Triangle\Triangle.cpp" />
     <ClCompile Include="Graphics\Shaders\Naive\Naive.cpp" />
@@ -38,9 +36,8 @@
   <ItemGroup>
     <ClInclude Include="Core\Game.h" />
     <ClInclude Include="Core\State.h" />
+    <ClInclude Include="Graphics\Containers\ContextContainer.h" />
     <ClInclude Include="Graphics\Context\Context.h" />
-    <ClInclude Include="Graphics\FrameBuffer\FrameBuffer.h" />
-    <ClInclude Include="Graphics\Managers\Context\FBOManager.h" />
     <ClInclude Include="Graphics\Managers\Globals\ContextManager.h" />
     <ClInclude Include="Graphics\Managers\Random\ModelManager.h" />
     <ClInclude Include="Graphics\Managers\Random\ShaderManager.h" />

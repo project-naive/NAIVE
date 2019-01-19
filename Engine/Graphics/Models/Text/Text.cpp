@@ -5,9 +5,9 @@
 namespace Engine{
 	namespace Graphics{
 		namespace Models{
-			Text::Text(Managers::Shader& given_manager):Model(given_manager){
-				shader = Managers::Shader::Text;
-				vbos=new GLuint[1];
+			Text::Text(Managers::Shader& given_manager):
+				Model(given_manager, Managers::Shader::Text){
+				vbos = new GLuint[1];
 				vbo_count = 1;
 				glGenVertexArrays(1, &vao);
 				glBindVertexArray(vao);

@@ -22,10 +22,10 @@ namespace Engine {
 		namespace Managers {
 			class Text {
 			public:
-				Text(Context& CManager, Shader& SManager);
+				Text(const Context& CManager, Shader& SManager);
 				~Text();
 			private:
-				Context& ContextManager;
+				const Context& ContextManager;
 				Shader& ShaderManager;
 				Models::Text TextModel;
 				//The Instance Manager of FreeTypeFont APIs
@@ -60,6 +60,8 @@ namespace Engine {
 				//resizes the array of textures
 				bool resize_texture();
 				glm::mat4 projection{};
+				GLint in_color_uniform_position;
+				GLint projection_uniform_position;
 			public:
 				//reserves memory for textures
 				bool reserve_texture(size_t size);
@@ -79,10 +81,10 @@ namespace Engine {
 				}
 				//Call this function to render random UTF-32 encoded strings
 				//Default length 0 means the string is NULL terminated
-				void renderText(const uint32_t* text, glm::vec2 pos, glm::vec4 color, size_t length = 0, size_t font_index = 0, GLfloat scale = 1);
+				void renderText(const uint32_t* text, glm::vec2 pos, glm::vec4 color, GLfloat scale = 1, size_t length = 0, size_t font_index = 0);
 				//Currently only support ASCII rendering, may add encoding support in the future
 				//Default length 0 means the string is NULL terminated
-				void renderText(const char* text, glm::vec2 pos, glm::vec4 color, size_t length = 0, size_t font_index = 0, GLfloat scale = 1);
+				void renderText(const char* text, glm::vec2 pos, glm::vec4 color, GLfloat scale = 1, size_t length = 0, size_t font_index = 0);
 			};
 		}
 	}

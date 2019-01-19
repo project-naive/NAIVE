@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace State_2048 {
-	namespace Models {
+	namespace Shaders {
 		GLuint TextureQuad::CreateProgram() {
 			std::ifstream ifs;
 			ifs.open(vertex_shader_path);

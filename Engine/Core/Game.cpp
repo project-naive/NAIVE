@@ -4,7 +4,12 @@
 
 namespace Engine {
 	namespace Core {
-		Game::Game(Graphics::Context::WindowInfo& windowinfo):
+		Game* Active_Game = nullptr;
+		GlobalManagers::GlobalManagers(Engine::Graphics::WindowInfo& info):
+			ContextManager(info),
+			ShaderManager(ContextManager),
+			TextManager(ContextManager, ShaderManager) {}
+		Game::Game(Graphics::WindowInfo& windowinfo):
 			Managers(windowinfo){
 			glViewport(0, 0, GLsizei(windowinfo.Basic_Info.width), GLsizei(windowinfo.Basic_Info.height));
 			Active_Game = this;
@@ -33,7 +38,6 @@ namespace Engine {
 
 		}
 */
-		Game* Active_Game = nullptr;
 	}
 }
 

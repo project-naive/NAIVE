@@ -4,11 +4,10 @@
 
 namespace State_2048{
 	namespace Models{
-		Fan::Fan(Engine::Graphics::Managers::Shader& given_manager):Model(given_manager){
-			Shaders::Fan* FanShader = new Shaders::Fan(given_manager);
-			FanShader_ID = given_manager.addGeneric(*FanShader);
-			given_manager.UseGeneric(FanShader_ID);
-			projection_uniform_location = glGetUniformLocation(FanShader->program,"projection");
+		Fan::Fan(Engine::Graphics::Managers::Shader& given_manager, size_t shaderID):
+			Model(given_manager, shaderID) {
+			given_manager.UseGeneric(shaderID);
+			projection_uniform_location = glGetUniformLocation(manager.GetCurrent(), "projection");
 			glGenVertexArrays(1, &vao);
 			glBindVertexArray(vao);
 			vbos = new GLuint[1];
@@ -24,9 +23,10 @@ namespace State_2048{
 			glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), (void*)offsetof(VertexFormat, VertexFormat::uv_coords));
 		}
 		GLuint State_2048::Models::Fan::Begin(){
-			manager.UseGeneric(FanShader_ID);
+			GLuint program = manager.UseGeneric(shader);
+			glUniformMatrix4fv(projection_uniform_location, 1, GL_FALSE, glm::value_ptr(projection));
 			glBindVertexArray(vao);
-			return -1;
+			return program;
 		}
 
 		void State_2048::Models::Fan::Draw() {
@@ -38,37 +38,36 @@ namespace State_2048{
 			glm::vec3 vec1n = glm::normalize(data.vec1);
 			glm::vec3 vec2n = glm::normalize(data.vec2);
 			VertexData[0] = {
-				glm::vec4(data.origin, 1.0f),
+				data.origin,
 				data.origin_color,
 				glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
 			};
 			VertexData[1] = {
-				glm::vec4(data.origin+data.vec1, 1.0f),
+				data.origin + glm::vec4(data.vec1, 0.0f),
 				data.color1,
 				glm::vec4(vec1n, 1.0f)
 			};
 			VertexData[2] = {
-				glm::vec4(data.origin+data.vec1+data.vec2, 1.0f),
+				data.origin + glm::vec4(data.vec1+data.vec2, 0.0f),
 				data.far_color,
 				glm::vec4(vec1n + vec2n, 1.0f)
 			};
 			VertexData[3] = {
-				glm::vec4(data.origin+data.vec1+data.vec2, 1.0f),
+				data.origin + glm::vec4(data.vec1+data.vec2, 0.0f),
 				data.far_color,
 				glm::vec4(vec1n + vec2n, 1.0f)
 			};
 			VertexData[4] = {
-				glm::vec4(data.origin+data.vec2, 1.0f),
+				data.origin + glm::vec4(data.vec2, 0.0f),
 				data.color2,
 				glm::vec4(vec2n, 1.0f)
 			};
 			VertexData[5] = {
-				glm::vec4(data.origin, 1.0f),
+				data.origin,
 				data.origin_color,
 				glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
 			};
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VertexFormat)*6, VertexData);
-			glUniformMatrix4fv(projection_uniform_location, 1, GL_FALSE, glm::value_ptr(projection));
 		}
 	}
 }

@@ -3,7 +3,7 @@
 #include <Graphics\Shaders\Shader.h>
 
 namespace State_2048 {
-	namespace Models {
+	namespace Shaders {
 		class TextureQuad: public Engine::Graphics::Shader {
 		public:
 			TextureQuad(Engine::Graphics::Managers::Shader& given_manager): Shader(given_manager) {

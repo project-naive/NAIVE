@@ -7,7 +7,7 @@ out vec2 TexCoords;
 
 uniform mat4 projection;
 
-void main(void){
+void main(void) {
 	TexCoords = vertex.zw;
 	gl_Position = projection * vec4(vertex.xy, 1.0, 1.0);
 }

@@ -16,7 +16,7 @@ namespace Engine {
 		}
 		class Shader {
 		public:
-			Shader(Managers::Shader& given_manager):parent(given_manager) {};
+			Shader(Managers::Shader& given_manager):parent(given_manager) {}
 			Managers::Shader& parent;
 			GLuint program = 0;
 			Shader(const Shader&) = delete;

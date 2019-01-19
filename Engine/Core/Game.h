@@ -15,12 +15,11 @@ namespace Engine {
 		extern int argc_m;
 		extern char** argv_m;
 		extern char** env_m;
+		extern Core::Game* Active_Game;
 
-		class GlobalManagers{
+		class GlobalManagers {
 		public:
-			GlobalManagers(Graphics::Context::WindowInfo& info):
-				ContextManager(info), 
-				TextManager(ContextManager, ShaderManager){}
+			GlobalManagers(Graphics::WindowInfo& info);
 			//Must be a Singleton as required by OpenGL Implementation
 			Graphics::Managers::Context ContextManager;
 			//This can have many instances, but one is much better than having many
@@ -32,10 +31,9 @@ namespace Engine {
 			//as long as the context shares textures
 			Graphics::Managers::Text    TextManager;
 		};
-
 		class Game {
 		protected:
-			Game(Graphics::Context::WindowInfo& info);
+			Game(Graphics::WindowInfo& info);
 			~Game();
 			State* state = nullptr;
 			bool running = true;
@@ -43,18 +41,14 @@ namespace Engine {
 			GlobalManagers Managers;
 			virtual void MainLoop() = 0;
 			//Called from callbacks
-			virtual void notifyClose(size_t contextID = 0) {};
-			virtual void notifyRefresh(size_t contextID = 0) {}
-			virtual void notifyFocus(int flag, size_t contextID = 0) {}
-			virtual void notifyIconify(int flag, size_t contextID = 0) {}
-			virtual void notifyPos(int width, int height, size_t contextID = 0) {}
-			virtual void notifySize(int width, int height, size_t contextID = 0) {}
-			virtual void notifyFBSize(int width, int height, size_t contextID = 0) {
-				Managers.ContextManager.Resize(width, height, contextID);
-				state->Draw();
-			};
+			virtual void notifyClose(size_t contextID = 0) = 0;
+			virtual void notifyRefresh(size_t contextID = 0) = 0;
+			virtual void notifyFocus(int flag, size_t contextID = 0) = 0;
+			virtual void notifyIconify(int flag, size_t contextID = 0) = 0;
+			virtual void notifyPos(int width, int height, size_t contextID = 0) = 0;
+			virtual void notifySize(int width, int height, size_t contextID = 0) = 0;
+			virtual void notifyFBSize(int width, int height, size_t contextID = 0) = 0;
 		};
-		extern Core::Game* Active_Game;
 	}
 }
 

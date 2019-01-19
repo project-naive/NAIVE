@@ -6,50 +6,48 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 #include <glm\gtc\matrix_transform.hpp>
 
 namespace States {
-	Simple::Simple(Engine::Core::GlobalManagers& given_managers): 
-		State(given_managers) {
-		Main_context = Managers.ContextManager.GetContext();
-		TriangleModel = new Engine::Graphics::Models::Triangle(Managers.ShaderManager);
-		TriangleModel->VertexData[0] = {
+	Simple::Simple(Engine::Core::GlobalManagers& given_managers):
+		State(given_managers),
+		PrivateModels(given_managers.ShaderManager) {
+		ContextIDs[0] = Managers.ContextManager.GetCurrent();
+		PrivateModels.TriangleModel.VertexData[0] = {
 			glm::vec3(0.5, -0.5, 0.0),
 			glm::vec4(1, 0, 0, 1)
 		};
-		TriangleModel->VertexData[1] = {
+		PrivateModels.TriangleModel.VertexData[1] = {
 			glm::vec3(-0.5, -0.5, 0.0),
 			glm::vec4(0, 1, 0, 1)
 		};
-		TriangleModel->VertexData[2] = {
+		PrivateModels.TriangleModel.VertexData[2] = {
 			glm::vec3(0.5, 0.5, 0.0),
 			glm::vec4(0, 0, 1, 1)
 		};
-		FanModel=new ::State_2048::Models::Fan(Managers.ShaderManager);
-		FanModel->data=::State_2048::Models::Fan::DataFormat{
+		PrivateModels.FanModel.data=::State_2048::Models::Fan::DataFormat{
 			glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
 			glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),
 			glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
 			glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-			glm::vec4(480.0f, 60.0f, 0.0f, 1.0f),
-			glm::vec4(-64.0f, 15.0f, 0.0f, 0.0f),
-			glm::vec4(30.0f, 64.0f, 0.0f, 0.0f),
+			glm::vec4(960.0f, 120.0f, 0.0f, 1.0f),
+			glm::vec3(-128.0f, 30.0f, 0.0f),
+			glm::vec3(60.0f, 128.0f, 0.0f),
 		};
 		Managers.ContextManager.GetCurrentDefaultResolution(rb_width, rb_height);
-		projection = glm::ortho(0.0f, float(rb_width), 0.0f, float(rb_height));
-		FanModel->projection = projection;
-		chars = new uint32_t[strlen(text)];
-		for (size_t i = 0; i < strlen(text); i++) {
-			chars[i] = text[i];
-		}
+		projection = Managers.ContextManager.GetProjection();
+		PrivateModels.FanModel.projection = projection;
+		Managers.TextManager.UpdateDisplay(projection);
 		glGenFramebuffers(1, &texture_fbo);
 		glBindFramebuffer(GL_FRAMEBUFFER, texture_fbo);
 		glViewport(0, 0, GLsizei(rb_width), GLsizei(rb_height));
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glGenBuffers(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, GLsizei(rb_width), GLsizei(rb_height), 0, GL_RGBA, GL_FLOAT, nullptr);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glGenRenderbuffers(1, &texture_rbo);
 		glBindRenderbuffer(GL_RENDERBUFFER, texture_rbo);
@@ -58,78 +56,156 @@ namespace States {
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 		GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
 		glDrawBuffers(1, DrawBuffers);
-		Engine::Graphics::Context::WindowInfo info=Engine::Graphics::Contexts::Default::default_window();
-		info.Basic_Info.height = 512;
-		info.Basic_Info.width = 512;
+		Engine::Graphics::WindowInfo info = Engine::Graphics::Contexts::Default::default_window();
+		info.Basic_Info.height = 1024;
+		info.Basic_Info.width = 1024;
 		info.Extended_Info.GL_Version_Major = 4;
 		info.Extended_Info.GL_Version_Minor = 4;
 		info.Extended_Info.title = "Another Window!";
-		Sub_context = Managers.ContextManager.GenContext(info, Managers.ContextManager.GetContext());
-		Managers.ContextManager.SetContext(Main_context);
-
+		info.Extended_Info.swap_interval = 0;
+		info.Extended_Info.debug = true;
+		info.Extended_Info.double_buffer = true;
+		ContextIDs[1] = Managers.ContextManager.GenContext(info, Managers.ContextManager.GetCurrent());
+		//Do stuff with the other context...
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		size_t texture_shader = given_managers.ShaderManager.addGeneric(*(new ::State_2048::Shaders::TextureQuad(given_managers.ShaderManager)));
+		TextureModel = new 
+			::State_2048::Models::TextureQuad(
+				given_managers.ShaderManager, texture_shader);
+		TextureModel->data = {
+			glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+			glm::vec3(float(rb_width), 0.0f, 0.0f),
+			glm::vec3(0.0f, float(rb_height), 0.0f),
+			texture,
+			projection
+		};
+		CubeModel = new ::State_2048::Models::TextureCube(
+			given_managers.ShaderManager, texture_shader
+		);
+		CubeModel->data = {
+			glm::vec4(-256.0f, -256.0f, -256.0f, 1.0f),
+			glm::vec3(512.0f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 512.0f, 0.0f),
+			glm::vec3(0.0f, 0.0f, 512.0f),
+			texture,
+			::State_2048::Models::TextureCube::TextureFlagBits(0),
+			projection
+		};
+		Managers.ContextManager.SetContext(ContextIDs[0]);
 		FPS_timer = std::chrono::steady_clock::now();
 	}
 
-	void Simple::Destroy(){
+	void Simple::Destroy() {
 		glDeleteFramebuffers(1, &texture_fbo);
-		delete TriangleModel;
-		delete FanModel;
-		delete[] chars;
+		glDeleteRenderbuffers(1, &texture_rbo);
+		glDeleteTextures(1, &texture);
 	}
 
 	void Simple::Draw() {
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, texture_fbo);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.0, 0.0, 0.0, 0.0);
-		TriangleModel->Begin();
-		TriangleModel->Update();
-		TriangleModel->Draw();
-		FanModel->Begin();
-		FanModel->Update();
-		FanModel->Draw();
-		Managers.TextManager.renderText(chars, glm::vec2(0.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), strlen(text));
 		std::chrono::steady_clock::time_point cur = std::chrono::steady_clock::now();
-		if (cur - FPS_timer >= std::chrono::milliseconds(500)) {
-			FPS_timer = cur;
-			FPS = FPS_cache;
-		}
-		std::ostringstream oss;
-		oss << "FPS:  " << FPS;
-		Managers.TextManager.renderText(oss.str().c_str(), glm::vec2(20.0f, 450.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		size_t width, height;
-		Managers.ContextManager.GetCurrentResolution(width, height);
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, texture_fbo);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		glBlitFramebuffer(0, 0, GLint(rb_width), GLint(rb_height), 0, 0, GLint(width), GLint(height), GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-
-
-
-		Managers.ContextManager.Refresh();
+		if (is_refresh_frame) {
+			updateFPS = 1 / std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::duration<float>>( ( std::chrono::high_resolution_clock::now() - update_start ) )).count();
+			is_refresh_frame = false;
+		}
+		if (cur - FPS_timer >= std::chrono::milliseconds(250)) {
+			is_refresh_frame = true;
+			update_start = std::chrono::high_resolution_clock::now();
+			FPS_timer = cur;		
+			Managers.ContextManager.SetContext(ContextIDs[0]);
+			FPS = FPS_cache;
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, texture_fbo);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glViewport(0.0f, 0.0f, rb_width, rb_height);
+			PrivateModels.TriangleModel.Begin();
+			PrivateModels.TriangleModel.Draw();
+			PrivateModels.FanModel.Begin();
+			PrivateModels.FanModel.Draw();
+			Managers.TextManager.renderText(text, glm::vec2(0.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 2, strlen(text));
+			std::ostringstream oss;
+			oss << "FPS:  " << FPS;
+			Managers.TextManager.renderText(oss.str().c_str(), glm::vec2(40.0f, 900.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),2);
+			oss.str("");
+			oss << "Prev Frame Update FPS:  " << updateFPS;
+			Managers.TextManager.renderText(oss.str().c_str(), glm::vec2(40.0f, 860.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.8);
+			oss.str("");
+			oss << "FPS (Lower):  " << std::min(FPS, lowerFPS);
+			lowerFPS = 10000;
+			Managers.TextManager.renderText(oss.str().c_str(), glm::vec2(40.0f, 800.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0);
+			//Do stuff with the rendered render buffer
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, texture_fbo);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+			Managers.ContextManager.GetCurrentResolution(width, height);
+			glViewport(0, 0, width, height);
+			glBlitFramebuffer(0.0f, 0.0f, rb_width, rb_height,
+							  0.0f, 0.0f, width, height,
+							  GL_COLOR_BUFFER_BIT, GL_LINEAR);
+			Managers.ContextManager.Refresh();
+		}
+		if(ContextIDs[1]!=size_t(-1)) {
+			Managers.ContextManager.SetContext(ContextIDs[1]);
+			Managers.ContextManager.GetCurrentResolution(width, height);
+			if (is_refresh_frame) {
+				glViewport(0.0f, 0.0f, width, height);
+			} else {
+				lowerFPS = std::min(FPS, lowerFPS);
+			}
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			CubeModel->Begin();
+			CubeModel->Draw();
+		//	TextureModel->Begin();
+		//	TextureModel->Draw();
+			Managers.ContextManager.Refresh();
+		}
 	}
 	void Simple::Update() {
 		std::chrono::high_resolution_clock::time_point cur = std::chrono::high_resolution_clock::now();
 		FPS_cache = 1 / std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::duration<float>>((cur - last_update_time))).count();
 		last_update_time = std::chrono::high_resolution_clock::now();
 		//Do other things that modifies data here.
+		PrivateModels.TriangleModel.Update();
+		PrivateModels.FanModel.Update();
+		TextureModel->Update();
+		float elapsed = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::duration<float>>( start_time - std::chrono::steady_clock::now() )).count();
+		glm::mat4 ModelView = glm::mat4(1.0f);
+		ModelView = glm::rotate(ModelView, 1.1f*elapsed, glm::vec3(1.0, 0.0, 0.0));
+		ModelView = glm::rotate(ModelView, 1.2f*elapsed, glm::vec3(0.0, 1.0, 0.0));
+		ModelView = glm::rotate(ModelView, 1.3f*elapsed, glm::vec3(0.0, 0.0, 1.0));
+		ModelView = glm::scale(ModelView, glm::vec3(1 / 512.0f, 1 / 512.0f, 1 / 512.0f));
+//		ModelView = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 1024.0f) * ModelView;
+		CubeModel->data.projection =  ModelView;
+		CubeModel->Update();
 	}
 
 	void Simple::Loop() {
 		while(running){
 			Update();
 			Draw();
-			glfwWaitEvents();
+			glfwPollEvents();
 		}
 	}
 
-	void Simple::notifyContextClose(size_t ID) {
-		if (ID == Main_context) {
+	bool Simple::notifyContextClose(size_t ID) {
+		if (ID == ContextIDs[0]) {
 			Managers.ContextManager.DelContext(ID);
 			running = false;
+			return false;
 		}
 		else {
-			Managers.ContextManager.DelContext(ID);
+			for (size_t i = 0; i < context_count; i++) {
+				if (ID == ContextIDs[i]) {
+					//Free resorces of this context
+					ContextIDs[i] = -1;
+					Managers.ContextManager.DelContext(ID);
+					//Change to other context
+					Managers.ContextManager.SetContext(ContextIDs[0]);
+					return true;
+				}
+			}
+			//The context is not managed by current state
+			return false;
 		}
+
 	}
 }
 

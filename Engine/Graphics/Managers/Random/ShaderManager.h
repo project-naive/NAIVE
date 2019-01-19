@@ -10,38 +10,36 @@
 
 namespace Engine {
 	namespace Graphics {
+		class Shader;
 		namespace Managers {
+			class Context;
 			//A class that manages all the shaders
 			//TO-DO Add Generic shader management.
 			class Shader {
 			public:
-				Shader();
+				Shader(const Managers::Context& ContextManager);
 				~Shader();
+				Shader(const Shader&) = delete;
+				Shader& operator=(const Shader&) = delete;
 				enum ShaderType { Naive, Text, NumOfDefault, NoShader, NonDefault, NotManaged, ReserveField };
-				GLuint UseDefault(ShaderType type){
-					if(type>=NumOfDefault) return -1;
-					if(current != type){
-						current = type;
-						ActiveProgram = DefaultShaders[type]->program;
-						glUseProgram(ActiveProgram);
-					}
-					return ActiveProgram;
-				}
+				GLuint UseDefault(ShaderType type);
 				ShaderType current = NoShader;
 				//Uses a program by calling its corresponding glUseProgram
 				//Checks if current one is the given one
-				GLuint UseGeneric(size_t ID){
-					if (ID == size_t(-1)) return -1;
-					if(ID < NumOfDefault){
-						return UseDefault(ShaderType(ID));
+				GLuint UseGeneric(size_t ID);
+				GLuint GetCurrent() const {
+					return ActiveProgram;
+				}
+				GLuint GetDefault(ShaderType type) const {
+					if (type >= NumOfDefault) return -1;
+					return DefaultShaders[type]->program;
+				}
+				GLuint GetGeneric(size_t ID) const {
+					if (ID < NumOfDefault) {
+						return DefaultShaders[ID]->program;
 					}
-					if(ID < ReserveField) return GLuint(ID);
-					if(Generics[ID - ReserveField]->program == ActiveProgram) 
-						return ActiveProgram;
-					if(ID - ReserveField < shader_count - NumOfDefault){
-						ActiveProgram = Generics[ID - ReserveField]->program;
-						glUseProgram(ActiveProgram);
-						return ActiveProgram;
+					if (ID - ReserveField < shader_count - NumOfDefault && Generics[ID - ReserveField]) {
+						return Generics[ID - ReserveField]->program;
 					}
 					return -1;
 				}
@@ -57,9 +55,9 @@ namespace Engine {
 				size_t unload_cache = 0;
 				size_t* unloaded = nullptr;
 				GLuint ActiveProgram = -1;
-				Shader(const Shader&)=delete;
-				Shader& operator=(const Shader&)=delete;
-				Graphics::Shader* DefaultShaders[NumOfDefault] {};
+				size_t ActiveContext = 0;
+				const Graphics::Shader* DefaultShaders[NumOfDefault] {};
+				const Context& Contexts;
 			};
 		}
 	}

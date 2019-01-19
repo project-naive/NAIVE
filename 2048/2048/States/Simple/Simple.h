@@ -6,21 +6,21 @@
 #include <Graphics\Models\Triangle\Triangle.h>
 
 #include "..\State_2048\Models\Fan\Fan.h"
+#include "..\Simple\Models\TextureQuad\TextureQuad.h"
+#include "..\Simple\Models\TexturedCube\TextureCube.h"
 
 namespace States {
 	class Simple:
 		public Engine::Core::State{
 	public:
 		Simple(Engine::Core::GlobalManagers& given_managers);
-		Engine::Graphics::Models::Triangle* TriangleModel;
-		::State_2048::Models::Fan* FanModel;
 		void Destroy() override;
 		void Draw() override;
 		void Update() override;
 		void Loop() override;
-		void notifyContextClose(size_t ID) override;
+	private:
+		bool notifyContextClose(size_t ID) override;
 		const char* text = "Hello World!";
-		uint32_t* chars = nullptr;
 		float FPS_cache = 0;
 		float FPS = 0;
 		std::chrono::steady_clock::time_point FPS_timer;
@@ -32,7 +32,26 @@ namespace States {
 		GLuint texture;
 		size_t rb_width, rb_height;
 
-		size_t Main_context;
-		size_t Sub_context;
+		struct PrivateModels {
+			PrivateModels() = delete;
+			PrivateModels(Engine::Graphics::Managers::Shader& SManager):
+				TriangleModel(SManager),
+				FanModel(SManager,
+						 SManager.addGeneric(*( new ::State_2048::Shaders::Fan(SManager)))) {};
+			Engine::Graphics::Models::Triangle TriangleModel;
+			::State_2048::Models::Fan FanModel;
+
+		};
+		::State_2048::Models::TextureQuad* TextureModel;
+		::State_2048::Models::TextureCube* CubeModel;
+		PrivateModels PrivateModels;
+
+		size_t ContextIDs[2];
+		size_t context_count = 2;
+
+		float updateFPS;
+		float lowerFPS;
+		std::chrono::high_resolution_clock::time_point update_start = std::chrono::high_resolution_clock::now();
+		bool is_refresh_frame = false;
 	};
 }

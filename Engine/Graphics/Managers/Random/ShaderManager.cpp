@@ -3,14 +3,16 @@
 #include "..\..\Shaders\Naive\Naive.h"
 #include "..\..\Shaders\Text\TextShader.h"
 
+#include "..\Globals\ContextManager.h"
+
 #include <algorithm>
 
 namespace Engine {
 	namespace Graphics {
 		namespace Managers {
-			Shader::Shader() {
-				DefaultShaders[Naive] = new Shaders::Naive(*this);
-				DefaultShaders[Text] = new Shaders::Text(*this);
+			Shader::Shader(const Context& ContextManager):
+				Contexts(ContextManager),
+				DefaultShaders{ new Shaders::Naive(*this), new Shaders::Text(*this) } {
 			}
 			Shader::~Shader() {
 				for (size_t i = 0; i < Shader::NumOfDefault; i++) {
@@ -21,6 +23,42 @@ namespace Engine {
 					delete Generics[i];
 				}
 				delete[] Generics;
+			}
+
+
+			//Uses a program by calling its corresponding glUseProgram
+			//Checks if current one is the given one
+			GLuint Managers::Shader::UseDefault(ShaderType type) {
+				if (type >= NumOfDefault) return -1;
+				size_t cur_context = Contexts.GetCurrent();
+				if (current == type && ActiveContext == cur_context) {
+					return ActiveProgram;
+				}
+				ActiveContext = cur_context;
+				current = type;
+				ActiveProgram = DefaultShaders[type]->program;
+				glUseProgram(ActiveProgram);
+				return ActiveProgram;
+			}
+			GLuint Shader::UseGeneric(size_t ID) {
+				if (ID == size_t(-1)) return -1;
+				if (ID < NumOfDefault) {
+					return UseDefault(ShaderType(ID));
+				}
+				if (ID < ReserveField) return -1;
+				if (ID - ReserveField < shader_count - NumOfDefault && Generics[ID - ReserveField]) {
+					size_t cur_context = Contexts.GetCurrent();
+					if (Generics[ID - ReserveField]->program == ActiveProgram 
+						&& cur_context == ActiveContext) {
+						current = NonDefault;
+						return ActiveProgram;
+					}
+					ActiveContext = cur_context;
+					ActiveProgram = Generics[ID - ReserveField]->program;
+					glUseProgram(ActiveProgram);
+					return ActiveProgram;
+				}
+				return -1;
 			}
 
 			size_t Shader::addGeneric(Graphics::Shader& shader) {

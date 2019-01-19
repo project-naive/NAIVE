@@ -4,7 +4,7 @@
 #include "States/Loading/Loading.h"
 
 
-Game_2048::Game_2048(Engine::Graphics::Context::WindowInfo& info) : Game(info) {
+Game_2048::Game_2048(Engine::Graphics::WindowInfo& info) : Game(info) {
 //	state = new States::Loading(Managers);
 	state = new States::Simple(Managers);
 //	glfwSetKeyCallback(display.Window, KeyCallback);

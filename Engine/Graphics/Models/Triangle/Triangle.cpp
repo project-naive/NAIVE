@@ -7,8 +7,8 @@
 namespace Engine {
 	namespace Graphics {
 		namespace Models {
-			Triangle::Triangle(Managers::Shader& given_manager): Model(given_manager) {
-				shader = Managers::Shader::Naive;
+			Triangle::Triangle(Managers::Shader& given_manager): 
+				Model(given_manager, Managers::Shader::Naive) {
 				vbos = new GLuint[1]{};
 				vbo_count = 1;
 				glGenVertexArrays(1, &vao);
@@ -46,7 +46,7 @@ namespace Engine {
 
 			GLuint Triangle::Begin() {
 				glBindVertexArray(vao);
-				return manager.UseDefault(Managers::Shader::Naive);;;
+				return manager.UseDefault(Managers::Shader::Naive);
 			}
 		}
 	}

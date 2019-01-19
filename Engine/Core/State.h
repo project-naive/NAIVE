@@ -13,7 +13,7 @@ namespace Engine {
 			std::chrono::steady_clock::time_point start_time;
 			std::chrono::high_resolution_clock::time_point last_update_time;
 
-			size_t id;
+			size_t id = 0;
 		public:
 			State(GlobalManagers& given_managers):
 				Managers(given_managers) {
@@ -21,16 +21,19 @@ namespace Engine {
 				last_update_time = std::chrono::steady_clock::now();
 			}
 			GlobalManagers& Managers;
-			~State() {};
+			~State() = default;
 
 			bool running = true;
-			virtual void Destroy() {};
+			virtual void Destroy() = 0;
 			virtual void Loop() = 0;
 
 			virtual void Draw() = 0;
 			virtual void Update() = 0;
 
-			virtual void notifyContextClose(size_t ID) {};
+			virtual bool notifyContextClose(size_t ID) = 0;
+		private:
+			size_t* ContextIDs = nullptr;
+			size_t context_count = 0;
 		};
 	}
 }

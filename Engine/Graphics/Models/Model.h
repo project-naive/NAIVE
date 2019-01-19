@@ -1,7 +1,6 @@
 #pragma once
 
-#include "..\Shaders\Shader.h"
-#include "..\..\Core\State.h"
+#include <GL\glew.h>
 
 namespace Engine {
 	namespace Graphics {
@@ -10,7 +9,7 @@ namespace Engine {
 		}
 		class Model {
 		public:
-			size_t shader = 0;
+			const size_t shader;
 			GLuint vao = 0;
 			GLuint* vbos = nullptr;
 			GLuint vbo_count = 0;
@@ -22,7 +21,9 @@ namespace Engine {
 				glDeleteBuffers(vbo_count, vbos);
 				delete[] vbos;
 			}
-			Model(Managers::Shader& given_manager):manager(given_manager) {};
+			Model(Managers::Shader& given_manager, size_t shaderID):
+				manager(given_manager),
+				shader(shaderID) {};
 			Managers::Shader& manager;
 		};
 	}

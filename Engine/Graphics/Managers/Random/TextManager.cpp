@@ -9,7 +9,7 @@
 namespace Engine {
 	namespace Graphics {
 		namespace Managers {
-			Text::Text(Context& CManager, Shader& SManager):
+			Text::Text(const Context& CManager, Shader& SManager):
 				ContextManager(CManager),
 				ShaderManager(SManager), 
 				TextModel(SManager) {
@@ -26,6 +26,9 @@ namespace Engine {
 				size_t width, height;
 				ContextManager.GetCurrentDefaultResolution(width, height);
 				projection = glm::ortho(0.0f, float(width), 0.0f, float(height));
+				GLuint program = ShaderManager.GetDefault(Shader::Text);
+				in_color_uniform_position = glGetUniformLocation(program, "in_color");
+				projection_uniform_position = glGetUniformLocation(program, "projection");
 			}
 
 			Text::~Text() {
@@ -203,13 +206,13 @@ namespace Engine {
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 			}
 
-			void Text::renderText(const uint32_t* text, glm::vec2 pos, glm::vec4 color, size_t length, size_t font_index, GLfloat scale) {
+			void Text::renderText(const uint32_t* text, glm::vec2 pos, glm::vec4 color, GLfloat scale, size_t length, size_t font_index) {
 				if(!text) return;
 				GlyphFont& cur_font = FontTextures[font_index];
 				GLuint program = TextModel.Begin();
 				glActiveTexture(GL_TEXTURE0);
-				glUniform4f(glGetUniformLocation(program, "in_color"), color.x, color.y, color.z, color.w);
-				glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+				glUniform4f(in_color_uniform_position, color.x, color.y, color.z, color.w);
+				glUniformMatrix4fv(projection_uniform_position, 1, GL_FALSE, glm::value_ptr(projection));
 				for(size_t i = 0; (!length && text[i] != 0)||(i < length); i++){
 					uint32_t cur_char = text[i];
 					if(text[i] - cur_font.start < 0 ||
@@ -239,13 +242,13 @@ namespace Engine {
 				TextModel.VetexData = nullptr;
 			}
 
-			void Text::renderText(const char* text, glm::vec2 pos, glm::vec4 color, size_t length, size_t font_index, GLfloat scale) {
+			void Text::renderText(const char* text, glm::vec2 pos, glm::vec4 color, GLfloat scale, size_t length, size_t font_index) {
 				if (!text) return;
 				GlyphFont& cur_font = FontTextures[font_index];
 				GLuint program = TextModel.Begin();
 				glActiveTexture(GL_TEXTURE0);
-				glUniform4f(glGetUniformLocation(program, "in_color"), color.x, color.y, color.z, color.w);
-				glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+				glUniform4f(in_color_uniform_position, color.x, color.y, color.z, color.w);
+				glUniformMatrix4fv(projection_uniform_position, 1, GL_FALSE, glm::value_ptr(projection));
 				for (size_t i = 0; ( !length && text[i] != 0 ) || ( i < length ); i++) {
 					uint32_t cur_char = text[i];
 					if (text[i] - cur_font.start < 0 ||

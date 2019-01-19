@@ -1,5 +1,6 @@
 #include "Context.h"
 
+#include "..\Managers\Globals\ContextManager.h"
 #include "..\..\Core\Game.h"
 
 #include <iostream>
@@ -63,6 +64,12 @@ namespace Engine {
 					<< info.Extended_Info.GL_Version_Major << '.'
 					<< info.Extended_Info.GL_Version_Minor << " not supported!\n" << std::endl;
 			}
+			if (info.Extended_Info.debug) { 
+				glEnable(GL_DEBUG_OUTPUT); 
+				glDebugMessageCallback((GLDEBUGPROC)Contexts::Default::debugCallback, this);
+			}
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LESS);
 			display = info;
 		}
 		Context::~Context() {
@@ -70,7 +77,7 @@ namespace Engine {
 		}
 		bool Context::MakeCurrent() {
 			glfwMakeContextCurrent(display.Basic_Info.Window);
-			glViewport(0, 0, GLsizei(display.Basic_Info.width), GLsizei(display.Basic_Info.height));
+//			glViewport(0, 0, GLsizei(display.Basic_Info.width), GLsizei(display.Basic_Info.height));
 			return true;
 		}
 		namespace Contexts {
