@@ -21,9 +21,6 @@ namespace Engine {
 				d_width = Contexts[0]->default_width;
 				d_height = Contexts[0]->default_height;
 				projection = Contexts[0]->projection;
-				if(default_context.Extended_Info.debug) EnableDebug();
-				glEnable(GL_BLEND);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			}
 			Context::~Context() {
 				for (size_t i = 0; i < context_count; i++) {

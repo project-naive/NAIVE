@@ -52,6 +52,8 @@
     <ClCompile Include="2048\States\Simple\Models\TextureQuad\TextureQuad.cpp" />
     <ClCompile Include="2048\States\Simple\Models\TextureQuad\TQShader.cpp" />
     <ClCompile Include="2048\States\Simple\Models\TexturedCube\TextureCube.cpp" />
+    <ClCompile Include="2048\States\State_2048\Models\Block\Block.cpp" />
+    <ClCompile Include="2048\States\State_2048\Models\Block\BlockShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2048\Game_2048.h">
@@ -78,6 +80,8 @@
     <ClInclude Include="2048\States\Simple\Models\TextureQuad\TextureQuad.h" />
     <ClInclude Include="2048\States\Simple\Models\TextureQuad\TQShader.h" />
     <ClInclude Include="2048\States\Simple\Models\TexturedCube\TextureCube.h" />
+    <ClInclude Include="2048\States\State_2048\Models\Block\Block.h" />
+    <ClInclude Include="2048\States\State_2048\Models\Block\BlockShader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="2048\States\State_2048\Models\Fan\Fan.frag">
@@ -88,5 +92,7 @@
     </None>
     <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.vert" />
     <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.frag" />
+    <None Include="2048\States\State_2048\Models\Block\Block.vert" />
+    <None Include="2048\States\State_2048\Models\Block\Block.frag" />
   </ItemGroup>
 </Project>

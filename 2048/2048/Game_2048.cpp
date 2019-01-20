@@ -6,7 +6,7 @@
 
 Game_2048::Game_2048(Engine::Graphics::WindowInfo& info) : Game(info) {
 //	state = new States::Loading(Managers);
-	state = new States::Simple(Managers);
+	state = new States::State_2048(Managers);
 //	glfwSetKeyCallback(display.Window, KeyCallback);
 }
 

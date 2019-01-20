@@ -44,7 +44,7 @@ namespace States {
 		glBindFramebuffer(GL_FRAMEBUFFER, texture_fbo);
 		glViewport(0, 0, GLsizei(rb_width), GLsizei(rb_height));
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glGenBuffers(1, &texture);
+		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, GLsizei(rb_width), GLsizei(rb_height), 0, GL_RGBA, GL_FLOAT, nullptr);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -92,6 +92,7 @@ namespace States {
 			projection
 		};
 		Managers.ContextManager.SetContext(ContextIDs[0]);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		FPS_timer = std::chrono::steady_clock::now();
 	}
 
@@ -133,7 +134,6 @@ namespace States {
 			lowerFPS = 10000;
 			Managers.TextManager.renderText(oss.str().c_str(), glm::vec2(40.0f, 800.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0);
 			//Do stuff with the rendered render buffer
-			glBindFramebuffer(GL_READ_FRAMEBUFFER, texture_fbo);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 			Managers.ContextManager.GetCurrentResolution(width, height);
 			glViewport(0, 0, width, height);

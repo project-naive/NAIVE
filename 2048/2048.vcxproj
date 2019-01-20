@@ -149,6 +149,8 @@
     <ClCompile Include="2048\States\Simple\Models\TextureQuad\TQShader.cpp" />
     <ClCompile Include="2048\States\Simple\Simple.cpp" />
     <ClCompile Include="2048\States\StateManager.cpp" />
+    <ClCompile Include="2048\States\State_2048\Models\Block\Block.cpp" />
+    <ClCompile Include="2048\States\State_2048\Models\Block\BlockShader.cpp" />
     <ClCompile Include="2048\States\State_2048\Models\Fan\Fan.cpp" />
     <ClCompile Include="2048\States\State_2048\Models\Fan\FanShader.cpp" />
     <ClCompile Include="2048\States\State_2048\State_2048.cpp" />
@@ -161,6 +163,8 @@
     <ClInclude Include="2048\States\Simple\Models\TextureQuad\TQShader.h" />
     <ClInclude Include="2048\States\Simple\Simple.h" />
     <ClInclude Include="2048\States\StateManager.h" />
+    <ClInclude Include="2048\States\State_2048\Models\Block\Block.h" />
+    <ClInclude Include="2048\States\State_2048\Models\Block\BlockShader.h" />
     <ClInclude Include="2048\States\State_2048\Models\Fan\Fan.h" />
     <ClInclude Include="2048\States\State_2048\Models\Fan\FanShader.h" />
     <ClInclude Include="2048\States\State_2048\State_2048.h" />
@@ -173,6 +177,8 @@
   <ItemGroup>
     <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.frag" />
     <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.vert" />
+    <None Include="2048\States\State_2048\Models\Block\Block.frag" />
+    <None Include="2048\States\State_2048\Models\Block\Block.vert" />
     <None Include="2048\States\State_2048\Models\Fan\Fan.frag" />
     <None Include="2048\States\State_2048\Models\Fan\Fan.vert" />
   </ItemGroup>

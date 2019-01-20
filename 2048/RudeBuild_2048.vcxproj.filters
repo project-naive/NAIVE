@@ -51,6 +51,8 @@
     <ClCompile Include="2048\States\Simple\Models\TextureQuad\TextureQuad.cpp" />
     <ClCompile Include="2048\States\Simple\Models\TextureQuad\TQShader.cpp" />
     <ClCompile Include="2048\States\Simple\Models\TexturedCube\TextureCube.cpp" />
+    <ClCompile Include="2048\States\State_2048\Models\Block\Block.cpp" />
+    <ClCompile Include="2048\States\State_2048\Models\Block\BlockShader.cpp" />
     <ClCompile Include="C:\RudeBuildCache\2048_10e9acc0f7160c5b8b7f3b3f2f1fb185\Release-x64\2048\20481.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +80,8 @@
     <ClInclude Include="2048\States\Simple\Models\TextureQuad\TextureQuad.h" />
     <ClInclude Include="2048\States\Simple\Models\TextureQuad\TQShader.h" />
     <ClInclude Include="2048\States\Simple\Models\TexturedCube\TextureCube.h" />
+    <ClInclude Include="2048\States\State_2048\Models\Block\Block.h" />
+    <ClInclude Include="2048\States\State_2048\Models\Block\BlockShader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="2048\States\State_2048\Models\Fan\Fan.frag">

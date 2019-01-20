@@ -14,12 +14,12 @@ namespace States {
 		public Engine::Core::State{
 	public:
 		Simple(Engine::Core::GlobalManagers& given_managers);
-		void Destroy() override;
-		void Draw() override;
-		void Update() override;
-		void Loop() override;
+		void Destroy() override final;
+		void Draw() override final;
+		void Update() override final;
+		void Loop() override final;
 	private:
-		bool notifyContextClose(size_t ID) override;
+		bool notifyContextClose(size_t ID) override final;
 		const char* text = "Hello World!";
 		float FPS_cache = 0;
 		float FPS = 0;

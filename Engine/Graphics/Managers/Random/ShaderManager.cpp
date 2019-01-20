@@ -56,6 +56,7 @@ namespace Engine {
 					ActiveContext = cur_context;
 					ActiveProgram = Generics[ID - ReserveField]->program;
 					glUseProgram(ActiveProgram);
+					current = NonDefault;
 					return ActiveProgram;
 				}
 				return -1;
