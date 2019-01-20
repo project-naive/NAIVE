@@ -20,7 +20,7 @@ int main(int argc, char* argv[], char* env[]) {
 	window.Extended_Info.GL_Version_Minor = 4;
 	window.Extended_Info.swap_interval = 0;
 	window.Extended_Info.debug = true;
-	window.Extended_Info.double_buffer = true;
+	window.Extended_Info.double_buffer = false;
 	{
 		Game_2048 this_game{ window };
 		this_game.MainLoop();

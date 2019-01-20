@@ -152,6 +152,9 @@ namespace Engine {
 					glDeleteTextures(1, &( FontTextures[texture_index].glyphs[i].TextureID ));
 				}
 				delete[] FontTextures[texture_index].glyphs;
+				FontTextures[texture_index].glyphs = nullptr;
+				FontTextures[texture_index].pixel_height = 0;
+				FontTextures[texture_index].length = 0;
 				unloaded[unload_count] = texture_index;
 				unload_count++;
 				return true;
@@ -206,8 +209,9 @@ namespace Engine {
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 			}
 
-			void Text::renderText(const uint32_t* text, glm::vec2 pos, glm::vec4 color, GLfloat scale, size_t length, size_t font_index) {
-				if(!text) return;
+			float Text::renderText(const uint32_t* text, glm::vec2 pos, glm::vec4 color, GLfloat scale, size_t length, size_t font_index) {
+				if(!text) return 0;
+				float start = pos.x;
 				GlyphFont& cur_font = FontTextures[font_index];
 				GLuint program = TextModel.Begin();
 				glActiveTexture(GL_TEXTURE0);
@@ -240,10 +244,12 @@ namespace Engine {
 					pos.x += (texture.advance >> 6) * scale;
 				}
 				TextModel.VetexData = nullptr;
+				return pos.x - start;
 			}
 
-			void Text::renderText(const char* text, glm::vec2 pos, glm::vec4 color, GLfloat scale, size_t length, size_t font_index) {
-				if (!text) return;
+			float Text::renderText(const char* text, glm::vec2 pos, glm::vec4 color, GLfloat scale, size_t length, size_t font_index) {
+				if (!text) return 0;
+				float start = pos.x;
 				GlyphFont& cur_font = FontTextures[font_index];
 				GLuint program = TextModel.Begin();
 				glActiveTexture(GL_TEXTURE0);
@@ -276,6 +282,33 @@ namespace Engine {
 					pos.x += ( texture.advance >> 6 ) * scale;
 				}
 				TextModel.VetexData = nullptr;
+				return pos.x - start;
+			}
+			float Text::TextLength(const uint32_t* text, size_t length, size_t font_index) {
+				float rtn = 0.0f;
+				GlyphFont& cur_font = FontTextures[font_index];
+				for (size_t i = 0; ( !length && text[i] != 0 ) || ( i < length ); i++) {
+					uint32_t cur_char = text[i];
+					if (text[i] - cur_font.start < 0 ||
+						text[i] - cur_font.start >= cur_font.length) {
+						cur_char = cur_font.start;
+					}
+					rtn += ( cur_font.glyphs[cur_char].advance >> 6);
+				}
+				return rtn;
+			}
+			float Text::TextLength(const char* text, size_t length, size_t font_index) {
+				float rtn = 0.0f;
+				GlyphFont& cur_font = FontTextures[font_index];
+				for (size_t i = 0; ( !length && text[i] != 0 ) || ( i < length ); i++) {
+					uint32_t cur_char = text[i];
+					if (text[i] - cur_font.start < 0 ||
+						text[i] - cur_font.start >= cur_font.length) {
+						cur_char = cur_font.start;
+					}
+					rtn += ( cur_font.glyphs[cur_char].advance >> 6 );
+				}
+				return rtn;
 			}
 		}
 	}

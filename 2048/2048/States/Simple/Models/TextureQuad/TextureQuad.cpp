@@ -37,11 +37,17 @@ namespace State_2048 {
 
 		void TextureQuad::Update() {
 			vertices[0].position = data.pos;
+			vertices[0].tex_coords = data.tex_ori;
 			vertices[1].position = data.pos + glm::vec4(data.vec1, 0.0f);
+			vertices[1].tex_coords = data.tex_ori + data.tex_vec1;
 			vertices[2].position = data.pos + glm::vec4(data.vec1 + data.vec2, 0.0f);
+			vertices[2].tex_coords = data.tex_ori + data.tex_vec1 + data.tex_vec2;
 			vertices[3].position = data.pos + glm::vec4(data.vec1 + data.vec2, 0.0f);
+			vertices[3].tex_coords = data.tex_ori + data.tex_vec1 + data.tex_vec2;
 			vertices[4].position = data.pos + glm::vec4(data.vec2, 0.0f);
+			vertices[4].tex_coords = data.tex_ori + data.tex_vec2;
 			vertices[5].position = data.pos;
+			vertices[5].tex_coords = data.tex_ori;
 			glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VertexFormat) * 6, vertices);
 		}

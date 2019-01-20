@@ -18,13 +18,15 @@ namespace States {
 			running = false;
 			return false;
 		};
-		GLuint FBO = 0;
-		GLuint RBO = 0;
+		GLuint Board_FBO = 0;
 		GLuint texture = 0;
 		::State_2048::Models::Block* BlockModel;
 		::State_2048::Models::TextureQuad* TextureModel;
 		float FPS_cache = 0;
 		float FPS = 0;
 		std::chrono::steady_clock::time_point FPS_timer;
+
+		unsigned char Board[4][4]{};
+
 	};
 }

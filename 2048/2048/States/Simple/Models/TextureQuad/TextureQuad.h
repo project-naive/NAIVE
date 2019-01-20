@@ -16,6 +16,9 @@ namespace State_2048 {
 				glm::vec4 pos;
 				glm::vec3 vec1;
 				glm::vec3 vec2;
+				glm::vec2 tex_ori;
+				glm::vec2 tex_vec1;
+				glm::vec2 tex_vec2;
 				GLuint textureID;
 				glm::mat4 projection;
 			};
@@ -23,29 +26,10 @@ namespace State_2048 {
 		private:
 			struct VertexFormat{
 				glm::vec4 position;
-				const glm::vec2 tex_coords;
+				glm::vec2 tex_coords;
 			};
 			GLint projection_uniform_location;
-			VertexFormat vertices[6]{ 
-				{
-					glm::vec4(),
-					glm::vec2(0.0f, 0.0f)
-				},{
-					glm::vec4(),
-					glm::vec2(1.0f, 0.0f)
-				},{
-					glm::vec4(),
-					glm::vec2(1.0f, 1.0f)
-				},{
-					glm::vec4(),
-					glm::vec2(1.0f, 1.0f)
-				},{
-					glm::vec4(),
-					glm::vec2(0.0f, 1.0f)
-				},{
-					glm::vec4(),
-					glm::vec2(0.0f, 0.0f)
-				} };
+			VertexFormat vertices[6];
 		};
 	}
 }

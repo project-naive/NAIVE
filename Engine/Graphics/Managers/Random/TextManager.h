@@ -81,10 +81,16 @@ namespace Engine {
 				}
 				//Call this function to render random UTF-32 encoded strings
 				//Default length 0 means the string is NULL terminated
-				void renderText(const uint32_t* text, glm::vec2 pos, glm::vec4 color, GLfloat scale = 1, size_t length = 0, size_t font_index = 0);
+				float renderText(const uint32_t* text, glm::vec2 pos, glm::vec4 color, GLfloat scale = 1, size_t length = 0, size_t font_index = 0);
 				//Currently only support ASCII rendering, may add encoding support in the future
 				//Default length 0 means the string is NULL terminated
-				void renderText(const char* text, glm::vec2 pos, glm::vec4 color, GLfloat scale = 1, size_t length = 0, size_t font_index = 0);
+				float renderText(const char* text, glm::vec2 pos, glm::vec4 color, GLfloat scale = 1, size_t length = 0, size_t font_index = 0);
+				float TextLength(const uint32_t* text, size_t length = 0, size_t font_index = 0);
+				float TextLength(const char* text, size_t length = 0, size_t font_index = 0);
+				float GetHeight(size_t texture_index = 0) {
+					if (texture_index >= texture_count) return 0;
+					return FontTextures[texture_index].pixel_height;
+				};
 			};
 		}
 	}
