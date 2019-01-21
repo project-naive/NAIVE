@@ -28,5 +28,12 @@ namespace States {
 
 		unsigned char Board[4][4]{};
 
+		bool move_left();
+		bool move_right();
+		bool move_up();
+		bool move_down();
+
+		void clearBoard(int x0, int x1, int y0, int y1);
+		void drawBlock(unsigned char block, float Xc, float Yc);
 	};
 }
