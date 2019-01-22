@@ -2,22 +2,15 @@
 
 #include <Core\Game.h>
 
-
 class Game_2048:
 	public Engine::Core::Game {
 public:
 	Game_2048(Engine::Graphics::WindowInfo& info);
 	~Game_2048();
 	void notifyRefresh(size_t contextID) override final {
-		Managers.ContextManager.Refresh();
+//		Managers.ContextManager.Refresh();
 	}
-	void MainLoop() override final {
-		glfwPollEvents();
-		while(running){
-			state->Loop();
-			running &= state->running;
-		}
-	}
+	void MainLoop() override final;
 	void notifyFBSize(int width, int height, size_t contextID = 0) override final {
 		Managers.ContextManager.Resize(width, height, contextID);
 //		Managers.ContextManager.Refresh();

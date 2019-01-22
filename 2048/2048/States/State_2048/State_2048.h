@@ -10,7 +10,12 @@ namespace States {
 		public Engine::Core::State{
 	public:
 		State_2048(Engine::Core::GlobalManagers& given_managers);
-		void Destroy() override final {};
+		void Destroy() override final {
+			glDeleteFramebuffers(1, &Board_FBO);
+			glDeleteTextures(1, &texture);
+			delete BlockModel;
+			delete TextureModel;
+		};
 		void Draw() override final;
 		void Update() override final;
 		void Loop() override final;
@@ -48,9 +53,6 @@ namespace States {
 		GLuint texture = 0;
 		::State_2048::Models::Block* BlockModel;
 		::State_2048::Models::TextureQuad* TextureModel;
-		float FPS_cache = 0;
-		float FPS = 0;
-		std::chrono::steady_clock::time_point FPS_timer;
 
 		unsigned char Board[4][4]{};
 

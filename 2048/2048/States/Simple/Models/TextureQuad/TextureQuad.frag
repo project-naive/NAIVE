@@ -1,8 +1,8 @@
 #version 330 core
 
-layout(location = 0) in vec2 uv_coords;
-
 layout(location = 0) out vec4 out_color;
+
+in vec2 uv_coords;
 
 uniform sampler2D in_texture;
 

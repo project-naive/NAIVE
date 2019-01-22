@@ -88,8 +88,8 @@ namespace Engine {
 				float TextLength(const uint32_t* text, size_t length = 0, size_t font_index = 0);
 				float TextLength(const char* text, size_t length = 0, size_t font_index = 0);
 				float GetHeight(size_t texture_index = 0) {
-					if (texture_index >= texture_count) return 0;
-					return FontTextures[texture_index].pixel_height;
+					if (texture_index >= texture_count) return 0.0f;
+					return float(FontTextures[texture_index].pixel_height);
 				};
 			};
 		}

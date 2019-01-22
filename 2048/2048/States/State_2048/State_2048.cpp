@@ -133,9 +133,30 @@ namespace States {
 	void State_2048::Loop() {
 		Update();
 		while (running) {
-			while (can_continue) {
+			while (can_continue && running) {
 				input_got = false;
 				glfwWaitEvents();
+				/*
+				int input = rand() % 4;
+				switch (input) {
+					case 0:
+						last_input = 'S';
+						input_got = true;
+						break;
+					case 1:
+						last_input = 'A';
+						input_got = true;
+						break;
+					case 2:
+						last_input = 'D';
+						input_got = true;
+						break;
+					case 3:
+						last_input = 'W';
+						input_got = true;
+						break;
+				}
+				*/
 				if (input_got) {
 					valid_move = false;
 					Draw();

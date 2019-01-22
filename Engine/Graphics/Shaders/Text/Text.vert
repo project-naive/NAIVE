@@ -2,7 +2,6 @@
 
 layout(location = 0) in vec4 vertex;
 
-out vec4 gl_Position;
 out vec2 TexCoords;
 
 uniform mat4 projection;
