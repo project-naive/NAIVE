@@ -120,7 +120,7 @@ namespace States {
 			FPS = FPS_cache;
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, texture_fbo);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glViewport(0.0f, 0.0f, rb_width, rb_height);
+			glViewport(0, 0, GLsizei(rb_width), GLsizei(rb_height));
 			PrivateModels.TriangleModel.Begin();
 			PrivateModels.TriangleModel.Draw();
 			PrivateModels.FanModel.Begin();
@@ -139,9 +139,9 @@ namespace States {
 			//Do stuff with the rendered render buffer
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 			Managers.ContextManager.GetCurrentResolution(width, height);
-			glViewport(0, 0, width, height);
-			glBlitFramebuffer(0.0f, 0.0f, rb_width, rb_height,
-							  0.0f, 0.0f, width, height,
+			glViewport(0, 0, GLsizei(width), GLsizei(height));
+			glBlitFramebuffer(0, 0, GLint(rb_width), GLint(rb_height),
+							  0, 0, GLint(width), GLint(height),
 							  GL_COLOR_BUFFER_BIT, GL_LINEAR);
 			Managers.ContextManager.Refresh();
 		}
@@ -149,7 +149,7 @@ namespace States {
 			Managers.ContextManager.SetContext(ContextIDs[1]);
 			Managers.ContextManager.GetCurrentResolution(width, height);
 			if (is_refresh_frame) {
-				glViewport(0.0f, 0.0f, width, height);
+				glViewport(0, 0, GLsizei(width), GLsizei(height));
 			} else {
 				lowerFPS = std::min(FPS, lowerFPS);
 			}

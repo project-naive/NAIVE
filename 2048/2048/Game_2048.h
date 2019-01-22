@@ -8,11 +8,13 @@ public:
 	Game_2048(Engine::Graphics::WindowInfo& info);
 	~Game_2048();
 	void notifyRefresh(size_t contextID) override final {
+		state->Refresh(contextID);
 //		Managers.ContextManager.Refresh();
 	}
 	void MainLoop() override final;
 	void notifyFBSize(int width, int height, size_t contextID = 0) override final {
 		Managers.ContextManager.Resize(width, height, contextID);
+		state->Refresh(contextID);
 //		Managers.ContextManager.Refresh();
 //		state->Draw();
 	};

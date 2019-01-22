@@ -15,7 +15,7 @@ namespace Engine {
 				TextModel(SManager) {
 				std::ifstream ifs;
 				ifs.open(".\\Engine\\Resources\\Fonts\\Default.ttf");
-				size_t size = ifs.seekg(0, std::ios::end).tellg();
+				size_t size = size_t(ifs.seekg(0, std::ios::end).tellg());
 				char* buffer=new char[size];
 				ifs.seekg(0);
 				ifs.read(buffer, size);

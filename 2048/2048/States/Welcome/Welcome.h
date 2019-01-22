@@ -12,6 +12,7 @@ namespace States {
 		void Draw() override final {};
 		void Update() override final {};
 		void Loop() override final;
+		void Refresh(size_t ID = 0) override final;
 		bool notifyContextClose(size_t ID) override final {
 			running = false;
 			return false;

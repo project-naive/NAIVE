@@ -3,6 +3,18 @@
 namespace States {
 	Welcome::Welcome(Engine::Core::GlobalManagers & given_managers):
 		State(given_managers) {
+		Refresh();
+	}
+
+	void Welcome::Loop() {
+		while (running) {
+			glfwWaitEvents();
+			if (ready) {
+				running = false;
+			}
+		}
+	}
+	void Welcome::Refresh(size_t ID) {
 		size_t width, height;
 		Managers.ContextManager.GetCurrentDefaultResolution(width, height);
 		const char* message1 = "2048 Game";
@@ -22,15 +34,6 @@ namespace States {
 		Managers.TextManager.renderText(message1, glm::vec2(x0, y0), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), scale1);
 		Managers.TextManager.renderText(message2, glm::vec2(x1, y1), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), scale2);
 		glFlush();
-	}
-
-	void Welcome::Loop() {
-		while (running) {
-			glfwWaitEvents();
-			if (ready) {
-				running = false;
-			}
-		}
 	}
 }
 

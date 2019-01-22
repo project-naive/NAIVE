@@ -23,6 +23,7 @@ namespace States {
 			running = false;
 			return false;
 		};
+		void Refresh(size_t ID) override final;
 		void notifyKey(int key, int scancode, int action, int mods, size_t contextID = 0) override final {
 			if (action == GLFW_PRESS) {
 				switch (key) {
@@ -65,9 +66,10 @@ namespace States {
 		unsigned char last_input = 0;
 		bool input_got = false;
 		bool valid_move = false;
-		bool quit_key = false;
+		bool quit_key = true;
 
 		void clearBoard(int x0, int x1, int y0, int y1);
 		void drawBlock(unsigned char block, float Xc, float Yc);
+		void renderExitText();
 	};
 }

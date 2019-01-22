@@ -39,7 +39,7 @@ namespace States {
 		glBindFramebuffer(GL_FRAMEBUFFER, Board_FBO);
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2 * width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, GLsizei(2 * width), GLsizei(height), 0, GL_RGBA, GL_FLOAT, nullptr);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
@@ -56,7 +56,7 @@ namespace States {
 		BlockModel->data.radius = 0.0f;
 		BlockModel->data.projection = glm::identity<glm::mat4>();
 		BlockModel->Begin();
-		glViewport(0, 0, width, height);
+		glViewport(0, 0, GLsizei(width), GLsizei(height));
 		BlockModel->data.Block_center = glm::vec2(0.0f, 0.0f);
 		BlockModel->Update();
 		BlockModel->Draw();
@@ -72,7 +72,7 @@ namespace States {
 			}
 			BlockModel->data.Block_center += glm::vec2(-2.0f, 0.5f);
 		}
-		glViewport(width, 0, width, height);
+		glViewport(GLint(width), 0, GLsizei(width), GLsizei(height));
 		BlockModel->data.Block_center = glm::vec2(-0.75f, -0.75f);
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
@@ -114,7 +114,7 @@ namespace States {
 		TextureModel->data.projection = glm::identity<glm::mat4>();
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		Managers.ContextManager.GetCurrentResolution(width, height);
-		glViewport(0, 0, width, height);
+		glViewport(0, 0, GLsizei(width), GLsizei(height));
 		glClear(GL_COLOR_BUFFER_BIT);
 		glDisable(GL_DEPTH_TEST);
 		TextureModel->data.tex_ori = glm::vec2(0.0f, 0.0f);
@@ -126,7 +126,7 @@ namespace States {
 		TextureModel->Begin();
 		TextureModel->Update();
 		TextureModel->Draw();
-		std::srand(std::chrono::system_clock::now().time_since_epoch().count());
+		std::srand(std::chrono::duration_cast<std::chrono::duration<int>>(std::chrono::system_clock::now().time_since_epoch()).count());
 		std::rand();
 	}
 
@@ -155,8 +155,7 @@ namespace States {
 						last_input = 'W';
 						input_got = true;
 						break;
-				}
-				*/
+				}*/
 				if (input_got) {
 					valid_move = false;
 					Draw();
@@ -182,33 +181,7 @@ namespace States {
 				}
 			}
 			quit_key = false;
-			BlockModel->data.Block_center = glm::vec2(0.0f, 0.0f);
-			BlockModel->data.Block_size = glm::vec2(0.8f, 0.25f);
-			BlockModel->data.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-			BlockModel->data.radius = 0.2f;
-			BlockModel->Begin();
-			BlockModel->Update();
-			BlockModel->Draw();
-			BlockModel->data.Block_size = glm::vec2(0.78f, 0.23f);
-			BlockModel->data.color = glm::vec4(0xF5 / 255.0f, 0xF6 / 255.0f, 0xCE / 255.0f, 1.0f);
-			BlockModel->Update();
-			BlockModel->Draw();
-			size_t width, height;
-			Managers.ContextManager.GetCurrentDefaultResolution(width, height);
-			const char* message1 = "Game Over!";
-			const float scale1 = 0.8f;
-			const char* message2 = "Press 'Q' Key to exit!";
-			const float scale2 = 0.4f;
-			const float divide = 32.0f;
-			float text_length1 = Managers.TextManager.TextLength(message1);
-			float text_length2 = Managers.TextManager.TextLength(message2);
-			float text_height = Managers.TextManager.GetHeight();
-			float x1 = width / 2.0f - text_length1 * scale1 / 2.0f;
-			float x2 = width / 2.0f - text_length2 * scale2 / 2.0f;
-			float y2 = height / 2.0f - (text_height * ( scale1 + scale2 ) + divide) / 2.0f *0.8f;
-			float y1 = y2 + text_height * (scale2)+divide / 2;
-			Managers.TextManager.renderText(message1, glm::vec2(x1, y1), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), scale1);
-			Managers.TextManager.renderText(message2, glm::vec2(x2, y2), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), scale2);
+			renderExitText();
 			glFlush();
 			quit_key = false;
 			while (!quit_key&&running) {
@@ -613,7 +586,70 @@ namespace States {
 		TextureModel->Update();
 		TextureModel->Draw();
 	}
+
+	void State_2048::Refresh(size_t ID) {
+		if(!quit_key)
+			TextureModel->Begin();
+		TextureModel->data.tex_ori = glm::vec2(0.0f, 0.0f);
+		TextureModel->data.tex_vec1 = glm::vec2(0.5f, 0.0f);
+		TextureModel->data.tex_vec2 = glm::vec2(0.0f, 1.0f);
+		TextureModel->data.pos = glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f);
+		TextureModel->data.vec1 = glm::vec3(2.0f, 0.0f, 0.0f);
+		TextureModel->data.vec2 = glm::vec3(0.0f, 2.0f, 0.0f);
+		TextureModel->Update();
+		TextureModel->Draw();
+		TextureModel->data.vec1 = glm::vec3(0.5f, 0.0f, 0.0f);
+		TextureModel->data.vec2 = glm::vec3(0.0f, 0.5f, 0.0f);
+		TextureModel->data.tex_vec1 = glm::vec2(1.0f / 8.0f, 0.0f);
+		TextureModel->data.tex_vec2 = glm::vec2(0.0f, 1.0f / 4.0f);
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if (Board[i][j]) {
+					TextureModel->data.pos = glm::vec4(j*0.5f - 1.0f, i*0.5f - 1.0f, 0.0f, 1.0f);
+					TextureModel->data.tex_ori = glm::vec2(0.5f + 0.125f*( ( Board[i][j] - 1 ) % 4 ), 0.25f*( ( Board[i][j] - 1 ) / 4 ));
+					TextureModel->Update();
+					TextureModel->Draw();
+				}
+			}
+		}
+		if (!quit_key) {
+			renderExitText();
+		}
+		glFlush();
+	}
+
+	void State_2048::renderExitText() {
+		BlockModel->data.Block_center = glm::vec2(0.0f, 0.0f);
+		BlockModel->data.Block_size = glm::vec2(0.8f, 0.25f);
+		BlockModel->data.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		BlockModel->data.radius = 0.2f;
+		BlockModel->Begin();
+		BlockModel->Update();
+		BlockModel->Draw();
+		BlockModel->data.Block_size = glm::vec2(0.78f, 0.23f);
+		BlockModel->data.color = glm::vec4(0xF5 / 255.0f, 0xF6 / 255.0f, 0xCE / 255.0f, 1.0f);
+		BlockModel->Update();
+		BlockModel->Draw();
+		size_t width, height;
+		Managers.ContextManager.GetCurrentDefaultResolution(width, height);
+		const char* message1 = "Game Over!";
+		const float scale1 = 0.8f;
+		const char* message2 = "Press 'Q' Key to exit!";
+		const float scale2 = 0.4f;
+		const float divide = 32.0f;
+		float text_length1 = Managers.TextManager.TextLength(message1);
+		float text_length2 = Managers.TextManager.TextLength(message2);
+		float text_height = Managers.TextManager.GetHeight();
+		float x1 = width / 2.0f - text_length1 * scale1 / 2.0f;
+		float x2 = width / 2.0f - text_length2 * scale2 / 2.0f;
+		float y2 = height / 2.0f - ( text_height * ( scale1 + scale2 ) + divide ) / 2.0f *0.8f;
+		float y1 = y2 + text_height * (scale2)+divide / 2;
+		Managers.TextManager.renderText(message1, glm::vec2(x1, y1), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), scale1);
+		Managers.TextManager.renderText(message2, glm::vec2(x2, y2), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), scale2);
+	}
 }
+
+
 
 		/*
 		int moves[3][4]{};
