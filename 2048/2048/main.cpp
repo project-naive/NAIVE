@@ -18,7 +18,7 @@ int main(int argc, char* argv[], char* env[]) {
 	window.Extended_Info.title = "2048";
 	window.Extended_Info.GL_Version_Major = 4;
 	window.Extended_Info.GL_Version_Minor = 4;
-	window.Extended_Info.swap_interval = 0;
+	window.Extended_Info.swap_interval = 1;
 	window.Extended_Info.debug = true;
 	window.Extended_Info.double_buffer = false;
 	{

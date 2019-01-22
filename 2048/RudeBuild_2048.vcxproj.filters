@@ -53,7 +53,7 @@
     <ClCompile Include="2048\States\Simple\Models\TexturedCube\TextureCube.cpp" />
     <ClCompile Include="2048\States\State_2048\Models\Block\Block.cpp" />
     <ClCompile Include="2048\States\State_2048\Models\Block\BlockShader.cpp" />
-    <ClCompile Include="C:\RudeBuildCache\2048_10e9acc0f7160c5b8b7f3b3f2f1fb185\Release-x64\2048\20481.cpp" />
+    <ClCompile Include="C:\RudeBuildCache\2048_10e9acc0f7160c5b8b7f3b3f2f1fb185\Debug-x64\2048\20481.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2048\Game_2048.h">
@@ -92,5 +92,7 @@
     </None>
     <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.vert" />
     <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.frag" />
+    <None Include="2048\States\State_2048\Models\Block\Block.vert" />
+    <None Include="2048\States\State_2048\Models\Block\Block.frag" />
   </ItemGroup>
 </Project>

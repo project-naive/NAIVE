@@ -21,13 +21,14 @@ namespace Engine {
 			bool     debug = true;
 			size_t        Monitor_count = 0;
 			GLFWmonitor** Monotors = nullptr;
-			GLFWwindowclosefun     Close = nullptr;
+			GLFWwindowclosefun     Close   = nullptr;
 			GLFWwindowrefreshfun   Refresh = nullptr;
-			GLFWwindowfocusfun     Focus = nullptr;
+			GLFWwindowfocusfun     Focus   = nullptr;
 			GLFWwindowiconifyfun   Iconify = nullptr;
-			GLFWwindowposfun       Pos = nullptr;
-			GLFWwindowsizefun      Size = nullptr;
-			GLFWframebuffersizefun FBSize = nullptr;
+			GLFWwindowposfun       Pos     = nullptr;
+			GLFWwindowsizefun      Size    = nullptr;
+			GLFWframebuffersizefun FBSize  = nullptr;
+			GLFWkeyfun             Key     = nullptr;
 			int    swap_interval = 1;
 			bool   keep_aspect = true;
 			//currently ignored, planned for integrating
@@ -70,7 +71,9 @@ namespace Engine {
 					void Pos(GLFWwindow* window, int width, int height);
 					void Size(GLFWwindow* window, int width, int height);
 				}
-
+				namespace InputCallback {
+					void Key(GLFWwindow* window, int key, int scancode, int action, int mods);
+				}
 				inline WindowInfo default_window() {
 					WindowInfo rtn{};
 					rtn.Extended_Info.Close   = WindowCallback::Close;
@@ -80,6 +83,7 @@ namespace Engine {
 					rtn.Extended_Info.Pos     = WindowCallback::Pos;
 					rtn.Extended_Info.Size    = WindowCallback::Size;
 					rtn.Extended_Info.FBSize  = FrameBufferSizeCallback;
+					rtn.Extended_Info.Key     = InputCallback::Key;
 					return rtn;
 				}
 			}

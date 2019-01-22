@@ -92,9 +92,9 @@ namespace States {
 				oss << num;
 				float h = Managers.TextManager.GetHeight();
 				float l = Managers.TextManager.TextLength(oss.str().c_str());
-				float scale = 2.5f;
-				if (num >= 64) scale = 2.0f;
-				if (num >= 8196) scale = 1.5f;
+				float scale = 1.0f;
+				if (num > 64) scale = 0.8f;
+				if (num >= 8196) scale = 0.6f;
 				float x_pos = ( 1.0f + x )*( width / 2.0f ) - ( l / 2.0f )*scale;
 				float y_pos = ( 1.0f + y )*( height / 2.0f ) - ( h / 2.0f )*scale* (0.8f);
 				glm::vec4 color;
@@ -131,82 +131,110 @@ namespace States {
 	}
 
 	void State_2048::Loop() {
+		Update();
 		while (running) {
-			Update();
-			Draw();
-			glfwPollEvents();
+			while (can_continue) {
+				input_got = false;
+				glfwWaitEvents();
+				if (input_got) {
+					valid_move = false;
+					Draw();
+					if (valid_move) {
+						Update();
+						can_continue = false;
+						for (int i = 0; i < 4; i++) {
+							for (int j = 0; j < 4; j++) {
+								if (!Board[i][j]) can_continue = true;
+							}
+						}
+						for (int i = 0; i < 3; i++) {
+							for (int j = 0; j < 4; j++) {
+								if (Board[i][j] == Board[i + 1][j]) can_continue = true;
+							}
+						}
+						for (int i = 0; i < 4; i++) {
+							for (int j = 0; j < 3; j++) {
+								if (Board[i][j] == Board[i][j + 1]) can_continue = true;
+							}
+						}
+					}
+				}
+			}
+			quit_key = false;
+			BlockModel->data.Block_center = glm::vec2(0.0f, 0.0f);
+			BlockModel->data.Block_size = glm::vec2(0.8f, 0.25f);
+			BlockModel->data.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			BlockModel->data.radius = 0.2f;
+			BlockModel->Begin();
+			BlockModel->Update();
+			BlockModel->Draw();
+			BlockModel->data.Block_size = glm::vec2(0.78f, 0.23f);
+			BlockModel->data.color = glm::vec4(0xF5 / 255.0f, 0xF6 / 255.0f, 0xCE / 255.0f, 1.0f);
+			BlockModel->Update();
+			BlockModel->Draw();
+			size_t width, height;
+			Managers.ContextManager.GetCurrentDefaultResolution(width, height);
+			const char* message1 = "Game Over!";
+			const float scale1 = 0.8f;
+			const char* message2 = "Press 'Q' Key to exit!";
+			const float scale2 = 0.4f;
+			const float divide = 32.0f;
+			float text_length1 = Managers.TextManager.TextLength(message1);
+			float text_length2 = Managers.TextManager.TextLength(message2);
+			float text_height = Managers.TextManager.GetHeight();
+			float x1 = width / 2.0f - text_length1 * scale1 / 2.0f;
+			float x2 = width / 2.0f - text_length2 * scale2 / 2.0f;
+			float y2 = height / 2.0f - (text_height * ( scale1 + scale2 ) + divide) / 2.0f *0.8f;
+			float y1 = y2 + text_height * (scale2)+divide / 2;
+			Managers.TextManager.renderText(message1, glm::vec2(x1, y1), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), scale1);
+			Managers.TextManager.renderText(message2, glm::vec2(x2, y2), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), scale2);
+			glFlush();
+			quit_key = false;
+			while (!quit_key&&running) {
+				glfwWaitEvents();
+			}
+			running = false;
 		}
+
 	}
 
 	void State_2048::Draw() {
-		size_t width, height;
-		Managers.ContextManager.GetCurrentResolution(width, height);
-//		glBlitFramebuffer(0, 0, 2048, 1024, 0, 0, width, height, GL_COLOR_BUFFER_BIT,GL_LINEAR);
-//		TextureModel->Begin();
-//		TextureModel->Draw();
-		float time = std::chrono::duration_cast<std::chrono::duration<float> > ( std::chrono::steady_clock::now() - start_time ).count();
-//		clearBoard(0, 3, 0, 3);
-//		drawBlock(10, sinf(time), cosf(time));
-		while (true) {
-			bool okay = false;
-			while (!okay) {
-				int pos = std::rand();
-				int x = pos % 4;
-				int y = ( pos / 4 ) % 4;
-				if (!Board[y][x]) {
-					okay = true;
-					int num = std::rand() % 2;
-					Board[y][x] = num + 1;
-					drawBlock(num + 1, x*0.5f - 0.75f, y*0.5f - 0.75f);
-				}
-			}
-			int move = std::rand() % 4;
-			switch (move) {
-				case 0:
-					move_down();
-					break;
-				case 1:
-					move_left();
-					break;
-				case 2:
-					move_right();
-					break;
-				case 3:
-					move_up();
-					break;
-			}
+		switch (last_input) {
+			case 'S':
+				valid_move = move_down();
+				break;
+			case 'A':
+				valid_move = move_left();
+				break;
+			case 'D':
+				valid_move = move_right();
+				break;
+			case 'W':
+				valid_move = move_up();
+				break;
+			default:
+				break;
 		}
-		move_right();
-		if (std::chrono::steady_clock::now() - FPS_timer >= std::chrono::milliseconds(250)) {
-			FPS = FPS_cache;
-			FPS_timer = std::chrono::steady_clock::now();
-			std::cout << "FPS:  " << FPS << std::endl;
-		}
-		glFlush();
-		//		Managers.ContextManager.Refresh();
 	};
 	void State_2048::Update() {
-		std::chrono::high_resolution_clock::time_point cur = std::chrono::high_resolution_clock::now();
-		FPS_cache = 1 / std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::duration<float>>( ( cur - last_update_time ) )).count();
-		last_update_time = std::chrono::high_resolution_clock::now();
-		/*
-		char input = rand() % 4;
-		switch (input) {
-			case 0:
-				move_down();
-				break;
-			case 1:
-				move_left();
-				break;
-			case 2:
-				move_right();
-				break;
-			case 3:
-				move_up();
-				break;
+		bool okay = true;
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if (!Board[i][j]) okay = false;
+			}
 		}
-		*/
-
+		while (!okay) {
+			int pos = std::rand();
+			int x = pos % 4;
+			int y = ( pos / 4 ) % 4;
+			if (!Board[y][x]) {
+				okay = true;
+				int num = std::rand() % 2;
+				Board[y][x] = num + 1;
+				drawBlock(num + 1, x*0.5f - 0.75f, y*0.5f - 0.75f);
+			}
+		}
+		glFlush();
 	};
 
 	bool State_2048::move_down() {
@@ -218,7 +246,8 @@ namespace States {
 			int cur_moves[3][4]{};
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 4; j++) {
-					if (!Board[i][j] && Board[i+1][j]) {
+					if (Board[i + 1][j]&&
+						((!Board[i][j] || ( i != 0 && cur_moves[i - 1][j] ) )) ) {
 						cur_moves[i][j] = 1;
 						moved_finished = false;
 						rtn = true;
@@ -228,6 +257,7 @@ namespace States {
 							 && ( i == 0 ||(cur_moves[i - 1][j] != 2))
 							 && ( !merged[i][j] ) && ( i == 2 || !merged[i + 1][j] )) {
 						cur_moves[i][j] = 2;
+						if(i) cur_moves[i - 1][j] = 0;
 						moved_finished = false;
 						rtn = true;
 					}
@@ -246,13 +276,16 @@ namespace States {
 				}
 				for (int i = 0; i < 3; i++) {
 					for (int j = 0; j < 4; j++) {
+						if (cur_moves[i][j]) clearBoard(j, j, i, i + 1);
+					}
+				}
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 4; j++) {
 						switch (cur_moves[i][j]) {
 							case 1:
-								clearBoard(j, j, i, i + 1);
 								drawBlock(Board[i + 1][j], j*0.5f - 0.75f, ( i + 1 )*0.5f - 0.75f - time_passed * scale);
 								break;
 							case 2:
-								clearBoard(j, j, i, i + 1);
 								drawBlock(Board[i + 1][j] + 1, j*0.5f - 0.75f, ( i + 1 )*0.5f - 0.75f - time_passed * scale);
 								break;
 							case 0:
@@ -268,10 +301,10 @@ namespace States {
 						case 1:
 							Board[i][j] = Board[i + 1][j];
 							Board[i + 1][j] = 0;
-							if (i < 2) {
+							if (i != 2) {
 								merged[i][j] = merged[i + 1][j];
-								merged[i + 1][j] = false;
-							} else {
+							} 
+							else {
 								merged[i][j] = false;
 							}
 							break;
@@ -297,7 +330,7 @@ namespace States {
 			int cur_moves[4][3]{};
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 3; j++) {
-					if (!Board[i][j] && Board[i][j + 1]) {
+					if (Board[i][j + 1]&&((!Board[i][j] || ( j != 0 && cur_moves[i][j - 1]) ))) {
 						cur_moves[i][j] = 1;
 						moved_finished = false;
 						rtn = true;
@@ -305,8 +338,9 @@ namespace States {
 					else if (Board[i][j+1]
 							 &&Board[i][j]==Board[i][j+1]
 							 &&(j==0||cur_moves[i][j-1]!=2)
-							 &&(!merged[i][j])&&(i == 2||!merged[i][j+1])) {
+							 &&(!merged[i][j])&&(j == 2||!merged[i][j+1])) {
 						cur_moves[i][j] = 2;
+						if (j) cur_moves[i][j - 1] = 0;
 						moved_finished = false;
 						rtn = true;
 					}
@@ -324,15 +358,18 @@ namespace States {
 					time_passed = 0.5f / scale;
 				}
 				for (int i = 0; i < 4; i++) {
-					for (int j = 0; j <3; j++) {
+					for (int j = 2; j >=0; j--) {
+						if (cur_moves[i][j]) clearBoard(j, j + 1 , i, i);
+					}
+				}
+				for (int i = 0; i < 4; i++) {
+					for (int j = 2; j >= 0; j--) {
 						switch (cur_moves[i][j]) {
 							case 1:
-								clearBoard(j, j + 1 , i, i);
-								drawBlock(Board[i][j + 1], (j+1)*0.5f - 0.75f - time_passed * scale, (i)*0.5f - 0.75f );
+								drawBlock(Board[i][j + 1], ( j + 1 )*0.5f - 0.75f - time_passed * scale, ( i )*0.5f - 0.75f);
 								break;
 							case 2:
-								clearBoard(j, j + 1, i, i);
-								drawBlock(Board[i][j + 1] + 1, (j+1)*0.5f - 0.75f - time_passed * scale, (i)*0.5f - 0.75f);
+								drawBlock(Board[i][j + 1] + 1, ( j + 1 )*0.5f - 0.75f - time_passed * scale, ( i )*0.5f - 0.75f);
 								break;
 							case 0:
 								break;
@@ -347,10 +384,10 @@ namespace States {
 						case 1:
 							Board[i][j] = Board[i][j + 1];
 							Board[i][j + 1] = 0;
-							if (i < 2) {
-								merged[i][j] = merged[i][j + 1];
-								merged[i][j + 1] = false;
-							} else {
+							if (j !=2 ) {
+								merged[i][j] = merged[i][j +1];
+							}
+							else {
 								merged[i][j] = false;
 							}
 							break;
@@ -375,8 +412,8 @@ namespace States {
 			moved_finished = true;
 			int cur_moves[4][3]{};
 			for (int i = 0; i < 4; i++) {
-				for (int j = 2; j >= 0; j--) {
-					if (!Board[i][j + 1] && Board[i][j]) {
+				for (int j = 2; j >=0; j--) {
+					if ( Board[i][j]&&((!Board[i][j + 1] || ( j != 2 && cur_moves[i][j + 1]) ))) {
 						cur_moves[i][j] = 1;
 						moved_finished = false;
 						rtn = true;
@@ -386,6 +423,7 @@ namespace States {
 							 &&(j==2||cur_moves[i][j+1]!=2)
 							 &&(!merged[i][j]&&(j==0||!merged[i][j-1]))) {
 						cur_moves[i][j] = 2;
+						if (j < 2) cur_moves[i][j + 1] = 0;
 						moved_finished = false;
 						rtn = true;
 					}
@@ -404,13 +442,16 @@ namespace States {
 				}
 				for (int i = 0; i < 4; i++) {
 					for (int j = 2; j >=0; j--) {
+						if (cur_moves[i][j]) clearBoard(j, j + 1, i, i);
+					}
+				}
+				for (int i = 0; i < 4; i++) {
+					for (int j = 2; j >= 0; j--) {
 						switch (cur_moves[i][j]) {
 							case 1:
-								clearBoard(j, j + 1, i, i);
 								drawBlock(Board[i][j], j*0.5f - 0.75f + time_passed * scale, i*0.5f - 0.75f);
 								break;
 							case 2:
-								clearBoard(j, j + 1, i, i);
 								drawBlock(Board[i][j] + 1, j*0.5f - 0.75f + time_passed * scale, i*0.5f - 0.75f);
 								break;
 							case 0:
@@ -429,7 +470,9 @@ namespace States {
 							if (j != 0) {
 								merged[i][j] = merged[i][j - 1];
 							}
-							merged[i][j] = false;
+							else {
+								merged[i][j] = false;
+							}
 							break;
 						case 2:
 							Board[i][j + 1] = Board[i][j] + 1;
@@ -453,7 +496,7 @@ namespace States {
 			int cur_moves[3][4]{};
 			for (int i = 2; i >=0; i--) {
 				for (int j = 0; j < 4; j++) {
-					if (!Board[i+1][j] && Board[i][j]) {
+					if (Board[i][j]&&((!Board[i+1][j] || ( i != 2 && cur_moves[i + 1][j]) ) )) {
 						cur_moves[i][j] = 1;
 						moved_finished = false;
 						rtn = true;
@@ -462,6 +505,7 @@ namespace States {
 							   && ( i == 2 || ( cur_moves[i + 1][j] != 2 ))
 							   && (( !merged[i][j] ) && ( i == 0 || !merged[i-1][j] ))) {
 							cur_moves[i][j] = 2;
+							if (i < 2) cur_moves[i + 1][j] = 0;
 							moved_finished = false;
 							rtn = true;
 					}
@@ -480,13 +524,16 @@ namespace States {
 				}
 				for (int i = 2; i >=0; i--) {
 					for (int j = 0; j < 4; j++) {
+						if (cur_moves[i][j]) clearBoard(j, j, i, i + 1);
+					}
+				}
+				for (int i = 2; i >= 0; i--) {
+					for (int j = 0; j < 4; j++) {
 						switch (cur_moves[i][j]) {
 							case 1:
-								clearBoard(j, j, i, i + 1);
 								drawBlock(Board[i][j], j*0.5f - 0.75f, i*0.5f - 0.75f + time_passed * scale);
 								break;
 							case 2:
-								clearBoard(j, j, i, i + 1);
 								drawBlock(Board[i][j] + 1, j*0.5f - 0.75f, i*0.5f - 0.75f + time_passed * scale);
 								break;
 							case 0:
@@ -496,16 +543,19 @@ namespace States {
 				}
 				glFlush();
 			}
-			for (int i = 2; i >= 0; i--) {
+			for (int i = 2; i >=0; i--) {
 				for (int j = 0; j < 4; j++) {
 					switch (cur_moves[i][j]) {
 						case 1:
 							Board[i + 1][j] = Board[i][j];
 							Board[i][j] = 0;
 							if (i != 0) {
-								merged[i][j] = merged[i - 1][j];
+								merged[i][j] = merged[i -1][j];
+								merged[i - 1][j] = false;
 							}
-							merged[i][j] = false;
+							else {
+								merged[i][j] = false;
+							}
 							break;
 						case 2:
 							Board[i + 1][j] = Board[i][j] + 1;
@@ -522,20 +572,12 @@ namespace States {
 	}
 
 	void State_2048::clearBoard(int x0, int x1, int y0, int y1) {
-		float texX0 = x0 / 8.0f ;
-		float texX1 = ( x1 - x0 + 1 ) / 8.0f;
-		float texY0 = y0 / 4.0f;
-		float texY1 = ( y1 - y0 + 1 ) / 4.0f;
-		float X0 = x0 * 0.5f - 1.0f;
-		float Y0 = y0 * 0.5f - 1.0f;
-		float X1 = ( x1 - x0 + 1) * 0.5f;
-		float Y1 = ( y1 - y0 + 1) * 0.5f;
-		TextureModel->data.pos = glm::vec4(X0, Y0, 0.0f, 1.0f);
-		TextureModel->data.vec1 = glm::vec3(X1, 0.0f, 0.0f);
-		TextureModel->data.vec2 = glm::vec3(0.0f, Y1, 0.0f);
-		TextureModel->data.tex_ori = glm::vec2(texX0, texY0);
-		TextureModel->data.tex_vec1 = glm::vec2(texX1, 0.0f);
-		TextureModel->data.tex_vec2 = glm::vec2(0.0f, texY1);
+		TextureModel->data.pos = glm::vec4(x0 * 0.5f - 1.0f, y0 * 0.5f - 1.0f, 0.0f, 1.0f);
+		TextureModel->data.vec1 = glm::vec3(( x1 - x0 + 1 ) * 0.5f, 0.0f, 0.0f);
+		TextureModel->data.vec2 = glm::vec3(0.0f, ( y1 - y0 + 1 ) * 0.5f, 0.0f);
+		TextureModel->data.tex_ori = glm::vec2(x0 / 8.0f, y0 / 4.0f);
+		TextureModel->data.tex_vec1 = glm::vec2(( x1 - x0 + 1 ) / 8.0f, 0.0f);
+		TextureModel->data.tex_vec2 = glm::vec2(0.0f, ( y1 - y0 + 1 ) / 4.0f);
 		TextureModel->Update();
 		TextureModel->Draw();
 	}

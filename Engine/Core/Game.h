@@ -48,6 +48,7 @@ namespace Engine {
 			virtual void notifyPos(int width, int height, size_t contextID = 0) = 0;
 			virtual void notifySize(int width, int height, size_t contextID = 0) = 0;
 			virtual void notifyFBSize(int width, int height, size_t contextID = 0) = 0;
+			virtual void notifyKey(int key, int scancode, int action, int mods, size_t contextID = 0) = 0;
 		};
 	}
 }

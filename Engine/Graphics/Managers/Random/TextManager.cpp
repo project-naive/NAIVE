@@ -20,7 +20,7 @@ namespace Engine {
 				ifs.seekg(0);
 				ifs.read(buffer, size);
 				loadFace(buffer, size);
-				genCharTexture(0, 128, 48);
+				genCharTexture(0, 128, 120);
 				unloadFace();
 				delete[] buffer;
 				size_t width, height;

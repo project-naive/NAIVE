@@ -19,6 +19,7 @@ namespace States {
 		void Update() override final;
 		void Loop() override final;
 	private:
+		void notifyKey(int key, int scancode, int action, int mods, size_t contextID = 0) override final{}
 		bool notifyContextClose(size_t ID) override final;
 		const char* text = "Hello World!";
 		float FPS_cache = 0;

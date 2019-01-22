@@ -35,4 +35,7 @@ public:
 	void notifyIconify(int flag, size_t contextID = 0) override final {};
 	void notifyPos(int width, int height, size_t contextID = 0) override final {};
 	void notifySize(int width, int height, size_t contextID = 0) override final {};
+	void notifyKey(int key, int scancode, int action, int mods, size_t contextID = 0) override final {
+		state->notifyKey(key, scancode, action, mods, contextID);
+	};
 };

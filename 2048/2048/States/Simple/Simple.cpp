@@ -125,17 +125,17 @@ namespace States {
 			PrivateModels.TriangleModel.Draw();
 			PrivateModels.FanModel.Begin();
 			PrivateModels.FanModel.Draw();
-			Managers.TextManager.renderText(text, glm::vec2(0.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 2, strlen(text));
+			Managers.TextManager.renderText(text, glm::vec2(0.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.8f, strlen(text));
 			std::ostringstream oss;
 			oss << "FPS:  " << FPS;
-			Managers.TextManager.renderText(oss.str().c_str(), glm::vec2(40.0f, 900.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),2);
+			Managers.TextManager.renderText(oss.str().c_str(), glm::vec2(40.0f, 900.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),0.8f);
 			oss.str("");
 			oss << "Prev Frame Update FPS:  " << updateFPS;
-			Managers.TextManager.renderText(oss.str().c_str(), glm::vec2(40.0f, 860.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.8);
+			Managers.TextManager.renderText(oss.str().c_str(), glm::vec2(40.0f, 860.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.32f);
 			oss.str("");
 			oss << "FPS (Lower):  " << std::min(FPS, lowerFPS);
 			lowerFPS = 10000;
-			Managers.TextManager.renderText(oss.str().c_str(), glm::vec2(40.0f, 800.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0);
+			Managers.TextManager.renderText(oss.str().c_str(), glm::vec2(40.0f, 800.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.4f);
 			//Do stuff with the rendered render buffer
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 			Managers.ContextManager.GetCurrentResolution(width, height);

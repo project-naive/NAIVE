@@ -44,6 +44,7 @@ namespace Engine {
 			glfwSetWindowSizeCallback(info.Basic_Info.Window, info.Extended_Info.Size);
 			glfwSetFramebufferSizeCallback(info.Basic_Info.Window, info.Extended_Info.FBSize);
 			//Add input initializations and callbacks here, eg keyboard and joystick here...
+			glfwSetKeyCallback(info.Basic_Info.Window, info.Extended_Info.Key);
 			glfwMakeContextCurrent(info.Basic_Info.Window);
 			glfwSwapInterval(info.Extended_Info.swap_interval);
 			glewExperimental = true;
@@ -115,9 +116,14 @@ namespace Engine {
 						cur_game.notifySize(width, height, cur_game.Managers.ContextManager.GetContext(window));
 					}
 				}
+				namespace InputCallback {
+					void Key(GLFWwindow * window, int key, int scancode, int action, int mods) {
+						Core::Game& cur_game = *( Core::Active_Game );
+						cur_game.notifyKey(key, scancode, action, mods, cur_game.Managers.ContextManager.GetContext(window));
+					}
+				}
 			}
 		}
 	}
 }
-
 

@@ -178,7 +178,7 @@
     <ClCompile Include="2048\States\State_2048\State_2048.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="C:\RudeBuildCache\2048_10e9acc0f7160c5b8b7f3b3f2f1fb185\Release-x64\2048\20481.cpp" />
+    <ClCompile Include="C:\RudeBuildCache\2048_10e9acc0f7160c5b8b7f3b3f2f1fb185\Debug-x64\2048\20481.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2048\Game_2048.h" />
@@ -202,6 +202,8 @@
   <ItemGroup>
     <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.frag" />
     <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.vert" />
+    <None Include="2048\States\State_2048\Models\Block\Block.frag" />
+    <None Include="2048\States\State_2048\Models\Block\Block.vert" />
     <None Include="2048\States\State_2048\Models\Fan\Fan.frag" />
     <None Include="2048\States\State_2048\Models\Fan\Fan.vert" />
   </ItemGroup>

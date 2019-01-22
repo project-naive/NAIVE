@@ -57,7 +57,7 @@
     <ClCompile Include="Graphics\Text\FTF.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="C:\RudeBuildCache\2048_10e9acc0f7160c5b8b7f3b3f2f1fb185\Release-x64\Engine\Engine1.cpp" />
+    <ClCompile Include="C:\RudeBuildCache\2048_10e9acc0f7160c5b8b7f3b3f2f1fb185\Debug-x64\Engine\Engine1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Game.h" />
