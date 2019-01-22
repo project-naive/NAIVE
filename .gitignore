@@ -299,7 +299,6 @@ __pycache__/
 *.xsd.cs
 
 #Project-specific
-[Aa]rchive/
 [Bb]uild/
 [Ii]ntermediates/
 [Tt]est/
@@ -319,7 +318,6 @@ MyLibrary/
 *.ilk
 *.iobj
 *.ipdb
-*.zip
 *.dat
 
 
