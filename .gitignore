@@ -301,7 +301,6 @@ __pycache__/
 #Project-specific
 [Bb]uild/
 [Ii]ntermediates/
-[Tt]est/
 MyLibrary/
 .leu
 *.png

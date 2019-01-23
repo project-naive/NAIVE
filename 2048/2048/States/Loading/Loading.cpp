@@ -18,7 +18,7 @@ namespace States {
 
 	void Loading::Draw() {
 		Managers.TextManager.renderText(text_code, glm::vec2(20.0f, 20.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, strlen(text));
-		Managers.ContextManager.Refresh();
+		Managers.ContextManager.SwapBuffers();
 	}
 	void Loading::Update(){}
 	void Loading::Loop(){

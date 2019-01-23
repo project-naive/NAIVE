@@ -2,21 +2,23 @@
 
 #include <Core\Game.h>
 
-class Game_2048:
+class Test:
 	public Engine::Core::Game {
 public:
-	Game_2048(Engine::Graphics::WindowInfo& info);
-	~Game_2048();
+	Test(Engine::Graphics::WindowInfo& info);
+	~Test();
 	void notifyRefresh(size_t contextID) override final {
 		state->Refresh(contextID);
 //		Managers.ContextManager.SwapBuffers();
 	}
-	void MainLoop() override final;
+	void MainLoop() override final {
+		while (running) {
+			state->Loop();
+		}
+	};
 	void notifyFBSize(int width, int height, size_t contextID = 0) override final {
 		Managers.ContextManager.Resize(width, height, contextID);
 		state->Refresh(contextID);
-//		Managers.ContextManager.SwapBuffers();
-//		state->Draw();
 	};
 	virtual void notifyClose(size_t contextID = 0) override final {
 		if (!state->notifyContextClose(contextID)) {
