@@ -7,6 +7,8 @@ namespace Engine {
 		namespace Managers {
 			Context::Context(Graphics::WindowInfo& default_context) {
 				glfwSetErrorCallback(Contexts::Default::glfwErrorCallback);
+				std::clog << "GLFW Version string:\n"
+					<< glfwGetVersionString() << '\n' << std::endl;
 				if (!glfwInit()) {
 					std::cerr << "Error initializing glfw!\n" << std::endl;
 					exit(EXIT_FAILURE);
@@ -14,7 +16,7 @@ namespace Engine {
 				std::clog << "GLFW Initialized!\n" << std::endl;
 				Contexts = new Graphics::Context*[1];
 				context_cache = 1;
-				Contexts[0] = new Graphics::Context(default_context);
+				Contexts[0] = new Graphics::Context(default_context,0);
 				context_count = 1;
 				current = 0;
 				display = Contexts[0]->display.Basic_Info;
@@ -38,7 +40,7 @@ namespace Engine {
 					display.height = height;
 					glViewport(0, 0, GLsizei(height), GLsizei(width));
 				} else {
-					Graphics::Window_Basic_Info& info = Contexts[ID]->display.Basic_Info;
+					Graphics::WindowInfo::Window_Basic_Info& info = Contexts[ID]->display.Basic_Info;
 					info.width = width;
 					info.height = height;
 					glfwMakeContextCurrent(info.Window);
@@ -62,7 +64,7 @@ namespace Engine {
 				}
 				if (unload_count) {
 					size_t rtn = unloaded[unload_count-1];
-					Contexts[rtn] = new Graphics::Context(info, shared);
+					Contexts[rtn] = new Graphics::Context(info, rtn, shared);
 					unload_count--;
 					context_count++;
 					current = rtn;
@@ -83,7 +85,7 @@ namespace Engine {
 					context_cache = new_size;
 					delete[] new_cache;
 				}
-				Contexts[context_count] = new Graphics::Context(info, shared);
+				Contexts[context_count] = new Graphics::Context(info, context_count, shared);
 				current = context_count;
 				display = Contexts[current]->display.Basic_Info;
 				d_width = Contexts[current]->default_width;
@@ -161,49 +163,49 @@ namespace Engine {
 				if(ID >= context_count || !Contexts[ID]) return nullptr;
 				Graphics::WindowInfo& info = Contexts[ID]->display;
 				GLFWwindowclosefun rtn = glfwSetWindowCloseCallback(info.Basic_Info.Window, function);
-				info.Extended_Info.Close = function;
+				info.Extended_Info.Callback.Window.Close = function;
 				return rtn;
 			}
 			GLFWwindowrefreshfun   Context::SetRefreshCallback(size_t ID, GLFWwindowrefreshfun function){
 				if(ID >= context_count || !Contexts[ID]) return nullptr;
 				Graphics::WindowInfo& info = Contexts[ID]->display;
 				GLFWwindowrefreshfun rtn = glfwSetWindowRefreshCallback(info.Basic_Info.Window, function);
-				info.Extended_Info.Refresh = function;
+				info.Extended_Info.Callback.Window.Refresh = function;
 				return rtn;
 			}
 			GLFWwindowfocusfun     Context::SetFocusCallback(size_t ID, GLFWwindowfocusfun function){
 				if(ID >= context_count || !Contexts[ID]) return nullptr;
 				Graphics::WindowInfo& info = Contexts[ID]->display;
 				GLFWwindowfocusfun rtn = glfwSetWindowFocusCallback(info.Basic_Info.Window, function);
-				info.Extended_Info.Focus = function;
+				info.Extended_Info.Callback.Window.Focus = function;
 				return rtn;
 			}
 			GLFWwindowiconifyfun   Context::SetIconifyCallback(size_t ID, GLFWwindowiconifyfun function){
 				if(ID >= context_count || !Contexts[ID]) return nullptr;
 				Graphics::WindowInfo& info = Contexts[ID]->display;
 				GLFWwindowiconifyfun rtn = glfwSetWindowIconifyCallback(info.Basic_Info.Window, function);
-				info.Extended_Info.Iconify = function;
+				info.Extended_Info.Callback.Window.Iconify = function;
 				return rtn;
 			}
 			GLFWwindowposfun       Context::SetPosCallback(size_t ID, GLFWwindowposfun function){
 				if(ID >= context_count || !Contexts[ID]) return nullptr;
 				Graphics::WindowInfo& info = Contexts[ID]->display;
 				GLFWwindowposfun rtn = glfwSetWindowPosCallback(info.Basic_Info.Window, function);
-				info.Extended_Info.Pos = function;
+				info.Extended_Info.Callback.Window.Pos = function;
 				return rtn;
 			}
 			GLFWwindowsizefun      Context::SetSizeCallback(size_t ID, GLFWwindowsizefun function){
 				if(ID >= context_count || !Contexts[ID]) return nullptr;
 				Graphics::WindowInfo& info = Contexts[ID]->display;
 				GLFWwindowsizefun rtn = glfwSetWindowSizeCallback(info.Basic_Info.Window, function);
-				info.Extended_Info.Size = function;
+				info.Extended_Info.Callback.Window.Size = function;
 				return rtn;
 			}
 			GLFWframebuffersizefun Context::SetFBSizeCallback(size_t ID, GLFWwindowsizefun function){
 				if(ID >= context_count || !Contexts[ID]) return nullptr;
 				Graphics::WindowInfo& info = Contexts[ID]->display;
 				GLFWframebuffersizefun rtn = glfwSetFramebufferSizeCallback(info.Basic_Info.Window, function);
-				info.Extended_Info.FBSize = function;
+				info.Extended_Info.Callback.Window.FBSize = function;
 				return rtn;
 			}
 		}
