@@ -10,6 +10,12 @@
     <ClCompile Include="Test\Test.cpp">
       <Filter>Test</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Graphics\Context\Callback.cpp">
+      <Filter>Engine\Graphics\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Context\Context.cpp">
+      <Filter>Engine\Graphics\Context</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Test\States\Playground\Playground.h">
@@ -17,6 +23,15 @@
     </ClInclude>
     <ClInclude Include="Test\Test.h">
       <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Context\Callback.h">
+      <Filter>Engine\Graphics\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Context\Context.h">
+      <Filter>Engine\Graphics\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Context\WindowInfo.h">
+      <Filter>Engine\Graphics\Context</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -28,6 +43,15 @@
     </Filter>
     <Filter Include="Test\States\Playground">
       <UniqueIdentifier>{35df9543-5a59-49b2-851d-5c42813117f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{68d46735-d191-49b6-906c-039332a2728e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics">
+      <UniqueIdentifier>{7ea4960c-6a43-4ba4-be52-1d17fed0ca73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Context">
+      <UniqueIdentifier>{2daa42c9-7776-424e-84bc-8009b8afa1cd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
