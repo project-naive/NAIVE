@@ -23,12 +23,14 @@ public:
 	class TaskQueue {
 	private:
 		//queue always ends with a nullptr
+		//functions return true for rescheduling 
+		//if dependent data is not ready after timeout.
 		std::function<bool()>* queue = nullptr;
-		std::atomic<size_t> queue_start = 0;
+		size_t queue_start = 0;
 		//end is the position of the nullptr
-		std::atomic<size_t> queue_end = 0;
+		size_t queue_end = 0;
 		//size of queue structure - 1, same as number of available slots
-		std::atomic<size_t> queue_cache = 0;
+		size_t queue_cache = 0;
 		std::mutex mtx;
 	public:
 		~TaskQueue();
@@ -41,6 +43,7 @@ public:
 	};
 	ThreadPool();
 	ThreadPool(unsigned num);
+	//ThreadPools can only be destroyed on the creation thread.
 	~ThreadPool();
 	const unsigned available;
 	unsigned GetUsed() const;
@@ -49,14 +52,17 @@ public:
 
 	void PollAllTasks();
 	void PollTasks();
+	void PushTask(const std::function<bool()> added);
 	void ScheduleTasks(const TaskQueue& added);
-	bool ThreadTasks(const TaskQueue& added,unsigned thread);
+	void ClearSchedule();
+	void ClearAllTasks();
 
+	bool ThreadTasks(const TaskQueue& added,unsigned thread);
 	bool ThreadWaiting(unsigned thread);
 	size_t QuerieSchedule();
 	size_t QuerieThread(unsigned thread);
 	void WaitAll();
-	void WaitThread(unsigned ID);
+	bool WaitThread(unsigned ID);
 private:
 	std::mutex mtx;
 	std::atomic<unsigned> used;
@@ -65,13 +71,14 @@ private:
 		std::mutex mtx{};
 		std::condition_variable cv{};
 		TaskQueue queue{};
-		std::atomic<bool> finished = true;
-		std::atomic<bool> active = true;
-		std::atomic<size_t> num_done = 0;
-		std::atomic<bool> ready_exit = false;
+		bool finished = true;
+		bool active = true;
+		size_t num_done = 0;
+		bool ready_exit = false;
 	};
 	passed_vals* const states;
 	std::thread* const threads;
 	static void deploy_func(passed_vals* vals);
+	const std::thread::id creation_thread;
 };
 

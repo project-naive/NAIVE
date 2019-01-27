@@ -11,7 +11,8 @@ ThreadPool::ThreadPool():
 		all_available = 0;
 		return aval; }()),
 	states(new passed_vals[available]{}),
-	threads(new std::thread[available]{}) {
+	threads(new std::thread[available]{}),
+	creation_thread(std::this_thread::get_id()){
 	switch (available) {
 		case unsigned(-1):
 			throw
@@ -34,7 +35,8 @@ ThreadPool::ThreadPool(unsigned num):
 	available([num](){
 	if(num<=all_available) {all_available-=num; return num;} else throw std::runtime_error("Not Enough hardware for thread pool creation!");}()),
 	states(new passed_vals[available]{}),
-	threads(new std::thread[available]{}) {
+	threads(new std::thread[available]{}),
+	creation_thread(std::this_thread::get_id()) {
 	switch (available) {
 		case unsigned(-1) :
 			throw
@@ -54,15 +56,20 @@ ThreadPool::ThreadPool(unsigned num):
 }
 
 ThreadPool::~ThreadPool() {
+	std::thread::id current_thread =std::this_thread::get_id();
 	for (unsigned i = 0; i < available; i++) {
-		std::unique_lock<std::mutex> lck(states[i].mtx);
+		if (threads[i].get_id() != current_thread) {
+			std::unique_lock<std::mutex> lck(states[i].mtx);
+		}
 		states[i].active = false;
 		states[i].queue.clear();
 		states[i].cv.notify_all();
 	}
 	for (unsigned i = 0; i < available; i++) {
-		std::unique_lock<std::mutex> lck(states[i].mtx);
-		states[i].cv.wait(lck, [this, i]() {return bool(this->states[i].ready_exit); });
+		if (threads[i].get_id() != current_thread) {
+			std::unique_lock<std::mutex> lck(states[i].mtx);
+			states[i].cv.wait(lck, [this, i]() {return bool(this->states[i].ready_exit); });
+		}
 	}
 	delete[] threads;
 	delete[] states;
@@ -70,14 +77,20 @@ ThreadPool::~ThreadPool() {
 
 
 void ThreadPool::PollTasks() {
-	for (unsigned i = 0; !MasterQueue.empty() && i < available && states[i].active; i++) {
-		if (states[i].finished) {
-			std::unique_lock<std::mutex> lck(states[i].mtx);
-			states[i].queue.push(MasterQueue.pop());
-			states[i].finished = false;
-			states[i].cv.notify_all();
-		}
+	for (unsigned i = 0; 
+	!MasterQueue.empty() 
+	&& i < available 
+	&& states[i].active 
+	&& states[i].finished; i++) {
+		std::unique_lock<std::mutex> lck(states[i].mtx);
+		states[i].queue.push(MasterQueue.pop());
+		states[i].finished = false;
+		states[i].cv.notify_all();
 	}
+}
+
+void ThreadPool::PushTask(const std::function<bool()> added) {
+	MasterQueue.push(added);
 }
 
 void ThreadPool::PollAllTasks() {
@@ -95,7 +108,7 @@ unsigned ThreadPool::AddThread() {
 	if(used>=available) return -1;
 	unsigned rtn;
 	for (unsigned i = 0; i < available; i++) {
-		if (!states[i].active&&states[i].ready_exit) {
+		if (!states[i].active && states[i].ready_exit) {
 			states[i].active = true;
 			states[i].ready_exit = false;
 			states[i].finished = true;
@@ -115,6 +128,10 @@ bool ThreadPool::RemThread(unsigned ID) {
 	std::lock_guard<std::mutex> lck(mtx);
 	if(ID>=available) return false;
 	if(!states[ID].active) return false;
+	if(threads[ID].get_id()==std::this_thread::get_id()){ 
+		states[ID].active = false;
+		return true;
+	}
 	std::unique_lock<std::mutex> thread_lck(states[ID].mtx);
 	states[ID].active = false;
 	states[ID].queue.clear();
@@ -140,6 +157,20 @@ void ThreadPool::ScheduleTasks(const TaskQueue & added) {
 	MasterQueue.append(added);
 }
 
+void ThreadPool::ClearSchedule() {
+	MasterQueue.clear();
+}
+
+void ThreadPool::ClearAllTasks() {
+	std::thread::id current_thread = std::this_thread::get_id();
+	for (unsigned i = 0; i < available; i++) {
+		if (threads[i].get_id() != current_thread)
+			std::unique_lock<std::mutex> lck(states[i].mtx);
+		states[i].queue.clear();
+		states[i].cv.notify_all();
+	}
+}
+
 bool ThreadPool::ThreadWaiting(unsigned thread) {
 	return states[thread].active && states[thread].finished;
 }
@@ -154,16 +185,19 @@ size_t ThreadPool::QuerieSchedule() {
 	return MasterQueue.waiting();
 }
 
-void ThreadPool::WaitThread(unsigned ID) {
-	if (!states[ID].active) return;
-	if (states[ID].ready_exit || states[ID].finished) return;
+bool ThreadPool::WaitThread(unsigned ID) {
+	if (!states[ID].active) return false;
+	if (states[ID].ready_exit || states[ID].finished) return true;
+	if(threads[ID].get_id()==std::this_thread::get_id()) return false;
 	std::unique_lock<std::mutex> lck(states[ID].mtx);
 	states[ID].cv.wait(lck, [this, ID]() {return bool(states[ID].finished); });
+	return true;
 }
 
 void ThreadPool::WaitAll() {
+	std::thread::id current_thread = std::this_thread::get_id();
 	for (unsigned i = 0; i < available; i++) {
-		if (std::this_thread::get_id() != threads[i].get_id()) {
+		if (threads[i].get_id() != current_thread) {
 			if (!states[i].active) continue;
 			if (states[i].ready_exit || states[i].finished) continue;
 			std::unique_lock<std::mutex> lck(states[i].mtx);
@@ -248,11 +282,11 @@ std::function<bool()> ThreadPool::TaskQueue::pop() {
 }
 
 bool ThreadPool::TaskQueue::empty() {
-	return queue_start == queue_end;
+	return queue_end == queue_start;
 }
 
 size_t ThreadPool::TaskQueue::waiting() {
-	if (queue_start <= queue_end) return queue_end - queue_start;
+	if (queue_end >= queue_start) return queue_end - queue_start;
 	else return queue_cache - queue_start + queue_end + 1;
 }
 
