@@ -25,13 +25,13 @@ public:
 		//queue always ends with a nullptr
 		//functions return true for rescheduling 
 		//if dependent data is not ready after timeout.
+		std::atomic<bool> in_use = false;
 		std::function<bool()>* queue = nullptr;
 		size_t queue_start = 0;
 		//end is the position of the nullptr
 		size_t queue_end = 0;
 		//size of queue structure - 1, same as number of available slots
 		size_t queue_cache = 0;
-		std::mutex mtx;
 	public:
 		~TaskQueue();
 		void clear();
@@ -50,7 +50,7 @@ public:
 	unsigned AddThread();
 	bool RemThread(unsigned ID);
 
-	void PollAllTasks();
+	void PollAllTasks(float timeout = 0);
 	void PollTasks();
 	void PushTask(const std::function<bool()> added);
 	void ScheduleTasks(const TaskQueue& added);
@@ -61,8 +61,8 @@ public:
 	bool ThreadWaiting(unsigned thread);
 	size_t QuerieSchedule();
 	size_t QuerieThread(unsigned thread);
-	void WaitAll();
-	bool WaitThread(unsigned ID);
+	unsigned WaitAll(float timeout = 0);
+	bool WaitThread(unsigned ID, float timeout = 0);
 private:
 	std::mutex mtx;
 	std::atomic<unsigned> used;
@@ -71,7 +71,7 @@ private:
 		std::mutex mtx{};
 		std::condition_variable cv{};
 		TaskQueue queue{};
-		bool finished = true;
+		std::atomic<bool> finished = true;
 		bool active = true;
 		size_t num_done = 0;
 		bool ready_exit = false;

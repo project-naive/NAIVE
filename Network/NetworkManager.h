@@ -64,7 +64,7 @@ public:
 	bool PollConnections(fd_set* read_ready, fd_set* write_ready, fd_set* exception, timeval* timeout);
 	fd_set to_read_fd;
 	fd_set to_write_fd;
-	int max_fd;
+	size_t max_fd;
 protected:
 	TCPServer(size_t LSocket, const char* service, const addrinfo* const addri, const size_t queue_size);
 private:
