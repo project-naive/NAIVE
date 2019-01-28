@@ -4,6 +4,11 @@
 //Thread by default do not exit on task finish and waits for new tasks
 //Threads have separate pools of tasks, and the pool itself has a
 //pool of tasks that can be assigned to available threads on a PollTasks call.
+//
+//Note that a thread will go to wait when the queue gets empty, and waking up from
+//such a sleep can be costly at times. It is thus recommended to keep things busy
+
+
 
 #pragma once
 
@@ -62,7 +67,9 @@ public:
 
 	//No mutex involved in Poll functions and Schedule functions!
 	void PollAllTasks(float timeout = 0);
+	void PollAllTasks_WaitingOnly(float timeout = 0);
 	void PollTasks();
+	void PollTasks_WaitingOnly();
 	void PushTask(const std::function<bool()>& added);
 	void ScheduleTasks(const TaskQueue& added);
 	void ClearSchedule();
@@ -71,9 +78,11 @@ public:
 	bool ThreadTasks(const TaskQueue& added, unsigned thread);
 	bool ThreadPush(const std::function<bool()>& added, unsigned thread);
 	bool ThreadAvailable(unsigned thread);
-	size_t ThreadTODO(unsigned thread);
+//	bool ThreadAvailable_strict(unsigned thread);
 	size_t QuerieSchedule();
+//	size_t QuerieSchedule_strict();
 	size_t QuerieThread(unsigned thread);
+//	size_t QuerieThread_strict(unsigned thread);
 	unsigned WaitAll(float timeout = 0);
 	bool WaitThread(unsigned ID, float timeout = 0);
 	//These functions implements with the modifying set to block all current
@@ -84,6 +93,8 @@ public:
 	//the current queue has finished processing
 	unsigned WaitAllBlock(float timeout = 0);
 	bool WaitThreadBlock(unsigned ID, float timeout = 0);
+//	unsigned WaitAll_strict(float timeout = 0);
+//	bool WaitThreadBlock_strict(unsigned ID, float timeout = 0);
 private:
 	std::mutex mtx;
 	std::atomic<unsigned> used;
@@ -96,10 +107,10 @@ private:
 		//Lock both this and the mutex for long-running dispatchs
 		//Light-weight and fast changes should use this indicator instead.
 		std::atomic<bool> modifying = false;
+		std::atomic<bool> waiting = false;
 		std::mutex mtx{};
 		std::condition_variable cv{};
 		TaskQueue queue{};
-		bool waiting = false;
 		bool active = true;
 		bool finished = true;
 		size_t num_done = 0;

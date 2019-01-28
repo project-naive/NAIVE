@@ -9,15 +9,17 @@ size_t counts[7]{};
 
 bool test(ThreadPool* pool, int push_ID) {
 /*
-	std::lock_guard<std::mutex> lck(cout_mtx);
+	{
+//	std::lock_guard<std::mutex> lck(cout_mtx);
 	std::cout << "Executing dispatched function!\nCount of execution: " << ++times
 		<< "\nTask ID: " << push_ID
 		<< "\nThread Index: " << GetThreadIndex()
 		<< "\nTask execution count: " << ++counts[push_ID]
 		<< "\nHello from thread " << std::this_thread::get_id() << '\n' << std::endl;
-*/
+	}
+	*/
 	pool->PushTask(std::bind(*test, pool, push_ID));
-	pool->PollTasks();
+	pool->PollTasks_WaitingOnly();
 	return false;
 }
 
@@ -43,10 +45,14 @@ int main() {
 		queue.push(std::bind(test, &pool, 5));
 		queue.push(std::bind(test, &pool, 6));
 		pool.ScheduleTasks(queue);
-		while (pool.QuerieSchedule()) {
-			pool.PollAllTasks();
-			pool.WaitAll();
-		}
+		do{
+			while (pool.QuerieSchedule()) {
+				pool.PollAllTasks_WaitingOnly();
+				pool.WaitAll();
+			}
+			std::this_thread::sleep_for(std::chrono::duration<float>(1.0));
+		} while (pool.QuerieSchedule());
+		system("pause");
 	} catch (std::exception& e) {
 		std::cout<<e.what();
 	}
