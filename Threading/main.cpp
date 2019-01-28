@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "ThreadPool.h"
+#include "ThreadPool\ThreadPool.h"
 
 std::mutex cout_mtx;
 std::atomic<size_t> times = 0;
@@ -8,13 +8,12 @@ std::atomic<size_t> times = 0;
 size_t counts[7]{};
 
 bool test(ThreadPool* pool, int push_ID) {
-//	std::lock_guard<std::mutex> lck(cout_mtx);
-/*
+	std::lock_guard<std::mutex> lck(cout_mtx);
 	std::cout << "Executing dispatched function!\nCount of execution: " << ++times
 		<< "\nTask ID: " << push_ID
+		<< "\nThread Index: " << GetThreadIndex()
 		<< "\nTask execution count: " << ++counts[push_ID]
 		<< "\nHello from thread " << std::this_thread::get_id() << '\n' << std::endl;
-		*/
 	pool->PushTask(std::bind(*test, pool, push_ID));
 	pool->PollTasks();
 	return false;
@@ -42,8 +41,10 @@ int main() {
 		queue.push(std::bind(test, &pool, 5));
 		queue.push(std::bind(test, &pool, 6));
 		pool.ScheduleTasks(queue);
-		pool.PollAllTasks();
-		pool.WaitAll();
+		while (pool.QuerieSchedule()) {
+			pool.PollAllTasks();
+			pool.WaitAll();
+		}
 	} catch (std::exception& e) {
 		std::cout<<e.what();
 	}
