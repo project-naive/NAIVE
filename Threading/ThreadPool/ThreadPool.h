@@ -16,8 +16,8 @@
 #include <iostream>
 
 extern unsigned all_available;
-extern const std::thread::id main_thread_id;
 
+//unsigned(-1) for main thread and threads not managed by a pool
 unsigned GetThreadIndex(unsigned init_index = -1);
 
 class ThreadPool {
@@ -68,18 +68,34 @@ public:
 	void ClearSchedule();
 	void ClearAllTasks();
 
-	bool ThreadTasks(const TaskQueue& added,unsigned thread);
+	bool ThreadTasks(const TaskQueue& added, unsigned thread);
+	bool ThreadPush(const std::function<bool()>& added, unsigned thread);
 	bool ThreadAvailable(unsigned thread);
 	size_t ThreadTODO(unsigned thread);
 	size_t QuerieSchedule();
 	size_t QuerieThread(unsigned thread);
 	unsigned WaitAll(float timeout = 0);
 	bool WaitThread(unsigned ID, float timeout = 0);
+	//These functions implements with the modifying set to block all current
+	//pushes to the queue
+	//Note that in normal case, such a blocking is a CPU-consuming spin-block
+	//It is recommended only for use when necessary
+	//Also note that all the wait functions instantly releases controll after
+	//the current queue has finished processing
+	unsigned WaitAllBlock(float timeout = 0);
+	bool WaitThreadBlock(unsigned ID, float timeout = 0);
 private:
 	std::mutex mtx;
 	std::atomic<unsigned> used;
 	TaskQueue MasterQueue;
 	struct passed_vals {
+		//The structure is exclusive to the executing thread and values 
+		//are indicators for current execution state,
+		//with the exception of the pool adding things from other thread.
+		//setting this can allow a spin-lock when doing light-weight job.
+		//Lock both this and the mutex for long-running dispatchs
+		//Light-weight and fast changes should use this indicator instead.
+		std::atomic<bool> modifying = false;
 		std::mutex mtx{};
 		std::condition_variable cv{};
 		TaskQueue queue{};
@@ -88,13 +104,6 @@ private:
 		bool finished = true;
 		size_t num_done = 0;
 		bool ready_exit = false;
-		//The structure is exclusive to the executing thread and values 
-		//are indicators for current execution state,
-		//with the exception of the pool adding things from other thread.
-		//setting this can allow a spin-lock when doing light-weight job.
-		//Lock both this and the mutex for long-running dispatchs
-		//Light-weight and fast changes should use this indicator instead.
-		std::atomic<bool> modifying = false;
 		unsigned index;
 	};
 	passed_vals* const states;
