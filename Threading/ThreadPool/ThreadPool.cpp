@@ -3,7 +3,6 @@
 #include <stdexcept>
 
 unsigned all_available = std::thread::hardware_concurrency() - 1;
-const std::thread::id main_thread_id = std::this_thread::get_id();
 
 ThreadPool::ThreadPool():
 	available([](){
@@ -58,9 +57,10 @@ ThreadPool::ThreadPool(unsigned num):
 }
 
 ThreadPool::~ThreadPool() {
-	std::thread::id current_thread =std::this_thread::get_id();
+	unsigned Thread_Index = GetThreadIndex();
 	for (unsigned i = 0; i < available; i++) {
-		if (threads[i].get_id() != current_thread) {
+		if (i != Thread_Index) {
+			while(states[i].modifying.exchange(true));
 			std::unique_lock<std::mutex> lck(states[i].mtx);
 		}
 		states[i].active = false;
@@ -68,7 +68,7 @@ ThreadPool::~ThreadPool() {
 		states[i].cv.notify_all();
 	}
 	for (unsigned i = 0; i < available; i++) {
-		if (threads[i].get_id() != current_thread) {
+		if (i != Thread_Index) {
 			std::unique_lock<std::mutex> lck(states[i].mtx);
 			states[i].cv.wait(lck, [this, i]() {return bool(this->states[i].ready_exit); });
 		}
@@ -82,8 +82,16 @@ void ThreadPool::PollTasks() {
 	for (unsigned i = 0; !MasterQueue.empty() && i < available ; i++) {
 		if (states[i].active && states[i].finished && states[i].queue.empty() && !states[i].modifying.exchange(true)) {
 			while (!states[i].waiting);
-			states[i].queue.push(MasterQueue.pop());
-			states[i].modifying.exchange(false);
+			try{
+				states[i].queue.push(MasterQueue.pop());
+				states[i].modifying.exchange(false);
+			} catch (std::exception& e) {
+				states[i].modifying.exchange(false);
+				throw e;
+			} catch (...) {
+				states[i].modifying.exchange(false);
+				throw;
+			}
 		}
 	}
 	for (unsigned i = 0; i < available; i++) {
@@ -124,6 +132,7 @@ unsigned ThreadPool::AddThread() {
 			states[i].ready_exit = false;
 			states[i].waiting = false;
 			states[i].num_done = 0;
+			states[i].modifying = false;
 			std::thread t(deploy_func, &states[i]);
 			threads[i] = std::move(t);
 			threads[i].detach();
@@ -139,10 +148,11 @@ bool ThreadPool::RemThread(unsigned ID) {
 	if (ID >= available) return false;
 	if (!states[ID].active) return false;
 	std::lock_guard<std::mutex> lck(mtx);
-	if(threads[ID].get_id()==std::this_thread::get_id()){ 
+	if(ID==GetThreadIndex()){ 
 		states[ID].active = false;
 		return true;
 	}
+	while(states[ID].modifying.exchange(true));
 	std::unique_lock<std::mutex> thread_lck(states[ID].mtx);
 	states[ID].active = false;
 	states[ID].queue.clear();
@@ -158,9 +168,37 @@ bool ThreadPool::RemThread(unsigned ID) {
 bool ThreadPool::ThreadTasks(const TaskQueue& added, unsigned thread) {
 	if(thread>=available) return false;
 	if(states[thread].ready_exit || !states[thread].active) return false;
-	states[thread].queue.append(added);
-	states[thread].cv.notify_all();
-	return true;
+	while(!states[thread].modifying.exchange(true));
+	try{
+		states[thread].queue.append(added);
+		states[thread].cv.notify_all();
+		states[thread].modifying = false;
+		return true;
+	} catch (std::exception& e) {
+		states[thread].modifying = false;
+		throw e;
+	} catch (...) {
+		states[thread].modifying = false;
+		throw;
+	}
+}
+
+bool ThreadPool::ThreadPush(const std::function<bool()>& added, unsigned thread) {
+	if (thread >= available) return false;
+	if (states[thread].ready_exit || !states[thread].active) return false;
+	while (!states[thread].modifying.exchange(true));
+	try {
+		states[thread].queue.push(added);
+		states[thread].cv.notify_all();
+		states[thread].modifying = false;
+		return true;
+	} catch (std::exception& e) {
+		states[thread].modifying = false;
+		throw e;
+	} catch (...) {
+		states[thread].modifying = false;
+		throw;
+	}
 }
 
 void ThreadPool::ScheduleTasks(const TaskQueue & added) {
@@ -172,12 +210,15 @@ void ThreadPool::ClearSchedule() {
 }
 
 void ThreadPool::ClearAllTasks() {
-	std::thread::id current_thread = std::this_thread::get_id();
+	unsigned Thread_Index = GetThreadIndex();
 	for (unsigned i = 0; i < available; i++) {
-		if (threads[i].get_id() != current_thread)
-			std::unique_lock<std::mutex> lck(states[i].mtx);
+		if (i != Thread_Index) {
+			while (states[i].modifying.exchange(true));
+				std::unique_lock<std::mutex> lck(states[i].mtx);
+		}
 		states[i].queue.clear();
 		states[i].cv.notify_all();
+		states[i].modifying = false;
 	}
 }
 
@@ -207,7 +248,7 @@ bool ThreadPool::WaitThread(unsigned ID, float timeout) {
 	if (ID >= available) return false;
 	if (!states[ID].active) return false;
 	if (states[ID].ready_exit || states[ID].queue.empty()) return true;
-	if(threads[ID].get_id()==std::this_thread::get_id()) return false;
+	if(ID==GetThreadIndex()) return false;
 	std::unique_lock<std::mutex> lck(states[ID].mtx);
 	if (!timeout) {
 		states[ID].cv.wait(lck, [this, ID]() {return bool(states[ID].queue.empty()); });
@@ -218,12 +259,102 @@ bool ThreadPool::WaitThread(unsigned ID, float timeout) {
 	}
 }
 
-unsigned ThreadPool::WaitAll(float timeout) {
-	std::thread::id current_thread = std::this_thread::get_id();
+
+bool ThreadPool::WaitThreadBlock(unsigned ID, float timeout) {
+	if (ID >= available) return false;
+	if (!states[ID].active) return false;
+	if (states[ID].ready_exit || states[ID].queue.empty()) return true;
+	if (ID == GetThreadIndex()) return false;
+	while (states[ID].modifying.exchange(true));
+	std::unique_lock<std::mutex> lck(states[ID].mtx);
+	if (!timeout) {
+		try {
+			states[ID].cv.wait(lck, [this, ID]() {return bool(states[ID].queue.empty()); });
+		} catch (std::exception& e) {
+			states[ID].modifying = false;
+			throw e;
+		} catch (...) {
+			states[ID].modifying = false;
+			throw;
+		}
+		states[ID].modifying = false;
+		return true;
+	}
+	else {
+		bool rtn;
+		try {
+			rtn = states[ID].cv.wait_for(lck, std::chrono::duration<float>(timeout), [this, ID]() {return bool(states[ID].queue.empty()); });
+		} catch (std::exception& e) {
+			states[ID].modifying = false;
+			throw e;
+		} catch (...) {
+			states[ID].modifying = false;
+			throw;
+		}
+		states[ID].modifying = false;
+		return rtn;
+	}
+}
+
+unsigned ThreadPool::WaitAllBlock(float timeout) {
 	unsigned rtn = 0;
+	unsigned ThreadIndex = GetThreadIndex();
 	if (!timeout) {
 		for (unsigned i = 0; i < available; i++) {
-			if (threads[i].get_id() != current_thread) {
+			if (i != ThreadIndex) {
+				if (!states[i].active) continue;
+				if (states[i].ready_exit || states[i].finished) continue;
+				states[i].modifying.exchange(true);
+				try {
+					std::unique_lock<std::mutex> lck(states[i].mtx);
+					states[i].cv.wait(lck, [this, i]() { return bool(states[i].finished); });
+					states[i].modifying = false;
+				} catch (std::exception& e) {
+					states[i].modifying = false;
+					throw e;
+				} catch (...) {
+					states[i].modifying = false;
+					throw;
+				}
+				rtn++;
+			}
+		}
+		return rtn;
+	} else {
+		std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+		float time_passed = 0;
+		while (timeout > time_passed) {
+			for (unsigned i = 0; i < available && timeout > time_passed; i++) {
+				if (i != ThreadIndex) {
+					if (!states[i].active) continue;
+					if (states[i].ready_exit || states[i].queue.empty()) continue;
+					while(states[i].modifying.exchange(true));
+					try {
+						std::unique_lock<std::mutex> lck(states[i].mtx);
+						rtn += states[i].cv.wait_for(lck, std::chrono::duration<float>(timeout - time_passed), [this, i]() { return bool(states[i].queue.empty()); });
+					} catch (std::exception& e) {
+						states[i].modifying = false;
+						throw e;
+					} catch (...) {
+						states[i].modifying = false;
+						throw;
+					}
+					states[i].modifying = false;
+					time_passed = std::chrono::duration_cast<std::chrono::duration<float>>( std::chrono::steady_clock::now() - start ).count();
+				}
+			}
+			time_passed = std::chrono::duration_cast<std::chrono::duration<float>>( std::chrono::steady_clock::now() - start ).count();
+		}
+		return rtn;
+	}
+}
+
+unsigned ThreadPool::WaitAll(float timeout) {
+	unsigned rtn = 0;
+	unsigned ThreadIndex = GetThreadIndex();
+	if (!timeout) {
+		for (unsigned i = 0; i < available; i++) {
+			if (i != ThreadIndex) {
 				if (!states[i].active) continue;
 				if (states[i].ready_exit || states[i].finished) continue;
 				std::unique_lock<std::mutex> lck(states[i].mtx);
@@ -238,7 +369,7 @@ unsigned ThreadPool::WaitAll(float timeout) {
 		float time_passed = 0;
 		while (timeout > time_passed) {
 			for (unsigned i = 0; i < available && timeout > time_passed; i++) {
-				if (threads[i].get_id() != current_thread) {
+				if (i != ThreadIndex) {
 					if (!states[i].active) continue;
 					if (states[i].ready_exit || states[i].queue.empty()) continue;
 					std::unique_lock<std::mutex> lck(states[i].mtx);
@@ -295,45 +426,61 @@ void ThreadPool::TaskQueue::clear() {
 
 void ThreadPool::TaskQueue::push(const std::function<bool()>& function) {
 	while (in_use.exchange(true));
-	if (( queue_end>queue_start ) && ( queue_end - queue_start == queue_cache )
-		|| ( queue_end<queue_start ) && ( queue_start - 1 == queue_end )) {
-		size_t new_size = size_t(queue_cache*1.618) + 2;
-		std::function<bool()>* new_buffer = new std::function<bool()>[new_size]{};
-		for (size_t i = queue_start; i <= queue_end || ( queue_end<queue_start && i <= queue_cache ); i++) {
-			new_buffer[i - queue_start] = queue[i];
-		}
-		if (queue_end < queue_start) {
-			for (size_t i = 0; i <= queue_end; i++) {
-				new_buffer[queue_cache - queue_start + 1 + i] = queue[i];
+	try{
+		if (( queue_end > queue_start ) && ( queue_end - queue_start == queue_cache )
+			|| ( queue_end < queue_start ) && ( queue_start - 1 == queue_end )) {
+			size_t new_size = size_t(queue_cache*1.618) + 2;
+			std::function<bool()>* new_buffer = new std::function<bool()>[new_size] {};
+			for (size_t i = queue_start; i <= queue_end || ( queue_end < queue_start && i <= queue_cache ); i++) {
+				new_buffer[i - queue_start] = queue[i];
 			}
+			if (queue_end < queue_start) {
+				for (size_t i = 0; i <= queue_end; i++) {
+					new_buffer[queue_cache - queue_start + 1 + i] = queue[i];
+				}
+			}
+			std::swap(queue, new_buffer);
+			size_t temp = queue_cache;
+			queue_end = temp;
+			queue_cache = new_size - 1;
+			queue_start = 0;
+			delete[] new_buffer;
 		}
-		std::swap(queue, new_buffer);
-		size_t temp = queue_cache;
-		queue_end = temp;
-		queue_cache = new_size - 1;
-		queue_start = 0;
-		delete[] new_buffer;
+		if (queue_cache == 0) {
+			queue = new std::function<bool()>[2]{};
+			queue_cache = 1;
+		}
+		queue[queue_end] = function;
+		if (queue_end == queue_cache) queue_end = 0;
+		else queue_end++;
+		queue[queue_end] = nullptr;
+	} catch (std::exception& e) {
+		in_use = false;
+		throw e;
+	} catch (...) {
+		in_use = false;
+		throw;
 	}
-	if (queue_cache == 0) {
-		queue = new std::function<bool()>[2]{};
-		queue_cache = 1;
-	}
-	queue[queue_end] = function;
-	if (queue_end == queue_cache) queue_end = 0;
-	else queue_end++;
-	queue[queue_end] = nullptr;
 	in_use = false;
 }
 
 std::function<bool()> ThreadPool::TaskQueue::pop() {
 	while (in_use.exchange(true));
-	if (queue_start == queue_end) return nullptr;
-	std::function<bool()> rtn = queue[queue_start];
-	queue[queue_start] = nullptr;
-	if (queue_start == queue_cache) queue_start = 0;
-	else queue_start++;
-	in_use = false;
-	return rtn;
+	try{
+		if (queue_start == queue_end) return nullptr;
+		std::function<bool()> rtn = queue[queue_start];
+		queue[queue_start] = nullptr;
+		if (queue_start == queue_cache) queue_start = 0;
+		else queue_start++;
+		in_use = false;
+		return rtn;
+	} catch (std::exception& e) {
+		in_use = false;
+		throw e;
+	} catch (...) {
+		in_use = false;
+		throw;
+	}
 }
 
 bool ThreadPool::TaskQueue::empty() {
@@ -363,56 +510,63 @@ size_t ThreadPool::TaskQueue::waiting_strict() {
 
 void ThreadPool::TaskQueue::append(const TaskQueue & src) {
 	while (in_use.exchange(true));
-	size_t size1 = ( queue_end >= queue_start ) ? queue_end - queue_start : queue_cache - queue_start + queue_end + 1;
-	size_t size2 = ( src.queue_end >= src.queue_start ) ? src.queue_end - src.queue_start : src.queue_cache - src.queue_start + src.queue_end + 1;
-	if (size_t(( size1 + size2 ) * 1.618) < queue_cache) {
-		for (size_t i = src.queue_start; i < src.queue_end || ( src.queue_end < src.queue_start&&i - src.queue_start <= src.queue_cache ); i++) {
-			queue[queue_end] = src.queue[src.queue_start + i];
-			if (queue_end == queue_cache) queue_end = 0;
-			else queue_end++;
-		}
-		if (src.queue_end < src.queue_start) {
-			for (size_t i = 0; i < src.queue_end; i++) {
-				queue[queue_end] = src.queue[i];
+	try{
+		size_t size1 = ( queue_end >= queue_start ) ? queue_end - queue_start : queue_cache - queue_start + queue_end + 1;
+		size_t size2 = ( src.queue_end >= src.queue_start ) ? src.queue_end - src.queue_start : src.queue_cache - src.queue_start + src.queue_end + 1;
+		if (size_t(( size1 + size2 ) * 1.618) < queue_cache) {
+			for (size_t i = src.queue_start; i < src.queue_end || ( src.queue_end < src.queue_start&&i - src.queue_start <= src.queue_cache ); i++) {
+				queue[queue_end] = src.queue[src.queue_start + i];
 				if (queue_end == queue_cache) queue_end = 0;
 				else queue_end++;
 			}
-		}
-		queue[queue_end] = nullptr;
-		in_use = false;
-		return;
-	}
-	else {
-		size_t new_size = size_t(( size1 + size2 ) * 1.618) + 1;
-		std::function<bool()>* new_queue = new std::function<bool()>[new_size + 1]{};
-		for (size_t i = queue_start; i < queue_end || ( queue_end < queue_start && i <= queue_cache ); i++) {
-			new_queue[i - queue_start] = queue[i];
-		}
-		if (queue_end < queue_start) {
-			for (size_t i = 0; i < queue_end; i++) {
-				new_queue[queue_cache - queue_start + 1 + i] = queue[i];
+			if (src.queue_end < src.queue_start) {
+				for (size_t i = 0; i < src.queue_end; i++) {
+					queue[queue_end] = src.queue[i];
+					if (queue_end == queue_cache) queue_end = 0;
+					else queue_end++;
+				}
 			}
-		}
-		for (size_t i = src.queue_start; i < src.queue_end || ( src.queue_end < src.queue_start&& i <= src.queue_cache ); i++) {
-			new_queue[i - src.queue_start + size1] = src.queue[i];
-		}
-		if (src.queue_end < src.queue_start) {
-			for (size_t i = 0; i < src.queue_end; i++) {
-				new_queue[src.queue_cache - src.queue_start + 1 + i + size1] = src.queue[i];
+			queue[queue_end] = nullptr;
+			in_use = false;
+			return;
+		} else {
+			size_t new_size = size_t(( size1 + size2 ) * 1.618) + 1;
+			std::function<bool()>* new_queue = new std::function<bool()>[new_size + 1]{};
+			for (size_t i = queue_start; i < queue_end || ( queue_end < queue_start && i <= queue_cache ); i++) {
+				new_queue[i - queue_start] = queue[i];
 			}
+			if (queue_end < queue_start) {
+				for (size_t i = 0; i < queue_end; i++) {
+					new_queue[queue_cache - queue_start + 1 + i] = queue[i];
+				}
+			}
+			for (size_t i = src.queue_start; i < src.queue_end || ( src.queue_end < src.queue_start&& i <= src.queue_cache ); i++) {
+				new_queue[i - src.queue_start + size1] = src.queue[i];
+			}
+			if (src.queue_end < src.queue_start) {
+				for (size_t i = 0; i < src.queue_end; i++) {
+					new_queue[src.queue_cache - src.queue_start + 1 + i + size1] = src.queue[i];
+				}
+			}
+			new_queue[size1 + size2] = nullptr;
+			std::swap(new_queue, queue);
+			delete[] new_queue;
+			queue_cache = new_size;
+			queue_start = 0;
+			queue_end = size1 + size2;
+			in_use = false;
+			return;
 		}
-		new_queue[size1 + size2] = nullptr;
-		std::swap(new_queue, queue);
-		delete[] new_queue;
-		queue_cache = new_size;
-		queue_start = 0;
-		queue_end = size1 + size2;
+	} catch (std::exception& e) {
 		in_use = false;
-		return;
+		throw e;
+	} catch (...) {
+		in_use = false;
+		throw;
 	}
 }
 
 unsigned GetThreadIndex(unsigned init_index) {
-	thread_local static unsigned index = init_index;
+	thread_local static const unsigned index = init_index;
 	return index;
 }
