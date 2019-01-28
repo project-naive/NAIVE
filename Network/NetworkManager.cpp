@@ -76,6 +76,7 @@ TCPServer::TCPServer(size_t LSocket, const char* iservice, const addrinfo* const
 	FD_ZERO(&to_read_fd);
 	FD_ZERO(&to_write_fd);
 	FD_SET(LSocket, &to_read_fd);
+	max_fd = ListenSocket;
 }
 
 
@@ -110,6 +111,7 @@ TCPServer::Connection_Info* TCPServer::AcceptConnection(sockaddr* addr, int* add
 }
 
 bool TCPServer::PollConnections(fd_set* read_ready, fd_set* write_ready, fd_set* exception, timeval * timeout) {
+	//Can optimize by partial copy, not implemented by now
 	if (read_ready) *read_ready = to_read_fd;
 	if (write_ready) *write_ready = to_write_fd;
 	if (select(max_fd, read_ready, write_ready, exception, timeout) == -1) {
