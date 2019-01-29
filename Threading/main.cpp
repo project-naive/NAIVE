@@ -14,12 +14,13 @@ bool test(ThreadPool* pool, int push_ID) {
 	std::cout << "Executing dispatched function!\nCount of execution: " << ++times
 		<< "\nTask ID: " << push_ID
 		<< "\nThread Index: " << GetThreadIndex()
+		<< "\nPool Index: " << GetPoolIndex()
 		<< "\nTask execution count: " << ++counts[push_ID]
 		<< "\nHello from thread " << std::this_thread::get_id() << '\n' << std::endl;
 	}
-	*/
+*/
 	pool->PushTask(std::bind(*test, pool, push_ID));
-	pool->PollTasks_WaitingOnly();
+	pool->PollTasks();
 	return false;
 }
 
@@ -34,6 +35,7 @@ bool test2(ThreadPool* pool, int push_ID) {
 
 
 int main() {
+//	std::srand(std::chrono::duration_cast<std::chrono::duration<unsigned>>(std::chrono::steady_clock::now().time_since_epoch()).count());
 	try{
 		ThreadPool pool;
 		ThreadPool::TaskQueue queue;
@@ -47,10 +49,9 @@ int main() {
 		pool.ScheduleTasks(queue);
 		do{
 			while (pool.QuerieSchedule()) {
-				pool.PollAllTasks_WaitingOnly();
+				pool.PollAllTasks();
 				pool.WaitAll();
 			}
-			std::this_thread::sleep_for(std::chrono::duration<float>(1.0));
 		} while (pool.QuerieSchedule());
 		system("pause");
 	} catch (std::exception& e) {
