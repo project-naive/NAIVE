@@ -20,10 +20,13 @@
 
 #include <iostream>
 
-extern unsigned all_available;
+extern std::atomic<unsigned> all_available;
+
 
 //unsigned(-1) for main thread and threads not managed by a pool
 unsigned GetThreadIndex(unsigned init_index = -1);
+size_t MakePoolIndex();
+size_t GetPoolIndex(size_t init_index = -1);
 
 class ThreadPool {
 public:
@@ -63,6 +66,8 @@ public:
 	const unsigned available;
 	unsigned GetUsed() const;
 	unsigned AddThread();
+	//This function currently have the bug of a deadlock when
+	//two threads are executing it to remove each other.
 	bool RemThread(unsigned ID);
 
 	//No mutex involved in Poll functions and Schedule functions!
@@ -78,25 +83,25 @@ public:
 	bool ThreadTasks(const TaskQueue& added, unsigned thread);
 	bool ThreadPush(const std::function<bool()>& added, unsigned thread);
 	bool ThreadAvailable(unsigned thread);
-//	bool ThreadAvailable_strict(unsigned thread);
+	bool ThreadAvailable_strict(unsigned thread);
 	size_t QuerieSchedule();
-//	size_t QuerieSchedule_strict();
+	size_t QuerieSchedule_strict();
 	size_t QuerieThread(unsigned thread);
-//	size_t QuerieThread_strict(unsigned thread);
-	unsigned WaitAll(float timeout = 0);
-	bool WaitThread(unsigned ID, float timeout = 0);
+	size_t QuerieThread_strict(unsigned thread);
 	//These functions implements with the modifying set to block all current
 	//pushes to the queue
 	//Note that in normal case, such a blocking is a CPU-consuming spin-block
 	//It is recommended only for use when necessary
 	//Also note that all the wait functions instantly releases controll after
 	//the current queue has finished processing
+	unsigned WaitAll(float timeout = 0);
 	unsigned WaitAllBlock(float timeout = 0);
+	unsigned WaitAll_strict(float timeout = 0);
+	bool WaitThread(unsigned ID, float timeout = 0);
 	bool WaitThreadBlock(unsigned ID, float timeout = 0);
-//	unsigned WaitAll_strict(float timeout = 0);
-//	bool WaitThreadBlock_strict(unsigned ID, float timeout = 0);
+	bool WaitThreadBlock_strict(unsigned ID, float timeout = 0);
 private:
-	std::mutex mtx;
+//	std::mutex mtx;
 	std::atomic<unsigned> used;
 	TaskQueue MasterQueue;
 	struct passed_vals {
@@ -115,11 +120,13 @@ private:
 		bool finished = true;
 		size_t num_done = 0;
 		bool ready_exit = false;
-		unsigned index;
+		unsigned thread_index;
+		size_t pool_index;
 	};
 	passed_vals* const states;
 	std::thread* const threads;
 	static void deploy_func(passed_vals* vals);
 	const std::thread::id creation_thread;
+	const size_t pool_index;
 };
 

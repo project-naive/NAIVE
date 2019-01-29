@@ -2,16 +2,18 @@
 
 #include <stdexcept>
 
-unsigned all_available = std::thread::hardware_concurrency() - 1;
+#include <intrin.h>
+
+std::atomic<unsigned> all_available = std::thread::hardware_concurrency() - 1;
 
 ThreadPool::ThreadPool():
 	available([](){
-		unsigned aval = all_available;
-		all_available = 0;
-		return aval; }()),
+	return all_available.exchange(0,std::memory_order_acq_rel); }()),
 	states(new passed_vals[available]{}),
 	threads(new std::thread[available]{}),
-	creation_thread(std::this_thread::get_id()){
+	creation_thread(std::this_thread::get_id()),
+	used(available),
+	pool_index(GetPoolIndex(MakePoolIndex())) {
 	switch (available) {
 		case unsigned(-1):
 			throw
@@ -21,22 +23,28 @@ ThreadPool::ThreadPool():
 			std::runtime_error("Only one thread available on hardware! Falied to auto initialize thread pool!");
 		default:
 			for (unsigned i = 0; i < available; i++) {
-				states[i].index = i;
+				states[i].thread_index = i;
+				states[i].pool_index=pool_index;
 				std::thread t(deploy_func, &states[i]);
 				threads[i] = std::move(t);
 				threads[i].detach();
 			}
-			used = available;
 			break;
 	}
 }
 
 ThreadPool::ThreadPool(unsigned num):
-	available([num](){
-	if(num<=all_available) {all_available-=num; return num;} else throw std::runtime_error("Not Enough hardware for thread pool creation!");}()),
+	available([num]() {
+	unsigned aval = all_available.load(std::memory_order_acquire);
+	if (aval < std::atomic_fetch_sub_explicit(&all_available, num, std::memory_order_acq_rel) + num) {
+		throw std::runtime_error("Not Enough hardware for thread pool creation!");
+	}
+	return num;}()),
 	states(new passed_vals[available]{}),
 	threads(new std::thread[available]{}),
-	creation_thread(std::this_thread::get_id()) {
+	creation_thread(std::this_thread::get_id()),
+	used(available),
+	pool_index(GetPoolIndex(MakePoolIndex())) {
 	switch (available) {
 		case unsigned(-1) :
 			throw
@@ -46,22 +54,23 @@ ThreadPool::ThreadPool(unsigned num):
 				std::runtime_error("Only one thread available on hardware! Falied to auto initialize thread pool!");
 		default:
 			for (unsigned i = 0; i < available; i++) {
-				states[i].index = i;
+				states[i].thread_index = i;
+				states[i].pool_index = pool_index;
 				std::thread t(deploy_func, &states[i]);
 				threads[i] = std::move(t);
 				threads[i].detach();
 			}
-			used = available;
 			break;
 	}
 }
 
 ThreadPool::~ThreadPool() {
-	unsigned Thread_Index = GetThreadIndex();
+	unsigned ThreadIndex = GetThreadIndex();
+	if (ThreadIndex != unsigned(-1) && threads[ThreadIndex].get_id() != std::this_thread::get_id()) ThreadIndex = -1;
 	for (unsigned i = 0; i < available; i++) {
 		states[i].active = false;
 		states[i].queue.clear();
-		if (i != Thread_Index) {
+		if (i != ThreadIndex) {
 			while(states[i].modifying.exchange(true, std::memory_order_acq_rel));
 			while (!states[i].waiting.load(std::memory_order_acquire));
 			std::unique_lock<std::mutex> lck(states[i].mtx);
@@ -69,7 +78,7 @@ ThreadPool::~ThreadPool() {
 		}
 	}
 	for (unsigned i = 0; i < available; i++) {
-		if (i != Thread_Index) {
+		if (i != ThreadIndex) {
 			std::unique_lock<std::mutex> lck(states[i].mtx);
 			states[i].cv.wait(lck, [this, i]() {return bool(this->states[i].ready_exit); });
 		}
@@ -80,7 +89,8 @@ ThreadPool::~ThreadPool() {
 
 
 void ThreadPool::PollTasks() {
-	unsigned ThisThread = GetThreadIndex();
+	unsigned ThreadIndex = GetThreadIndex();
+	if (ThreadIndex != unsigned(-1) && threads[ThreadIndex].get_id() != std::this_thread::get_id()) ThreadIndex = -1;
 	for (unsigned i = 0; !MasterQueue.empty() && i < available ; i++) {
 		if (states[i].active && states[i].queue.empty() && !states[i].modifying.exchange(true, std::memory_order_acq_rel)) {
 			try{
@@ -96,8 +106,8 @@ void ThreadPool::PollTasks() {
 		}
 	}
 	for (unsigned i = 0; !MasterQueue.empty() && i < available; i++) {
-		if (i != ThisThread && states[i].active && states[i].finished && !states[i].queue.empty() && !states[i].modifying.exchange(true, std::memory_order_acq_rel)) {
-			while (!states[i].waiting.load(std::memory_order_acquire));
+		if (i != ThreadIndex && states[i].active && states[i].finished && !states[i].queue.empty() && !states[i].modifying.exchange(true, std::memory_order_acq_rel)) {
+			while (!states[i].waiting.load(std::memory_order_acquire))  _mm_pause();
 			states[i].cv.notify_all();
 			states[i].modifying.store(false, std::memory_order_release);
 		}
@@ -119,10 +129,11 @@ void ThreadPool::PollTasks_WaitingOnly() {
 			}
 		}
 	}
-	unsigned ThisThread = GetThreadIndex();
+	unsigned ThreadIndex = GetThreadIndex();
+	if (ThreadIndex != unsigned(-1) && threads[ThreadIndex].get_id() != std::this_thread::get_id()) ThreadIndex = -1;
 	for (unsigned i = 0; !MasterQueue.empty() && i < available; i++) {
-		if (i != ThisThread && states[i].finished && states[i].active && !states[i].queue.empty() && !states[i].modifying.exchange(true, std::memory_order_acq_rel)) {
-			while (!states[i].waiting.load(std::memory_order_acquire));
+		if (i != ThreadIndex && states[i].finished && states[i].active && !states[i].queue.empty() && !states[i].modifying.exchange(true, std::memory_order_acq_rel)) {
+			while (!states[i].waiting.load(std::memory_order_acquire))  _mm_pause();
 			states[i].cv.notify_all();
 			states[i].modifying.store(false, std::memory_order_release);
 		}
@@ -160,25 +171,27 @@ void ThreadPool::PollAllTasks_WaitingOnly(float timeout) {
 }
 
 unsigned ThreadPool::GetUsed() const {
-	return used;
+	return used.load(std::memory_order_acquire);
 }
 
 unsigned ThreadPool::AddThread() {
-	std::lock_guard<std::mutex> lck(mtx);
-	if(used>=available) return -1;
+	if (std::this_thread::get_id() != creation_thread) return -1;
+//	std::lock_guard<std::mutex> lck(mtx);
+	if(used.load(std::memory_order_acquire)>=available) return -1;
 	unsigned rtn;
 	for (unsigned i = 0; i < available; i++) {
-		if (!states[i].active && states[i].ready_exit) {
-			states[i].active = true;
-			states[i].ready_exit = false;
+		if (!states[i].active && states[i].ready_exit) { //&& states[i].modifying.exchange(true,std::memory_order_acq_rel)) {
+			std::lock_guard<std::mutex> lck(states[i].mtx);
 			states[i].waiting.store(false, std::memory_order_release);
 			states[i].num_done = 0;
-			states[i].modifying.store(false, std::memory_order_release);
+			states[i].active = true;
 			std::thread t(deploy_func, &states[i]);
 			threads[i] = std::move(t);
 			threads[i].detach();
+			states[i].ready_exit = false;
+			states[i].modifying.store(false, std::memory_order_release);
+			std::atomic_fetch_add_explicit(&used,1,std::memory_order_acq_rel);
 			rtn = i;
-			used++;
 			break;
 		}
 	}
@@ -187,13 +200,17 @@ unsigned ThreadPool::AddThread() {
 
 bool ThreadPool::RemThread(unsigned ID) {
 	if (ID >= available) return false;
-	if (!states[ID].active) return false;
-	std::lock_guard<std::mutex> lck(mtx);
+	if (!states[ID].active) return true;
+	if(std::this_thread::get_id()!=creation_thread) return false;
+//	std::lock_guard<std::mutex> lck(mtx);
+	/*
 	if(ID==GetThreadIndex()){ 
 		states[ID].active = false;
+		states[ID].queue.clear();
 		return true;
 	}
-	while(states[ID].modifying.exchange(true, std::memory_order_acq_rel));
+	*/
+	while(states[ID].modifying.exchange(true, std::memory_order_acq_rel))  _mm_pause();
 	std::unique_lock<std::mutex> thread_lck(states[ID].mtx);
 	states[ID].active = false;
 	states[ID].queue.clear();
@@ -202,14 +219,15 @@ bool ThreadPool::RemThread(unsigned ID) {
 	states[ID].queue.clear();
 	std::thread t;
 	threads[ID] = std::move(t);
-	used--;
+	std::atomic_fetch_sub_explicit(&used, 1, std::memory_order_acq_rel);
+	states[ID].modifying.store(false, std::memory_order_release);
 	return true;
 }
 
 bool ThreadPool::ThreadTasks(const TaskQueue& added, unsigned thread) {
 	if(thread>=available) return false;
 	if(states[thread].ready_exit || !states[thread].active) return false;
-	while(states[thread].modifying.exchange(true, std::memory_order_acq_rel));
+	while(states[thread].modifying.exchange(true, std::memory_order_acq_rel))  _mm_pause();
 	try{
 		states[thread].queue.append(added);
 		states[thread].cv.notify_all();
@@ -227,7 +245,7 @@ bool ThreadPool::ThreadTasks(const TaskQueue& added, unsigned thread) {
 bool ThreadPool::ThreadPush(const std::function<bool()>& added, unsigned thread) {
 	if (thread >= available) return false;
 	if (states[thread].ready_exit || !states[thread].active) return false;
-	while (states[thread].modifying.exchange(true, std::memory_order_acq_rel));
+	while (states[thread].modifying.exchange(true, std::memory_order_acq_rel))  _mm_pause();
 	try {
 		states[thread].queue.push(added);
 		states[thread].cv.notify_all();
@@ -251,10 +269,11 @@ void ThreadPool::ClearSchedule() {
 }
 
 void ThreadPool::ClearAllTasks() {
-	unsigned Thread_Index = GetThreadIndex();
+	unsigned ThreadIndex = GetThreadIndex();
+	if (ThreadIndex != unsigned(-1) && threads[ThreadIndex].get_id() != std::this_thread::get_id()) ThreadIndex = -1;
 	for (unsigned i = 0; i < available; i++) {
-		if (i != Thread_Index) {
-			while (states[i].modifying.exchange(true, std::memory_order_acq_rel));
+		if (i != ThreadIndex) {
+			while (states[i].modifying.exchange(true, std::memory_order_acq_rel)) _mm_pause();
 				std::unique_lock<std::mutex> lck(states[i].mtx);
 		}
 		states[i].queue.clear();
@@ -283,7 +302,7 @@ bool ThreadPool::WaitThread(unsigned ID, float timeout) {
 	if (ID >= available) return false;
 	if (!states[ID].active) return false;
 	if (states[ID].ready_exit || states[ID].queue.empty()) return true;
-	if(ID==GetThreadIndex()) return false;
+	if(ID==GetThreadIndex() && std::this_thread::get_id()==threads[ID].get_id()) return false;
 	std::unique_lock<std::mutex> lck(states[ID].mtx);
 	if (!timeout) {
 		states[ID].cv.wait(lck, [this, ID]() {return bool(states[ID].queue.empty()); });
@@ -299,8 +318,8 @@ bool ThreadPool::WaitThreadBlock(unsigned ID, float timeout) {
 	if (ID >= available) return false;
 	if (!states[ID].active) return false;
 	if (states[ID].ready_exit || states[ID].queue.empty()) return true;
-	if (ID == GetThreadIndex()) return false;
-	while (states[ID].modifying.exchange(true, std::memory_order_acq_rel));
+	if (ID == GetThreadIndex() && std::this_thread::get_id() == threads[ID].get_id()) return false;
+	while (states[ID].modifying.exchange(true, std::memory_order_acq_rel))  _mm_pause();
 	std::unique_lock<std::mutex> lck(states[ID].mtx);
 	if (!timeout) {
 		try {
@@ -334,12 +353,13 @@ bool ThreadPool::WaitThreadBlock(unsigned ID, float timeout) {
 unsigned ThreadPool::WaitAllBlock(float timeout) {
 	unsigned rtn = 0;
 	unsigned ThreadIndex = GetThreadIndex();
+	if (ThreadIndex != unsigned(-1) && threads[ThreadIndex].get_id() != std::this_thread::get_id()) ThreadIndex = -1;
 	if (!timeout) {
 		for (unsigned i = 0; i < available; i++) {
 			if (i != ThreadIndex) {
 				if (!states[i].active) continue;
 				if (states[i].ready_exit || states[i].finished) continue;
-				while(states[i].modifying.exchange(true, std::memory_order_acq_rel));
+				while(states[i].modifying.exchange(true, std::memory_order_acq_rel)) _mm_pause();
 				try {
 					std::unique_lock<std::mutex> lck(states[i].mtx);
 					states[i].cv.wait(lck, [this, i]() { return bool(states[i].finished); });
@@ -363,7 +383,7 @@ unsigned ThreadPool::WaitAllBlock(float timeout) {
 				if (i != ThreadIndex) {
 					if (!states[i].active) continue;
 					if (states[i].ready_exit || states[i].queue.empty()) continue;
-					while(states[i].modifying.exchange(true, std::memory_order_acq_rel));
+					while(states[i].modifying.exchange(true, std::memory_order_acq_rel)) _mm_pause();
 					try {
 						std::unique_lock<std::mutex> lck(states[i].mtx);
 						rtn += states[i].cv.wait_for(lck, std::chrono::duration<float>(timeout - time_passed), [this, i]() { return bool(states[i].queue.empty()); });
@@ -387,6 +407,7 @@ unsigned ThreadPool::WaitAllBlock(float timeout) {
 unsigned ThreadPool::WaitAll(float timeout) {
 	unsigned rtn = 0;
 	unsigned ThreadIndex = GetThreadIndex();
+	if (ThreadIndex != unsigned(-1) && threads[ThreadIndex].get_id() != std::this_thread::get_id()) ThreadIndex = -1;
 	if (!timeout) {
 		for (unsigned i = 0; i < available; i++) {
 			if (i != ThreadIndex) {
@@ -419,7 +440,8 @@ unsigned ThreadPool::WaitAll(float timeout) {
 }
 
 void ThreadPool::deploy_func(passed_vals* vals) {
-	GetThreadIndex(vals->index);
+	GetThreadIndex(vals->thread_index);
+	GetPoolIndex(vals->pool_index);
 	std::unique_lock<std::mutex> lck(vals->mtx);
 	while (vals->active) {//adding a condition variable here may be  a good choice
 						  //start execution of queue only after the calling thread sets the finished flag to false	
@@ -446,12 +468,12 @@ void ThreadPool::deploy_func(passed_vals* vals) {
 }
 
 ThreadPool::TaskQueue::~TaskQueue() {
-	while (in_use.exchange(true, std::memory_order_acq_rel));
+	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
 	delete[] queue;
 }
 
 void ThreadPool::TaskQueue::clear() {
-	while (in_use.exchange(true, std::memory_order_acq_rel));
+	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
 	delete[] queue;
 	queue = nullptr;
 	queue_start = 0;
@@ -461,7 +483,7 @@ void ThreadPool::TaskQueue::clear() {
 }
 
 void ThreadPool::TaskQueue::push(const std::function<bool()>& function) {
-	while (in_use.exchange(true, std::memory_order_acq_rel));
+	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
 	try{
 		if (( queue_end > queue_start ) && ( queue_end - queue_start == queue_cache )
 			|| ( queue_end < queue_start ) && ( queue_start - 1 == queue_end )) {
@@ -490,6 +512,7 @@ void ThreadPool::TaskQueue::push(const std::function<bool()>& function) {
 		if (queue_end == queue_cache) queue_end = 0;
 		else queue_end++;
 		queue[queue_end] = nullptr;
+		in_use.store(false, std::memory_order_release);
 	} catch (std::exception& e) {
 		in_use.store(false, std::memory_order_release);
 		throw e;
@@ -497,11 +520,10 @@ void ThreadPool::TaskQueue::push(const std::function<bool()>& function) {
 		in_use.store(false, std::memory_order_release);
 		throw;
 	}
-	in_use.store(false, std::memory_order_release);
 }
 
 std::function<bool()> ThreadPool::TaskQueue::pop() {
-	while (in_use.exchange(true, std::memory_order_acq_rel));
+	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
 	try{
 		if (queue_start == queue_end) return nullptr;
 		std::function<bool()> rtn = queue[queue_start];
@@ -524,7 +546,7 @@ bool ThreadPool::TaskQueue::empty() {
 }
 
 bool ThreadPool::TaskQueue::empty_strict() {
-	while (in_use.exchange(true, std::memory_order_acq_rel));
+	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
 	bool rtn = ( queue_end == queue_start );
 	in_use.store(false, std::memory_order_release);
 	return rtn;
@@ -537,7 +559,7 @@ size_t ThreadPool::TaskQueue::waiting() {
 
 size_t ThreadPool::TaskQueue::waiting_strict() {
 	size_t rtn;
-	while (in_use.exchange(true, std::memory_order_acq_rel));
+	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
 	if (queue_end >= queue_start) rtn = queue_end - queue_start;
 	else rtn = queue_cache - queue_start + queue_end + 1;
 	in_use.store(false, std::memory_order_release);
@@ -545,7 +567,7 @@ size_t ThreadPool::TaskQueue::waiting_strict() {
 }
 
 void ThreadPool::TaskQueue::append(const TaskQueue & src) {
-	while (in_use.exchange(true, std::memory_order_acq_rel));
+	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
 	try{
 		size_t size1 = ( queue_end >= queue_start ) ? queue_end - queue_start : queue_cache - queue_start + queue_end + 1;
 		size_t size2 = ( src.queue_end >= src.queue_start ) ? src.queue_end - src.queue_start : src.queue_cache - src.queue_start + src.queue_end + 1;
@@ -606,3 +628,14 @@ unsigned GetThreadIndex(unsigned init_index) {
 	thread_local static const unsigned index = init_index;
 	return index;
 }
+
+size_t GetPoolIndex(size_t init_index) {
+	thread_local static const size_t index = init_index;
+	return index;
+}
+
+size_t MakePoolIndex() {
+	static std::atomic<unsigned> index = 0;
+	return std::atomic_fetch_add_explicit(&index, 1, std::memory_order_acq_rel);
+}
+
