@@ -20,22 +20,24 @@
 
 #include <iostream>
 
-extern std::atomic<unsigned> all_available;
+extern std::atomic<int64_t> all_available;
 
 
 //unsigned(-1) for main thread and threads not managed by a pool
 unsigned GetThreadIndex(unsigned init_index = -1);
-size_t MakePoolIndex();
 size_t GetPoolIndex(size_t init_index = -1);
 
 class ThreadPool {
 public:
+	//A naive approach for a spin-locked task queue.
+	//A better approach may be a lock-free linked list of fixed length arrays or something similar
+	//(A pure linked list is not memory-efficient and has too many allocations and deallocations).
 	class TaskQueue {
 	private:
 		//queue always ends with a nullptr
 		//functions return true for rescheduling 
 		//if dependent data is not ready after timeout.
-		std::atomic<bool> in_use = false;
+		std::atomic_flag in_use = ATOMIC_FLAG_INIT;
 		std::function<bool()>* queue = nullptr;
 		size_t queue_start = 0;
 		//end is the position of the nullptr
@@ -54,10 +56,15 @@ public:
 		void append(const TaskQueue& src);
 		//These functions do not use the in_use for spin lock
 		//Thus, are prone to error if race condition occurs 
+		//Especially so if the queue is nearly full for empty() function.
+		//The idea for error is that false negative is more acceptible 
+		//than false positive since pushing and popping has a lock and can
+		//never drop a task when pushing, but may pop a nullptr if a
+		//false positive occurs, and checking for nullptrs will be bad.
 		bool empty();
 		bool empty_strict();
+		//waiting() function has to be strict when used for evaluation.
 		size_t waiting();
-		size_t waiting_strict();
 	};
 	ThreadPool();
 	ThreadPool(unsigned num);
@@ -83,23 +90,11 @@ public:
 	bool ThreadTasks(const TaskQueue& added, unsigned thread);
 	bool ThreadPush(const std::function<bool()>& added, unsigned thread);
 	bool ThreadAvailable(unsigned thread);
-	bool ThreadAvailable_strict(unsigned thread);
 	size_t QuerieSchedule();
-	size_t QuerieSchedule_strict();
 	size_t QuerieThread(unsigned thread);
-	size_t QuerieThread_strict(unsigned thread);
-	//These functions implements with the modifying set to block all current
-	//pushes to the queue
-	//Note that in normal case, such a blocking is a CPU-consuming spin-block
-	//It is recommended only for use when necessary
-	//Also note that all the wait functions instantly releases controll after
-	//the current queue has finished processing
 	unsigned WaitAll(float timeout = 0);
-	unsigned WaitAllBlock(float timeout = 0);
-	unsigned WaitAll_strict(float timeout = 0);
 	bool WaitThread(unsigned ID, float timeout = 0);
-	bool WaitThreadBlock(unsigned ID, float timeout = 0);
-	bool WaitThreadBlock_strict(unsigned ID, float timeout = 0);
+
 private:
 //	std::mutex mtx;
 	std::atomic<unsigned> used;
@@ -111,7 +106,7 @@ private:
 		//setting this can allow a spin-lock when doing light-weight job.
 		//Lock both this and the mutex for long-running dispatchs
 		//Light-weight and fast changes should use this indicator instead.
-		std::atomic<bool> modifying = false;
+		std::atomic_flag modifying = ATOMIC_FLAG_INIT;
 		std::atomic<bool> waiting = false;
 		std::mutex mtx{};
 		std::condition_variable cv{};
