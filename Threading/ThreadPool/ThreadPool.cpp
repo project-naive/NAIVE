@@ -4,64 +4,69 @@
 
 #include <intrin.h>
 
-std::atomic<unsigned> all_available = std::thread::hardware_concurrency() - 1;
+std::atomic<int64_t> all_available = std::thread::hardware_concurrency() - 1;
+
+unsigned GetThreadIndex(unsigned init_index) {
+	thread_local static const unsigned index = init_index;
+	return index;
+}
+
+size_t GetPoolIndex(size_t init_index) {
+	thread_local static const size_t index = init_index;
+	return index;
+}
+
+inline static size_t MakePoolIndex() {
+	static std::atomic<unsigned> index = 0;
+	return std::atomic_fetch_add_explicit(&index, 1, std::memory_order_seq_cst);
+}
 
 ThreadPool::ThreadPool():
 	available([](){
-	return all_available.exchange(0,std::memory_order_acq_rel); }()),
+	int64_t num; 
+	do {
+		num = all_available.exchange(0, std::memory_order_seq_cst);
+		if (num == -1) {
+			all_available.exchange(num, std::memory_order_seq_cst);
+			throw
+				std::runtime_error("Cannot detect Hardware Concurrency! Falied to auto initialize thread pool!");
+		}
+	} while (num < -1);
+	return unsigned(num);}()),
 	states(new passed_vals[available]{}),
 	threads(new std::thread[available]{}),
 	creation_thread(std::this_thread::get_id()),
 	used(available),
 	pool_index(GetPoolIndex(MakePoolIndex())) {
-	switch (available) {
-		case unsigned(-1):
-			throw
-			std::runtime_error("Cannot detect Hardware Concurrency! Falied to auto initialize thread pool!");
-		case 0:
-			throw
-			std::runtime_error("Only one thread available on hardware! Falied to auto initialize thread pool!");
-		default:
-			for (unsigned i = 0; i < available; i++) {
-				states[i].thread_index = i;
-				states[i].pool_index=pool_index;
-				std::thread t(deploy_func, &states[i]);
-				threads[i] = std::move(t);
-				threads[i].detach();
-			}
-			break;
+	for (unsigned i = 0; i < available; i++) {
+		states[i].thread_index = i;
+		states[i].pool_index=pool_index;
+		std::thread t(deploy_func, &states[i]);
+		threads[i] = std::move(t);
+		threads[i].detach();
 	}
 }
 
 ThreadPool::ThreadPool(unsigned num):
 	available([num]() {
-	unsigned aval = all_available.load(std::memory_order_acquire);
-	if (aval < std::atomic_fetch_sub_explicit(&all_available, num, std::memory_order_acq_rel) + num) {
+	//Checks for overflow and remove the used
+	if (num > std::atomic_fetch_sub_explicit(&all_available, num, std::memory_order_seq_cst)) {
+		std::atomic_fetch_add_explicit(&all_available, num, std::memory_order_seq_cst);
 		throw std::runtime_error("Not Enough hardware for thread pool creation!");
 	}
-	return num;}()),
+	return unsigned(num);}()),
 	states(new passed_vals[available]{}),
 	threads(new std::thread[available]{}),
 	creation_thread(std::this_thread::get_id()),
 	used(available),
 	pool_index(GetPoolIndex(MakePoolIndex())) {
-	switch (available) {
-		case unsigned(-1) :
-			throw
-			std::runtime_error("Cannot detect Hardware Concurrency! Falied to auto initialize thread pool!");
-		case 0:
-			throw
-				std::runtime_error("Only one thread available on hardware! Falied to auto initialize thread pool!");
-		default:
-			for (unsigned i = 0; i < available; i++) {
-				states[i].thread_index = i;
-				states[i].pool_index = pool_index;
-				std::thread t(deploy_func, &states[i]);
-				threads[i] = std::move(t);
-				threads[i].detach();
-			}
-			break;
-	}
+		for (unsigned i = 0; i < available; i++) {
+			states[i].thread_index = i;
+			states[i].pool_index = pool_index;
+			std::thread t(deploy_func, &states[i]);
+			threads[i] = std::move(t);
+			threads[i].detach();
+		}
 }
 
 ThreadPool::~ThreadPool() {
@@ -71,8 +76,8 @@ ThreadPool::~ThreadPool() {
 		states[i].active = false;
 		states[i].queue.clear();
 		if (i != ThreadIndex) {
-			while(states[i].modifying.exchange(true, std::memory_order_acq_rel));
-			while (!states[i].waiting.load(std::memory_order_acquire));
+			while(states[i].modifying.test_and_set(std::memory_order_acquire)) _mm_pause();
+			while (!states[i].waiting.load(std::memory_order_acquire)) _mm_pause();
 			std::unique_lock<std::mutex> lck(states[i].mtx);
 			states[i].cv.notify_all();
 		}
@@ -87,44 +92,43 @@ ThreadPool::~ThreadPool() {
 	delete[] states;
 }
 
-
 void ThreadPool::PollTasks() {
 	unsigned ThreadIndex = GetThreadIndex();
 	if (ThreadIndex != unsigned(-1) && threads[ThreadIndex].get_id() != std::this_thread::get_id()) ThreadIndex = -1;
 	for (unsigned i = 0; !MasterQueue.empty() && i < available ; i++) {
-		if (states[i].active && states[i].queue.empty() && !states[i].modifying.exchange(true, std::memory_order_acq_rel)) {
+		if (states[i].active && states[i].queue.empty() && !states[i].modifying.test_and_set(std::memory_order_acquire)) {
 			try{
 				states[i].queue.push(MasterQueue.pop());
-				states[i].modifying.store(false, std::memory_order_release);
+				states[i].modifying.clear(std::memory_order_release);
 			} catch (std::exception& e) {
-				states[i].modifying.store(false, std::memory_order_release);
+				states[i].modifying.clear(std::memory_order_release);
 				throw e;
 			} catch (...) {
-				states[i].modifying.store(false, std::memory_order_release);
+				states[i].modifying.clear(std::memory_order_release);
 				throw;
 			}
 		}
 	}
 	for (unsigned i = 0; !MasterQueue.empty() && i < available; i++) {
-		if (i != ThreadIndex && states[i].active && states[i].finished && !states[i].queue.empty() && !states[i].modifying.exchange(true, std::memory_order_acq_rel)) {
+		if (i != ThreadIndex && states[i].active && states[i].finished && !states[i].queue.empty() && !states[i].modifying.test_and_set(std::memory_order_acquire)) {
 			while (!states[i].waiting.load(std::memory_order_acquire))  _mm_pause();
 			states[i].cv.notify_all();
-			states[i].modifying.store(false, std::memory_order_release);
+			states[i].modifying.clear(std::memory_order_release);
 		}
 	}
 }
 
 void ThreadPool::PollTasks_WaitingOnly() {
 	for (unsigned i = 0; !MasterQueue.empty() && i < available; i++) {
-		if (states[i].active && states[i].finished  && states[i].queue.empty() && !states[i].modifying.exchange(true, std::memory_order_acq_rel)) {
+		if (states[i].active && states[i].finished  && states[i].queue.empty() && !states[i].modifying.test_and_set(std::memory_order_acquire)) {
 			try {
 				states[i].queue.push(MasterQueue.pop());
-				states[i].modifying.store(false, std::memory_order_release);
+				states[i].modifying.clear(std::memory_order_release);
 			} catch (std::exception& e) {
-				states[i].modifying.store(false, std::memory_order_release);
+				states[i].modifying.clear(std::memory_order_release);
 				throw e;
 			} catch (...) {
-				states[i].modifying.store(false, std::memory_order_release);
+				states[i].modifying.clear(std::memory_order_release);
 				throw;
 			}
 		}
@@ -132,10 +136,10 @@ void ThreadPool::PollTasks_WaitingOnly() {
 	unsigned ThreadIndex = GetThreadIndex();
 	if (ThreadIndex != unsigned(-1) && threads[ThreadIndex].get_id() != std::this_thread::get_id()) ThreadIndex = -1;
 	for (unsigned i = 0; !MasterQueue.empty() && i < available; i++) {
-		if (i != ThreadIndex && states[i].finished && states[i].active && !states[i].queue.empty() && !states[i].modifying.exchange(true, std::memory_order_acq_rel)) {
+		if (i != ThreadIndex && states[i].finished && states[i].active && !states[i].queue.empty() && !states[i].modifying.test_and_set(std::memory_order_acquire)) {
 			while (!states[i].waiting.load(std::memory_order_acquire))  _mm_pause();
 			states[i].cv.notify_all();
-			states[i].modifying.store(false, std::memory_order_release);
+			states[i].modifying.clear(std::memory_order_release);
 		}
 	}
 }
@@ -145,28 +149,37 @@ void ThreadPool::PushTask(const std::function<bool()>& added) {
 }
 
 void ThreadPool::PollAllTasks(float timeout) {
+	if (used == 0) return;
 	if (!timeout) {
-		while (!MasterQueue.empty()) {
-			PollTasks();
-		}
+		do {
+			while (!MasterQueue.empty()) {
+				PollTasks();
+			}
+		} while (!MasterQueue.empty_strict());
 	} else {
 		std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-		while (!MasterQueue.empty() && timeout < std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now()-start).count()) {
-			PollTasks();
-		}
+		do{
+			while (!MasterQueue.empty() && timeout < std::chrono::duration_cast<std::chrono::duration<float>>( std::chrono::steady_clock::now() - start ).count()) {
+				PollTasks();
+			}
+		}while(timeout < std::chrono::duration_cast<std::chrono::duration<float>>( std::chrono::steady_clock::now() - start ).count() && !MasterQueue.empty_strict());
 	}
 }
 
 void ThreadPool::PollAllTasks_WaitingOnly(float timeout) {
 	if (!timeout) {
-		while (!MasterQueue.empty()) {
-			PollTasks_WaitingOnly();
-		}
+		do{
+			while (!MasterQueue.empty()) {
+				PollTasks_WaitingOnly();
+			}
+		}while(!MasterQueue.empty_strict());
 	} else {
 		std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-		while (!MasterQueue.empty() && timeout < std::chrono::duration_cast<std::chrono::duration<float>>( std::chrono::steady_clock::now() - start ).count()) {
-			PollTasks_WaitingOnly();
-		}
+		do{
+			while (!MasterQueue.empty() && timeout < std::chrono::duration_cast<std::chrono::duration<float>>( std::chrono::steady_clock::now() - start ).count()) {
+				PollTasks_WaitingOnly();
+			}
+		}while(timeout < std::chrono::duration_cast<std::chrono::duration<float>>( std::chrono::steady_clock::now() - start ).count() && !MasterQueue.empty_strict());
 	}
 }
 
@@ -189,7 +202,7 @@ unsigned ThreadPool::AddThread() {
 			threads[i] = std::move(t);
 			threads[i].detach();
 			states[i].ready_exit = false;
-			states[i].modifying.store(false, std::memory_order_release);
+			states[i].modifying.clear(std::memory_order_release);
 			std::atomic_fetch_add_explicit(&used,1,std::memory_order_acq_rel);
 			rtn = i;
 			break;
@@ -210,7 +223,7 @@ bool ThreadPool::RemThread(unsigned ID) {
 		return true;
 	}
 	*/
-	while(states[ID].modifying.exchange(true, std::memory_order_acq_rel))  _mm_pause();
+	while(states[ID].modifying.test_and_set(std::memory_order_acquire))  _mm_pause();
 	std::unique_lock<std::mutex> thread_lck(states[ID].mtx);
 	states[ID].active = false;
 	states[ID].queue.clear();
@@ -220,24 +233,28 @@ bool ThreadPool::RemThread(unsigned ID) {
 	std::thread t;
 	threads[ID] = std::move(t);
 	std::atomic_fetch_sub_explicit(&used, 1, std::memory_order_acq_rel);
-	states[ID].modifying.store(false, std::memory_order_release);
+	states[ID].modifying.clear(std::memory_order_release);
 	return true;
 }
 
 bool ThreadPool::ThreadTasks(const TaskQueue& added, unsigned thread) {
 	if(thread>=available) return false;
 	if(states[thread].ready_exit || !states[thread].active) return false;
-	while(states[thread].modifying.exchange(true, std::memory_order_acq_rel))  _mm_pause();
+	if (!states[thread].finished) {
+		states[thread].queue.append(added);
+		return true;
+	}
+	while(states[thread].modifying.test_and_set(std::memory_order_acquire))  _mm_pause();
 	try{
 		states[thread].queue.append(added);
 		states[thread].cv.notify_all();
-		states[thread].modifying.store(false, std::memory_order_release);
+		states[thread].modifying.clear(std::memory_order_release);
 		return true;
 	} catch (std::exception& e) {
-		states[thread].modifying.store(false, std::memory_order_release);
+		states[thread].modifying.clear(std::memory_order_release);
 		throw e;
 	} catch (...) {
-		states[thread].modifying.store(false, std::memory_order_release);
+		states[thread].modifying.clear(std::memory_order_release);
 		throw;
 	}
 }
@@ -245,17 +262,21 @@ bool ThreadPool::ThreadTasks(const TaskQueue& added, unsigned thread) {
 bool ThreadPool::ThreadPush(const std::function<bool()>& added, unsigned thread) {
 	if (thread >= available) return false;
 	if (states[thread].ready_exit || !states[thread].active) return false;
-	while (states[thread].modifying.exchange(true, std::memory_order_acq_rel))  _mm_pause();
+	if (!states[thread].finished) {
+		states[thread].queue.push(added);
+		return true;
+	}
+	while (states[thread].modifying.test_and_set(std::memory_order_acquire))  _mm_pause();
 	try {
 		states[thread].queue.push(added);
 		states[thread].cv.notify_all();
-		states[thread].modifying.store(false, std::memory_order_release);
+		states[thread].modifying.clear(std::memory_order_release);
 		return true;
 	} catch (std::exception& e) {
-		states[thread].modifying.store(false, std::memory_order_release);
+		states[thread].modifying.clear(std::memory_order_release);
 		throw e;
 	} catch (...) {
-		states[thread].modifying.store(false, std::memory_order_release);
+		states[thread].modifying.clear(std::memory_order_release);
 		throw;
 	}
 }
@@ -273,12 +294,12 @@ void ThreadPool::ClearAllTasks() {
 	if (ThreadIndex != unsigned(-1) && threads[ThreadIndex].get_id() != std::this_thread::get_id()) ThreadIndex = -1;
 	for (unsigned i = 0; i < available; i++) {
 		if (i != ThreadIndex) {
-			while (states[i].modifying.exchange(true, std::memory_order_acq_rel)) _mm_pause();
+			while (states[i].modifying.test_and_set(std::memory_order_acquire)) _mm_pause();
 				std::unique_lock<std::mutex> lck(states[i].mtx);
 		}
 		states[i].queue.clear();
 		states[i].cv.notify_all();
-		states[i].modifying.store(false, std::memory_order_release);
+		states[i].modifying.clear(std::memory_order_release);
 	}
 }
 
@@ -303,103 +324,32 @@ bool ThreadPool::WaitThread(unsigned ID, float timeout) {
 	if (!states[ID].active) return false;
 	if (states[ID].ready_exit || states[ID].queue.empty()) return true;
 	if(ID==GetThreadIndex() && std::this_thread::get_id()==threads[ID].get_id()) return false;
-	std::unique_lock<std::mutex> lck(states[ID].mtx);
-	if (!timeout) {
-		states[ID].cv.wait(lck, [this, ID]() {return bool(states[ID].queue.empty()); });
-		return true;
-	}
-	else {
-		return states[ID].cv.wait_for(lck, std::chrono::duration<float>(timeout), [this, ID]() {return bool(states[ID].queue.empty()); });
-	}
-}
-
-
-bool ThreadPool::WaitThreadBlock(unsigned ID, float timeout) {
-	if (ID >= available) return false;
-	if (!states[ID].active) return false;
-	if (states[ID].ready_exit || states[ID].queue.empty()) return true;
-	if (ID == GetThreadIndex() && std::this_thread::get_id() == threads[ID].get_id()) return false;
-	while (states[ID].modifying.exchange(true, std::memory_order_acq_rel))  _mm_pause();
+	while (states[ID].modifying.test_and_set(std::memory_order_acquire))  _mm_pause();
 	std::unique_lock<std::mutex> lck(states[ID].mtx);
 	if (!timeout) {
 		try {
 			states[ID].cv.wait(lck, [this, ID]() {return bool(states[ID].queue.empty()); });
 		} catch (std::exception& e) {
-			states[ID].modifying.store(false, std::memory_order_release);
+			states[ID].modifying.clear(std::memory_order_release);
 			throw e;
 		} catch (...) {
-			states[ID].modifying.store(false, std::memory_order_release);
+			states[ID].modifying.clear(std::memory_order_release);
 			throw;
 		}
-		states[ID].modifying.store(false, std::memory_order_release);
+		states[ID].modifying.clear(std::memory_order_release);
 		return true;
-	}
-	else {
+	} else {
 		bool rtn;
 		try {
 			rtn = states[ID].cv.wait_for(lck, std::chrono::duration<float>(timeout), [this, ID]() {return bool(states[ID].queue.empty()); });
 		} catch (std::exception& e) {
-			states[ID].modifying.store(false, std::memory_order_release);
+			states[ID].modifying.clear(std::memory_order_release);
 			throw e;
 		} catch (...) {
-			states[ID].modifying.store(false, std::memory_order_release);
+			states[ID].modifying.clear(std::memory_order_release);
 			throw;
 		}
-		states[ID].modifying.store(false, std::memory_order_release);
-		return rtn;
-	}
-}
-
-unsigned ThreadPool::WaitAllBlock(float timeout) {
-	unsigned rtn = 0;
-	unsigned ThreadIndex = GetThreadIndex();
-	if (ThreadIndex != unsigned(-1) && threads[ThreadIndex].get_id() != std::this_thread::get_id()) ThreadIndex = -1;
-	if (!timeout) {
-		for (unsigned i = 0; i < available; i++) {
-			if (i != ThreadIndex) {
-				if (!states[i].active) continue;
-				if (states[i].ready_exit || states[i].finished) continue;
-				while(states[i].modifying.exchange(true, std::memory_order_acq_rel)) _mm_pause();
-				try {
-					std::unique_lock<std::mutex> lck(states[i].mtx);
-					states[i].cv.wait(lck, [this, i]() { return bool(states[i].finished); });
-					states[i].modifying.store(false, std::memory_order_release);
-				} catch (std::exception& e) {
-					states[i].modifying.store(false, std::memory_order_release);
-					throw e;
-				} catch (...) {
-					states[i].modifying.store(false, std::memory_order_release);
-					throw;
-				}
-				rtn++;
-			}
-		}
-		return rtn;
-	} else {
-		std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-		float time_passed = 0;
-		while (timeout > time_passed) {
-			for (unsigned i = 0; i < available && timeout > time_passed; i++) {
-				if (i != ThreadIndex) {
-					if (!states[i].active) continue;
-					if (states[i].ready_exit || states[i].queue.empty()) continue;
-					while(states[i].modifying.exchange(true, std::memory_order_acq_rel)) _mm_pause();
-					try {
-						std::unique_lock<std::mutex> lck(states[i].mtx);
-						rtn += states[i].cv.wait_for(lck, std::chrono::duration<float>(timeout - time_passed), [this, i]() { return bool(states[i].queue.empty()); });
-					} catch (std::exception& e) {
-						states[i].modifying.store(false, std::memory_order_release);
-						throw e;
-					} catch (...) {
-						states[i].modifying.store(false, std::memory_order_release);
-						throw;
-					}
-					states[i].modifying.store(false, std::memory_order_release);
-					time_passed = std::chrono::duration_cast<std::chrono::duration<float>>( std::chrono::steady_clock::now() - start ).count();
-				}
-			}
-			time_passed = std::chrono::duration_cast<std::chrono::duration<float>>( std::chrono::steady_clock::now() - start ).count();
-		}
+		states[ID].modifying.clear(std::memory_order_release);
 		return rtn;
 	}
 }
@@ -407,33 +357,48 @@ unsigned ThreadPool::WaitAllBlock(float timeout) {
 unsigned ThreadPool::WaitAll(float timeout) {
 	unsigned rtn = 0;
 	unsigned ThreadIndex = GetThreadIndex();
-	if (ThreadIndex != unsigned(-1) && threads[ThreadIndex].get_id() != std::this_thread::get_id()) ThreadIndex = -1;
+	if (ThreadIndex < available && threads[ThreadIndex].get_id() != std::this_thread::get_id()) ThreadIndex = -1;
 	if (!timeout) {
 		for (unsigned i = 0; i < available; i++) {
 			if (i != ThreadIndex) {
-				if (!states[i].active) continue;
-				if (states[i].ready_exit || states[i].finished) continue;
+				if (!states[i].active || states[i].ready_exit) continue;
+				while (states[i].active && states[i].modifying.test_and_set(std::memory_order_acquire)) _mm_pause();
+				if (states[i].finished) continue;
 				std::unique_lock<std::mutex> lck(states[i].mtx);
 				states[i].cv.wait(lck, [this, i]() { return bool(states[i].finished); });
 				rtn++;
 			}
 		}
+		for (unsigned i = 0; i < available; i++) {
+			if (i != ThreadIndex) {
+				if (!states[i].active || states[i].ready_exit) continue;
+				states[i].modifying.clear(std::memory_order_release);
+			}
+		}
 		return rtn;
-	}
-	else {
+	} else {
 		std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 		float time_passed = 0;
-		while (timeout > time_passed) {
-			for (unsigned i = 0; i < available && timeout > time_passed; i++) {
-				if (i != ThreadIndex) {
-					if (!states[i].active) continue;
-					if (states[i].ready_exit || states[i].queue.empty()) continue;
-					std::unique_lock<std::mutex> lck(states[i].mtx);
-					rtn += states[i].cv.wait_for(lck, std::chrono::duration<float>(timeout - time_passed), [this, i]() { return bool(states[i].queue.empty()); });
+		bool last_set;
+		for (unsigned i = 0; i < available && timeout > time_passed; i++) {
+			if (i != ThreadIndex) {
+				if (!states[i].active || states[i].ready_exit) continue;
+				while (states[i].active && timeout > time_passed && states[i].modifying.test_and_set(std::memory_order_acquire)){
 					time_passed = std::chrono::duration_cast<std::chrono::duration<float>>( std::chrono::steady_clock::now() - start ).count();
 				}
+				if (timeout <= time_passed) continue;
+				if (states[i].finished) continue;
+				std::unique_lock<std::mutex> lck(states[i].mtx);
+				last_set = states[i].cv.wait_for(lck, std::chrono::duration<float>(timeout - time_passed), [this, i]() { return bool(states[i].finished); });
+				rtn += last_set;
 			}
 			time_passed = std::chrono::duration_cast<std::chrono::duration<float>>( std::chrono::steady_clock::now() - start ).count();
+		}
+		for (unsigned i = 0; i < rtn + !last_set; i++) {
+			if (i != ThreadIndex) {
+				if (!states[i].active || states[i].ready_exit) continue;
+				states[i].modifying.clear(std::memory_order_release);
+			}
 		}
 		return rtn;
 	}
@@ -453,13 +418,16 @@ void ThreadPool::deploy_func(passed_vals* vals) {
 		}
 		vals->finished = false;
 		vals->waiting.store(false, std::memory_order_release);
-		while (vals->active && !vals->queue.empty()) {
-			auto func = vals->queue.pop();
-			if (func()) {
-				vals->queue.push(func);
+		do{
+			while (vals->active && !vals->queue.empty()) {
+				auto func = vals->queue.pop();
+				if (func()) {
+					vals->queue.push(func);
+				}
+				vals->num_done++;
 			}
-			vals->num_done++;
-		}
+			//double check for emptiness
+		}while(!vals->queue.empty_strict());
 		vals->finished = true;
 		if (vals->active) vals->cv.notify_all();
 	}
@@ -468,22 +436,22 @@ void ThreadPool::deploy_func(passed_vals* vals) {
 }
 
 ThreadPool::TaskQueue::~TaskQueue() {
-	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
+	while (in_use.test_and_set(std::memory_order_acquire)) _mm_pause();
 	delete[] queue;
 }
 
 void ThreadPool::TaskQueue::clear() {
-	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
+	while (in_use.test_and_set(std::memory_order_acquire)) _mm_pause();
 	delete[] queue;
 	queue = nullptr;
 	queue_start = 0;
 	queue_end = 0;
 	queue_cache = 0;
-	in_use.store(false, std::memory_order_release);
+	in_use.clear(std::memory_order_release);
 }
 
 void ThreadPool::TaskQueue::push(const std::function<bool()>& function) {
-	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
+	while (in_use.test_and_set(std::memory_order_acquire)) _mm_pause();
 	try{
 		if (( queue_end > queue_start ) && ( queue_end - queue_start == queue_cache )
 			|| ( queue_end < queue_start ) && ( queue_start - 1 == queue_end )) {
@@ -512,31 +480,31 @@ void ThreadPool::TaskQueue::push(const std::function<bool()>& function) {
 		if (queue_end == queue_cache) queue_end = 0;
 		else queue_end++;
 		queue[queue_end] = nullptr;
-		in_use.store(false, std::memory_order_release);
+		in_use.clear(std::memory_order_release);
 	} catch (std::exception& e) {
-		in_use.store(false, std::memory_order_release);
+		in_use.clear(std::memory_order_release);
 		throw e;
 	} catch (...) {
-		in_use.store(false, std::memory_order_release);
+		in_use.clear(std::memory_order_release);
 		throw;
 	}
 }
 
 std::function<bool()> ThreadPool::TaskQueue::pop() {
-	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
+	while (in_use.test_and_set(std::memory_order_acquire)) _mm_pause();
 	try{
 		if (queue_start == queue_end) return nullptr;
 		std::function<bool()> rtn = queue[queue_start];
 		queue[queue_start] = nullptr;
 		if (queue_start == queue_cache) queue_start = 0;
 		else queue_start++;
-		in_use.store(false, std::memory_order_release);
+		in_use.clear(std::memory_order_release);
 		return rtn;
 	} catch (std::exception& e) {
-		in_use.store(false, std::memory_order_release);
+		in_use.clear(std::memory_order_release);
 		throw e;
 	} catch (...) {
-		in_use.store(false, std::memory_order_release);
+		in_use.clear(std::memory_order_release);
 		throw;
 	}
 }
@@ -546,28 +514,23 @@ bool ThreadPool::TaskQueue::empty() {
 }
 
 bool ThreadPool::TaskQueue::empty_strict() {
-	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
+	while (in_use.test_and_set(std::memory_order_acquire)) _mm_pause();
 	bool rtn = ( queue_end == queue_start );
-	in_use.store(false, std::memory_order_release);
+	in_use.clear(std::memory_order_release);
 	return rtn;
 }
 
 size_t ThreadPool::TaskQueue::waiting() {
-	if (queue_end >= queue_start) return queue_end - queue_start;
-	else return queue_cache - queue_start + queue_end + 1;
-}
-
-size_t ThreadPool::TaskQueue::waiting_strict() {
 	size_t rtn;
-	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
+	while (in_use.test_and_set(std::memory_order_acquire)) _mm_pause();
 	if (queue_end >= queue_start) rtn = queue_end - queue_start;
 	else rtn = queue_cache - queue_start + queue_end + 1;
-	in_use.store(false, std::memory_order_release);
+	in_use.clear(std::memory_order_release);
 	return rtn;
 }
 
 void ThreadPool::TaskQueue::append(const TaskQueue & src) {
-	while (in_use.exchange(true, std::memory_order_acquire)) _mm_pause();
+	while (in_use.test_and_set(std::memory_order_acquire)) _mm_pause();
 	try{
 		size_t size1 = ( queue_end >= queue_start ) ? queue_end - queue_start : queue_cache - queue_start + queue_end + 1;
 		size_t size2 = ( src.queue_end >= src.queue_start ) ? src.queue_end - src.queue_start : src.queue_cache - src.queue_start + src.queue_end + 1;
@@ -585,7 +548,7 @@ void ThreadPool::TaskQueue::append(const TaskQueue & src) {
 				}
 			}
 			queue[queue_end] = nullptr;
-			in_use.store(false, std::memory_order_release);
+			in_use.clear(std::memory_order_release);
 			return;
 		} else {
 			size_t new_size = size_t(( size1 + size2 ) * 1.618) + 1;
@@ -612,30 +575,14 @@ void ThreadPool::TaskQueue::append(const TaskQueue & src) {
 			queue_cache = new_size;
 			queue_start = 0;
 			queue_end = size1 + size2;
-			in_use.store(false, std::memory_order_release);
+			in_use.clear(std::memory_order_release);
 			return;
 		}
 	} catch (std::exception& e) {
-		in_use.store(false, std::memory_order_release);
+		in_use.clear(std::memory_order_release);
 		throw e;
 	} catch (...) {
-		in_use.store(false, std::memory_order_release);
+		in_use.clear(std::memory_order_release);
 		throw;
 	}
 }
-
-unsigned GetThreadIndex(unsigned init_index) {
-	thread_local static const unsigned index = init_index;
-	return index;
-}
-
-size_t GetPoolIndex(size_t init_index) {
-	thread_local static const size_t index = init_index;
-	return index;
-}
-
-size_t MakePoolIndex() {
-	static std::atomic<unsigned> index = 0;
-	return std::atomic_fetch_add_explicit(&index, 1, std::memory_order_acq_rel);
-}
-
