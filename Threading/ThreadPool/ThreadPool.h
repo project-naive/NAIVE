@@ -42,6 +42,8 @@ public:
 	//as indicated by a usage counter. The push and pop also needs a flag to indicate
 	//the difference between push or pop being finished and memory being indicated as 
 	//under-use by the start and end indicator (all needs to be atomic).
+	//(Decided to give up since signalling a overflow of buffer can easily break since
+	//the signal time cannot be properly synced in the most general case).
 	class TaskQueue {
 	private:
 		//queue always ends with a nullptr
