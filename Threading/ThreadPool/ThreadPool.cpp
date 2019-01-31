@@ -43,7 +43,7 @@ ThreadPool::ThreadPool():
 		states[i].pool_index=pool_index;
 		std::thread t(deploy_func, &states[i]);
 		threads[i] = std::move(t);
-		threads[i].detach();
+//		threads[i].detach();
 	}
 }
 
@@ -65,7 +65,6 @@ ThreadPool::ThreadPool(unsigned num):
 			states[i].pool_index = pool_index;
 			std::thread t(deploy_func, &states[i]);
 			threads[i] = std::move(t);
-			threads[i].detach();
 		}
 }
 
@@ -84,8 +83,9 @@ ThreadPool::~ThreadPool() {
 	}
 	for (unsigned i = 0; i < available; i++) {
 		if (i != ThreadIndex) {
-			std::unique_lock<std::mutex> lck(states[i].mtx);
-			states[i].cv.wait(lck, [this, i]() {return bool(this->states[i].ready_exit); });
+			threads[i].join();
+//			std::unique_lock<std::mutex> lck(states[i].mtx);
+//			states[i].cv.wait(lck, [this, i]() {return bool(this->states[i].ready_exit); });
 		}
 	}
 	delete[] threads;
@@ -200,7 +200,6 @@ unsigned ThreadPool::AddThread() {
 			states[i].active = true;
 			std::thread t(deploy_func, &states[i]);
 			threads[i] = std::move(t);
-			threads[i].detach();
 			states[i].ready_exit = false;
 			states[i].modifying.clear(std::memory_order_release);
 			std::atomic_fetch_add_explicit(&used,1,std::memory_order_acq_rel);
@@ -228,10 +227,11 @@ bool ThreadPool::RemThread(unsigned ID) {
 	states[ID].active = false;
 	states[ID].queue.clear();
 	states[ID].cv.notify_all();
-	states[ID].cv.wait(thread_lck, [this, ID]() {return bool(this->states[ID].ready_exit);});
-	states[ID].queue.clear();
-	std::thread t;
-	threads[ID] = std::move(t);
+	threads[ID].join();
+//	states[ID].cv.wait(thread_lck, [this, ID]() {return bool(this->states[ID].ready_exit);});
+//	states[ID].queue.clear();
+//	std::thread t;
+//	threads[ID] = std::move(t);
 	std::atomic_fetch_sub_explicit(&used, 1, std::memory_order_acq_rel);
 	states[ID].modifying.clear(std::memory_order_release);
 	return true;
