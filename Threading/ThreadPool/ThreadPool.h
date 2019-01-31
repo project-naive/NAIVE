@@ -32,6 +32,16 @@ public:
 	//A naive approach for a spin-locked task queue.
 	//A better approach may be a lock-free linked list of fixed length arrays or something similar
 	//(A pure linked list is not memory-efficient and has too many allocations and deallocations).
+	//Or maybe a linked list of stack for "deallocated" nodes from pop could be used to reduce memory
+	//allocation time count, this apprach can also add features by putting additional information
+	//in the struct alongside the function pointer.
+	//
+	//Another thought is to implement the queue as a pseudo-fixed-length array queue.
+	//When a reallocation of the queue needs to be done, a flag is set to block normal
+	//pushing and popping, and start reallocating after all other worker has finished 
+	//as indicated by a usage counter. The push and pop also needs a flag to indicate
+	//the difference between push or pop being finished and memory being indicated as 
+	//under-use by the start and end indicator (all needs to be atomic).
 	class TaskQueue {
 	private:
 		//queue always ends with a nullptr
@@ -62,6 +72,7 @@ public:
 		//never drop a task when pushing, but may pop a nullptr if a
 		//false positive occurs, and checking for nullptrs will be bad.
 		bool empty();
+		//use this to double-check before ending loops.
 		bool empty_strict();
 		//waiting() function has to be strict when used for evaluation.
 		size_t waiting();
