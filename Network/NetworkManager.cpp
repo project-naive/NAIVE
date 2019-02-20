@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 //Functions in class NetworkManager
 
@@ -75,8 +76,10 @@ TCPServer::TCPServer(size_t LSocket, const char* iservice, const addrinfo* const
 	ListenSocket(LSocket), service(iservice), addr(addri), max_queue(queue_size) {
 	FD_ZERO(&to_read_fd);
 	FD_ZERO(&to_write_fd);
+	FD_ZERO(&to_close_fd);
 	FD_SET(LSocket, &to_read_fd);
 	max_fd = ListenSocket;
+	max_close_fd = 0;
 }
 
 
@@ -92,8 +95,19 @@ bool TCPServer::EnableNonBlockAccept(bool state) {
 	return true;
 }
 
+bool TCPServer::EnableNonBlockIO(size_t index, bool state) {
+	if (index >= connect_count) return false;
+	if (!Connections[index].in_use || Connections[index].socket == size_t(-1)) return false;
+	if (ioctlsocket(Connections[index].socket, FIONBIO, (u_long*)&state) == -1) {
+		HandleSocketError();
+		return false;
+	}
+	Connections[index].nonblock = state;
+	return true;
+}
+
 TCPServer::Connection_Info* TCPServer::AcceptConnection(sockaddr* addr, int* addrlen, int rw_flag) {
-	size_t incoming_socket=accept(ListenSocket, addr, addrlen);
+	size_t incoming_socket = accept(ListenSocket, addr, addrlen);
 	if (incoming_socket == size_t(-1)) {
 		HandleSocketError();
 		return nullptr;
@@ -108,6 +122,32 @@ TCPServer::Connection_Info* TCPServer::AcceptConnection(sockaddr* addr, int* add
 	//Set the incoming client to read and write polling
 	if(rw_flag & 0x01) FD_SET(incoming_socket, &to_read_fd);
 	if(rw_flag & 0x02) FD_SET(incoming_socket, &to_write_fd);
+}
+
+bool TCPServer::ReadConnection(size_t index, DataBlob & buffer) {
+	return false;
+}
+
+bool TCPServer::RegisterClose(size_t index) {
+	if (shutdown(Connections[index].socket, SD_SEND) == -1) {
+		HandleSocketError();
+		return false;
+	}
+	FD_CLR(Connections[index].socket, &to_read_fd);
+	FD_CLR(Connections[index].socket, &to_write_fd);
+	if (Connections[index].nonblock) {
+		FD_SET(Connections[index].socket, &to_close_fd);
+		max_close_fd = std::max(max_close_fd, Connections[index].socket);
+		return true;
+	}
+	else {
+		if (closesocket(Connections[index].socket) == -1) {
+			HandleSocketError();
+			return false;
+		}
+		//unload the Connections[index] to unloaded...
+		return true;
+	}
 }
 
 bool TCPServer::PollConnections(fd_set* read_ready, fd_set* write_ready, fd_set* exception, timeval * timeout) {
