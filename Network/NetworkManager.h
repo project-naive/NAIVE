@@ -33,6 +33,11 @@ public:
 	bool EnableNonBlockAccept(bool state = true);
 	bool EnableNonBlockIO(size_t index, bool state = true);
 
+	struct DataBlob {
+		size_t size = 0;
+		const char* data = nullptr;
+	};
+
 	struct Connection_Info {
 		size_t index = -1;
 		size_t socket = -1;
@@ -40,13 +45,11 @@ public:
 		std::atomic<size_t> revision = 0;
 		//Connection can only be made form one thread at a time
 		std::mutex mtx;
-		bool blocking_mode = true;
+		bool nonblock = true;
 		bool in_use = false;
 		//other data specific to one connection stored here.
-	};
-	struct DataBlob {
-		size_t size = 0;
-		const char* data = nullptr;
+		DataBlob to_write;
+		DataBlob to_read;
 	};
 
 	//Flags:
@@ -56,15 +59,18 @@ public:
 	//Other bits set but not the previous:
 	//Enable non-block but not register within the server class
 	Connection_Info* AcceptConnection(sockaddr* addr = nullptr, int* addrlen = nullptr, int rw_flag = 0x03);
-	bool CloseConnection(size_t index);
 	bool ReadConnection(size_t index, DataBlob& buffer);
 	bool WriteConnection(size_t index, DataBlob& buffer);
 	//calls select() with internally set "to_read_fd" and "to_write_fd", 
 	//writes to the location given by user, other parameters are used directly
 	bool PollConnections(fd_set* read_ready, fd_set* write_ready, fd_set* exception, timeval* timeout);
+	bool RegisterClose(size_t index);
+	size_t PollClosing();
 	fd_set to_read_fd;
 	fd_set to_write_fd;
+	fd_set to_close_fd;
 	size_t max_fd;
+	size_t max_close_fd;
 protected:
 	TCPServer(size_t LSocket, const char* service, const addrinfo* const addri, const size_t queue_size);
 private:
