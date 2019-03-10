@@ -1,2 +1,4 @@
-# 2048
-A simple OpenGL game
+# NAIVE
+
+A simple c++ multi-purpose (game) engine.  
+

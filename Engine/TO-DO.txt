@@ -1,0 +1,81 @@
+# A list of intended features for the NAIVE Game Engine
+
+Version 1.1.0 Info
+
+Implemented features:
+
+1. Graphics
+	1.1 Setup
+		1.1.1 Unified interface for OpenGL contexts, display state and event processing
+2. Models
+	2.1 Model rendering
+		2.1.1 Interface for user-defined hard-coded simple rendering models
+3. Interface
+	3.1 Info output
+		3.1.1 Simple text rendering with textures for each character
+4. Resource Management
+	4.1 Storage
+		4.1.1 Shader and other resource manager to share resource across context or models.
+	4.2 Processing
+		4.2.1 Fast and safe thread pool implementation
+		
+Implemented New features:
+
+1. Support for multithreading (Partial)
+	1.1 Fast and safe thread pool implementation
+
+Possible new features list for version 1.1.0
+
+1. Custom model-loading and rendering (!!!)
+	1.1 Model loading (fixed binary format, fast..., conversion may be supported)
+	1.2 Model flags (type and rendering strategy choice)
+	1.3 Model data processing (move skeletons, apply textures, etc. May be partially implemented in shaders)
+	1.4 Model render-layer sequence (e.g. background->bg models->fg models->captions)
+	1.5 Unified rendering logic
+	1.6 Possible decoupling of models and rendering (models still calls rendering part, though)
+	1.7 Faster text render with preloaded single texture (Can add more chars when needed or by setting flags)
+2. Full support for multithreading (!!)
+	2.1 Fast thread pool implementation (x)
+	2.2 Thread-aware managers
+3. Support for realtime network IO
+	3.1 Cross-platform network manager
+	3.2 Unified UDP transfer format and error checking
+4. Audio support (!)
+	4.1 Audio manager with stream (coupled to thread-manager)
+	4.2 Audio coupling with models (doppler effect and distance dampening)
+5. Video support (!)
+	5.1 Support playing video streams (either with software decoding (with decoding threads)
+		or somehow hardware accerlerated)
+	5.2 Syncronization with audio playbacks and couple with audio manager into a overall
+		integrated Media player
+6. Resource packaging
+	6.1 Package resource files into packages for faster loading and possible encryption
+7. Engine versioning queries
+
+
+Release version 1.0.0 info
+
+Implemented features:
+
+1. Graphics
+	1.1 Setup
+		1.1.1 Unified interface for OpenGL contexts, display state and event processing
+2. Models
+	2.1 Model rendering
+		2.1.1 Interface for user-defined hard-coded simple rendering models
+3. Interface
+	3.1 Info output
+		3.1.1 Simple text rendering with textures for each character
+4. Resource Management
+	4.1 Storage
+		4.1.1 Shader and other resource manager to share resource across context or models.
+5. Sample Programs
+	5.1 Rendering of a scence on one context and then use the scence to texture a rotating cube in another context
+		(with FPS counter)
+	5.2 A simple 2048 game
+
+NOTE: Initial useable release.
+
+
+
+
