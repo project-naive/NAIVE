@@ -316,8 +316,8 @@ __pycache__/
 *.iobj
 *.ipdb
 *.dat
-![Dd]epend/*
-![Bb]uild/Dependencies/*
+![Bb]uild/Dependencies/**/*
+![Dd]epend/**/*
 
 
 
