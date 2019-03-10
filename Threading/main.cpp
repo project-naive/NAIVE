@@ -20,7 +20,7 @@ bool test(ThreadPool* pool, int push_ID) {
 	}
 */
 	pool->PushTask(std::bind(*test, pool, push_ID));
-	pool->PollTasks();
+//	pool->PollTasks();
 	return false;
 }
 
@@ -49,7 +49,7 @@ int main() {
 		pool.ScheduleTasks(queue);
 		do{
 			while (pool.QuerieSchedule()) {
-				pool.PollAllTasks();
+				pool.PollAllTasks_WaitingOnly();
 				pool.WaitAll();
 			}
 		} while (pool.QuerieSchedule());
