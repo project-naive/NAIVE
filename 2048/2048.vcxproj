@@ -59,38 +59,28 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\Props\UTF-8 compiler.props" />
-    <Import Project="..\Props\FreeTypeFont.props" />
-    <Import Project="..\Props\OpenGL.props" />
-    <Import Project="..\Props\FTF_debug.props" />
-    <Import Project="..\Props\OpenGL debug.props" />
-    <Import Project="..\Props\MyEngine.props" />
+    <Import Project="..\Props\NAIVE_Dynamic_MDd.props" />
+    <Import Project="..\Props\NAIVE.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\Props\UTF-8 compiler.props" />
-    <Import Project="..\Props\FreeTypeFont.props" />
-    <Import Project="..\Props\OpenGL.props" />
-    <Import Project="..\Props\FTF_release.props" />
-    <Import Project="..\Props\OpenGL release.props" />
-    <Import Project="..\Props\MyEngine.props" />
+    <Import Project="..\Props\NAIVE_Static_MT.props" />
+    <Import Project="..\Props\NAIVE.props" />
+    <Import Project="..\Props\NoConsole.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\Props\UTF-8 compiler.props" />
-    <Import Project="..\Props\FreeTypeFont.props" />
-    <Import Project="..\Props\OpenGL.props" />
-    <Import Project="..\Props\FTF_debug.props" />
-    <Import Project="..\Props\OpenGL debug.props" />
-    <Import Project="..\Props\MyEngine.props" />
+    <Import Project="..\Props\NAIVE_Dynamic_MDd.props" />
+    <Import Project="..\Props\NAIVE.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\Props\UTF-8 compiler.props" />
-    <Import Project="..\Props\FreeTypeFont.props" />
-    <Import Project="..\Props\OpenGL.props" />
-    <Import Project="..\Props\FTF_release.props" />
-    <Import Project="..\Props\OpenGL release.props" />
-    <Import Project="..\Props\MyEngine.props" />
+    <Import Project="..\Props\NAIVE_Static_MT.props" />
+    <Import Project="..\Props\NAIVE.props" />
+    <Import Project="..\Props\NoConsole.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -187,6 +177,18 @@
     <None Include="2048\States\State_2048\Models\Block\Block.vert" />
     <None Include="2048\States\State_2048\Models\Fan\Fan.frag" />
     <None Include="2048\States\State_2048\Models\Fan\Fan.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Resources\fonts\arial.ttf" />
+    <Font Include="Resources\fonts\arialbd.ttf" />
+    <Font Include="Resources\fonts\arialbi.ttf" />
+    <Font Include="Resources\fonts\ariali.ttf" />
+    <Font Include="Resources\fonts\arialn.ttf" />
+    <Font Include="Resources\fonts\arialnb.ttf" />
+    <Font Include="Resources\fonts\arialnbi.ttf" />
+    <Font Include="Resources\fonts\arialni.ttf" />
+    <Font Include="Resources\fonts\ariblk.ttf" />
+    <Font Include="Resources\fonts\Default.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

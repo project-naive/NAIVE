@@ -299,10 +299,7 @@ __pycache__/
 *.xsd.cs
 
 #Project-specific
-[Bb]uild/
 [Ii]ntermediates/
-[Tt]est/
-MyLibrary/
 .leu
 *.png
 *.dll
@@ -319,6 +316,9 @@ MyLibrary/
 *.iobj
 *.ipdb
 *.dat
+![Bb]uild/Dependencies/**/*
+![Dd]epend/**/*
+
 
 
 

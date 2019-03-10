@@ -59,12 +59,12 @@ namespace States {
 		Engine::Graphics::WindowInfo info = Engine::Graphics::Contexts::Default::default_window();
 		info.Basic_Info.height = 1024;
 		info.Basic_Info.width = 1024;
-		info.Extended_Info.GL_Version_Major = 4;
-		info.Extended_Info.GL_Version_Minor = 4;
-		info.Extended_Info.title = "Another Window!";
-		info.Extended_Info.swap_interval = 0;
-		info.Extended_Info.debug = true;
-		info.Extended_Info.double_buffer = true;
+		info.Extended_Info.Context.ContextInfo.GL_Version_Major = 4;
+		info.Extended_Info.Context.ContextInfo.GL_Version_Minor = 4;
+		info.Extended_Info.Display.Window.title = "Another Window!";
+		info.Extended_Info.Display.SwapInterval = 0;
+		info.Extended_Info.Context.ContextInfo.debug = true;
+		info.Extended_Info.Context.FramebufferInfo.double_buffer = true;
 		ContextIDs[1] = Managers.ContextManager.GenContext(info, Managers.ContextManager.GetCurrent());
 		//Do stuff with the other context...
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -143,7 +143,7 @@ namespace States {
 			glBlitFramebuffer(0, 0, GLint(rb_width), GLint(rb_height),
 							  0, 0, GLint(width), GLint(height),
 							  GL_COLOR_BUFFER_BIT, GL_LINEAR);
-			Managers.ContextManager.Refresh();
+			Managers.ContextManager.SwapBuffers();
 		}
 		if(ContextIDs[1]!=size_t(-1)) {
 			Managers.ContextManager.SetContext(ContextIDs[1]);
@@ -158,7 +158,7 @@ namespace States {
 			CubeModel->Draw();
 		//	TextureModel->Begin();
 		//	TextureModel->Draw();
-			Managers.ContextManager.Refresh();
+			Managers.ContextManager.SwapBuffers();
 		}
 	}
 	void Simple::Update() {

@@ -9,13 +9,13 @@ public:
 	~Game_2048();
 	void notifyRefresh(size_t contextID) override final {
 		state->Refresh(contextID);
-//		Managers.ContextManager.Refresh();
+//		Managers.ContextManager.SwapBuffers();
 	}
 	void MainLoop() override final;
 	void notifyFBSize(int width, int height, size_t contextID = 0) override final {
 		Managers.ContextManager.Resize(width, height, contextID);
 		state->Refresh(contextID);
-//		Managers.ContextManager.Refresh();
+//		Managers.ContextManager.SwapBuffers();
 //		state->Draw();
 	};
 	virtual void notifyClose(size_t contextID = 0) override final {

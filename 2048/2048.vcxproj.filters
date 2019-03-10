@@ -23,6 +23,24 @@
     <Filter Include="2048\States\State_2048\Models">
       <UniqueIdentifier>{ef1cfbea-3766-40cf-b689-3192ef685cde}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2048\States\Welcome">
+      <UniqueIdentifier>{fbca9ad6-d422-4405-b2a8-f292393a9c6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2048\States\State_2048\Models\Block">
+      <UniqueIdentifier>{a63fec4d-0575-4be0-a578-cd9242ece810}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2048\States\State_2048\Models\Fan">
+      <UniqueIdentifier>{ceed8772-508a-4129-bcd6-58dcae89d31b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2048\States\Simple\TexturedCube">
+      <UniqueIdentifier>{74ee416b-0156-4d3f-a4ef-50f84bf60376}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2048\States\Simple\TextureQuad">
+      <UniqueIdentifier>{c2b23a49-2904-46bc-a8a2-121f585e23e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Fonts">
+      <UniqueIdentifier>{97a9b406-0e13-4374-b899-03d98a0e3072}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="2048\Game_2048.cpp">
@@ -34,27 +52,39 @@
     <ClCompile Include="2048\States\StateManager.cpp">
       <Filter>2048\States</Filter>
     </ClCompile>
-    <ClCompile Include="2048\States\Simple\Simple.cpp">
-      <Filter>2048\States\Simple</Filter>
-    </ClCompile>
     <ClCompile Include="2048\States\Loading\Loading.cpp">
       <Filter>2048\States\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="2048\States\Simple\Simple.cpp">
+      <Filter>2048\States\Simple</Filter>
     </ClCompile>
     <ClCompile Include="2048\States\State_2048\State_2048.cpp">
       <Filter>2048\States\State_2048</Filter>
     </ClCompile>
+    <ClCompile Include="2048\States\Welcome\Welcome.cpp">
+      <Filter>2048\States\Welcome</Filter>
+    </ClCompile>
+    <ClCompile Include="2048\States\State_2048\Models\Block\Block.cpp">
+      <Filter>2048\States\State_2048\Models\Block</Filter>
+    </ClCompile>
+    <ClCompile Include="2048\States\State_2048\Models\Block\BlockShader.cpp">
+      <Filter>2048\States\State_2048\Models\Block</Filter>
+    </ClCompile>
     <ClCompile Include="2048\States\State_2048\Models\Fan\Fan.cpp">
-      <Filter>2048\States\State_2048\Models</Filter>
+      <Filter>2048\States\State_2048\Models\Fan</Filter>
     </ClCompile>
     <ClCompile Include="2048\States\State_2048\Models\Fan\FanShader.cpp">
-      <Filter>2048\States\State_2048\Models</Filter>
+      <Filter>2048\States\State_2048\Models\Fan</Filter>
     </ClCompile>
-    <ClCompile Include="2048\States\Simple\Models\TextureQuad\TextureQuad.cpp" />
-    <ClCompile Include="2048\States\Simple\Models\TextureQuad\TQShader.cpp" />
-    <ClCompile Include="2048\States\Simple\Models\TexturedCube\TextureCube.cpp" />
-    <ClCompile Include="2048\States\State_2048\Models\Block\Block.cpp" />
-    <ClCompile Include="2048\States\State_2048\Models\Block\BlockShader.cpp" />
-    <ClCompile Include="2048\States\Welcome\Welcome.cpp" />
+    <ClCompile Include="2048\States\Simple\Models\TexturedCube\TextureCube.cpp">
+      <Filter>2048\States\Simple\TexturedCube</Filter>
+    </ClCompile>
+    <ClCompile Include="2048\States\Simple\Models\TextureQuad\TextureQuad.cpp">
+      <Filter>2048\States\Simple\TextureQuad</Filter>
+    </ClCompile>
+    <ClCompile Include="2048\States\Simple\Models\TextureQuad\TQShader.cpp">
+      <Filter>2048\States\Simple\TextureQuad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2048\Game_2048.h">
@@ -63,38 +93,90 @@
     <ClInclude Include="2048\States\StateManager.h">
       <Filter>2048\States</Filter>
     </ClInclude>
-    <ClInclude Include="2048\States\Simple\Simple.h">
-      <Filter>2048\States\Simple</Filter>
-    </ClInclude>
     <ClInclude Include="2048\States\Loading\Loading.h">
       <Filter>2048\States\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="2048\States\Simple\Simple.h">
+      <Filter>2048\States\Simple</Filter>
     </ClInclude>
     <ClInclude Include="2048\States\State_2048\State_2048.h">
       <Filter>2048\States\State_2048</Filter>
     </ClInclude>
+    <ClInclude Include="2048\States\Welcome\Welcome.h">
+      <Filter>2048\States\Welcome</Filter>
+    </ClInclude>
+    <ClInclude Include="2048\States\State_2048\Models\Block\Block.h">
+      <Filter>2048\States\State_2048\Models\Block</Filter>
+    </ClInclude>
+    <ClInclude Include="2048\States\State_2048\Models\Block\BlockShader.h">
+      <Filter>2048\States\State_2048\Models\Block</Filter>
+    </ClInclude>
     <ClInclude Include="2048\States\State_2048\Models\Fan\Fan.h">
-      <Filter>2048\States\State_2048\Models</Filter>
+      <Filter>2048\States\State_2048\Models\Fan</Filter>
     </ClInclude>
     <ClInclude Include="2048\States\State_2048\Models\Fan\FanShader.h">
-      <Filter>2048\States\State_2048\Models</Filter>
+      <Filter>2048\States\State_2048\Models\Fan</Filter>
     </ClInclude>
-    <ClInclude Include="2048\States\Simple\Models\TextureQuad\TextureQuad.h" />
-    <ClInclude Include="2048\States\Simple\Models\TextureQuad\TQShader.h" />
-    <ClInclude Include="2048\States\Simple\Models\TexturedCube\TextureCube.h" />
-    <ClInclude Include="2048\States\State_2048\Models\Block\Block.h" />
-    <ClInclude Include="2048\States\State_2048\Models\Block\BlockShader.h" />
-    <ClInclude Include="2048\States\Welcome\Welcome.h" />
+    <ClInclude Include="2048\States\Simple\Models\TexturedCube\TextureCube.h">
+      <Filter>2048\States\Simple\TexturedCube</Filter>
+    </ClInclude>
+    <ClInclude Include="2048\States\Simple\Models\TextureQuad\TQShader.h">
+      <Filter>2048\States\Simple\TextureQuad</Filter>
+    </ClInclude>
+    <ClInclude Include="2048\States\Simple\Models\TextureQuad\TextureQuad.h">
+      <Filter>2048\States\Simple\TextureQuad</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.frag">
+      <Filter>2048\States\Simple\TextureQuad</Filter>
+    </None>
+    <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.vert">
+      <Filter>2048\States\Simple\TextureQuad</Filter>
+    </None>
     <None Include="2048\States\State_2048\Models\Fan\Fan.frag">
-      <Filter>2048\States\State_2048\Models</Filter>
+      <Filter>2048\States\State_2048\Models\Fan</Filter>
     </None>
     <None Include="2048\States\State_2048\Models\Fan\Fan.vert">
-      <Filter>2048\States\State_2048\Models</Filter>
+      <Filter>2048\States\State_2048\Models\Fan</Filter>
     </None>
-    <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.vert" />
-    <None Include="2048\States\Simple\Models\TextureQuad\TextureQuad.frag" />
-    <None Include="2048\States\State_2048\Models\Block\Block.vert" />
-    <None Include="2048\States\State_2048\Models\Block\Block.frag" />
+    <None Include="2048\States\State_2048\Models\Block\Block.frag">
+      <Filter>2048\States\State_2048\Models\Block</Filter>
+    </None>
+    <None Include="2048\States\State_2048\Models\Block\Block.vert">
+      <Filter>2048\States\State_2048\Models\Block</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Resources\fonts\Default.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="Resources\fonts\arialbd.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="Resources\fonts\arialbi.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="Resources\fonts\ariali.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="Resources\fonts\arialn.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="Resources\fonts\arialnb.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="Resources\fonts\arialnbi.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="Resources\fonts\arialni.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="Resources\fonts\ariblk.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="Resources\fonts\arial.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
   </ItemGroup>
 </Project>
