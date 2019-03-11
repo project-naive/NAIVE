@@ -58,39 +58,27 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\Props\UTF-8 compiler.props" />
-    <Import Project="..\Props\FreeTypeFont.props" />
-    <Import Project="..\Props\OpenGL.props" />
-    <Import Project="..\Props\FTF_debug.props" />
-    <Import Project="..\Props\OpenGL debug.props" />
-    <Import Project="..\Props\MyEngine.props" />
+    <Import Project="..\..\Props\UTF-8 compiler.props" />
+    <Import Project="..\..\Props\NAIVE_Dynamic_MDd.props" />
+    <Import Project="..\..\Props\NAIVE.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\Props\UTF-8 compiler.props" />
-    <Import Project="..\Props\FreeTypeFont.props" />
-    <Import Project="..\Props\OpenGL.props" />
-    <Import Project="..\Props\FTF_release.props" />
-    <Import Project="..\Props\OpenGL release.props" />
-    <Import Project="..\Props\MyEngine.props" />
+    <Import Project="..\..\Props\UTF-8 compiler.props" />
+    <Import Project="..\..\Props\NAIVE_Static_MT.props" />
+    <Import Project="..\..\Props\NAIVE.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\Props\UTF-8 compiler.props" />
-    <Import Project="..\Props\FreeTypeFont.props" />
-    <Import Project="..\Props\OpenGL.props" />
-    <Import Project="..\Props\FTF_debug.props" />
-    <Import Project="..\Props\OpenGL debug.props" />
-    <Import Project="..\Props\MyEngine.props" />
+    <Import Project="..\..\Props\UTF-8 compiler.props" />
+    <Import Project="..\..\Props\NAIVE_Dynamic_MDd.props" />
+    <Import Project="..\..\Props\NAIVE.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\Props\UTF-8 compiler.props" />
-    <Import Project="..\Props\FreeTypeFont.props" />
-    <Import Project="..\Props\OpenGL.props" />
-    <Import Project="..\Props\FTF_release.props" />
-    <Import Project="..\Props\OpenGL release.props" />
-    <Import Project="..\Props\MyEngine.props" />
+    <Import Project="..\..\Props\UTF-8 compiler.props" />
+    <Import Project="..\..\Props\NAIVE_Static_MT.props" />
+    <Import Project="..\..\Props\NAIVE.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -139,21 +127,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Graphics\Context\Callback.cpp" />
-    <ClCompile Include="Engine\Graphics\Context\Context.cpp" />
     <ClCompile Include="Test\main.cpp" />
     <ClCompile Include="Test\States\Playground\Playground.cpp" />
     <ClCompile Include="Test\Test.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Graphics\Context\Callback.h" />
-    <ClInclude Include="Engine\Graphics\Context\Context.h" />
-    <ClInclude Include="Engine\Graphics\Context\WindowInfo.h" />
     <ClInclude Include="Test\States\Playground\Playground.h" />
     <ClInclude Include="Test\Test.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Engine\Engine.vcxproj">
+    <ProjectReference Include="..\..\Engine\Engine.vcxproj">
       <Project>{3c9221f3-0101-43c6-bf19-3bf108004c21}</Project>
     </ProjectReference>
   </ItemGroup>

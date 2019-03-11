@@ -10,7 +10,7 @@ namespace State_2048 {
 			std::ifstream ifs;
 			ifs.open(vertex_shader_path);
 			if (!ifs) {
-				std::cerr << "Error opening Naive vertex shader file!\n" << std::endl;
+				std::cerr << "Error opening TQ vertex shader file!\n" << std::endl;
 				return 0;
 			}
 			ifs.seekg(0, std::ios::end);
@@ -24,7 +24,7 @@ namespace State_2048 {
 			code.clear();
 			ifs.open(fragment_shader_path);
 			if (!ifs) {
-				std::cerr << "Error opening Naive fragment shader file!\n" << std::endl;
+				std::cerr << "Error opening TQ fragment shader file!\n" << std::endl;
 				glDeleteShader(VertexShader);
 				return 0;
 			}
@@ -50,7 +50,7 @@ namespace State_2048 {
 				glGetProgramiv(created_program, GL_INFO_LOG_LENGTH, &info_log_length);
 				std::vector<char> info_log(info_log_length);
 				glGetProgramInfoLog(created_program, info_log_length, nullptr, &info_log[0]);
-				std::cerr << "Error linking Naive Program!\n\n" << info_log.data() << '\n' << std::endl;
+				std::cerr << "Error linking TQ Program!\n\n" << info_log.data() << '\n' << std::endl;
 				glDeleteShader(VertexShader);
 				glDeleteShader(FragmentShader);
 				glDeleteProgram(created_program);
