@@ -108,6 +108,7 @@ namespace Engine {
 				info.Extended_Info.Display.Window.CreationInfo.maxHeight = 
 					std::min(info.Extended_Info.Display.Window.CreationInfo.maxHeight, 
 							 maximize_height);
+				if (!info.Extended_Info.Display.Window.StartInfo.visible) glfwHideWindow(info.Basic_Info.Window);
 			}
 			if (info.Extended_Info.Display.Window.CreationInfo.KeepAspect) {
 				double ratio = double(default_width) / default_height;

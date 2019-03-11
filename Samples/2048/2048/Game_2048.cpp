@@ -7,7 +7,8 @@
 
 Game_2048::Game_2048(Engine::Graphics::WindowInfo& info) : Game(info) {
 //	state = new States::Loading(Managers);
-	state = new States::Welcome(Managers);
+//	state = new States::Welcome(Managers);
+	state = new States::Simple(Managers);
 //	glfwSetKeyCallback(display.Window, KeyCallback);
 }
 
@@ -16,6 +17,7 @@ Game_2048::~Game_2048() {
 
 void Game_2048::MainLoop() {
 	glfwPollEvents();
+/*
 	while (state->running) {
 		state->Loop();
 	}
@@ -26,6 +28,11 @@ void Game_2048::MainLoop() {
 			state->Loop();
 			running &= state->running;
 		}
+	}
+	*/
+	while (running) {
+		state->Loop();
+		running &= state->running;
 	}
 }
 
