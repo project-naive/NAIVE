@@ -55,9 +55,11 @@ This file contains links to useful resources found while learning.
 7. Video codec
 	(The situation is worse than Audio, and may require calling hardware apis to encode and decode... Software
 	implementation is not fast enough in many cases.)
-	7.1 OpenH264
+	7.1 x264/x265
+	7.2 OpenH264
 		https://github.com/cisco/openh264
-	7.2 Review on codecs
+	7.3 VP8 (WebM)
+	7.4 Review on codecs
 		http://gamasutra.com/view/news/170671/Indepth_Playing_with_video.php
 
 7. Usefull tools
