@@ -10,8 +10,8 @@ namespace State_2048 {
 				CreateProgram();
 			}
 			GLuint CreateProgram() override;
-			const char* fragment_shader_path = ".\\2048\\2048\\States\\Simple\\Models\\TextureQuad\\TextureQuad.frag";
-			const char* vertex_shader_path = ".\\2048\\2048\\States\\Simple\\Models\\TextureQuad\\TextureQuad.vert";
+			const char* fragment_shader_path = ".\\Samples\\2048\\2048\\States\\Simple\\Models\\TextureQuad\\TextureQuad.frag";
+			const char* vertex_shader_path = ".\\Samples\\2048\\2048\\States\\Simple\\Models\\TextureQuad\\TextureQuad.vert";
 		};
 	}
 }

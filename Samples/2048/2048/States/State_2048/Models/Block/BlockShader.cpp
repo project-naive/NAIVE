@@ -10,7 +10,7 @@ namespace State_2048 {
 			std::ifstream ifs;
 			ifs.open(vertex_shader_path);
 			if (!ifs) {
-				std::cerr << "Error opening Naive vertex shader file!\n" << std::endl;
+				std::cerr << "Error opening Block vertex shader file!\n" << std::endl;
 				return 0;
 			}
 			ifs.seekg(0, std::ios::end);
@@ -24,7 +24,7 @@ namespace State_2048 {
 			code.clear();
 			ifs.open(fragment_shader_path);
 			if (!ifs) {
-				std::cerr << "Error opening Naive fragment shader file!\n" << std::endl;
+				std::cerr << "Error opening Block fragment shader file!\n" << std::endl;
 				glDeleteShader(VertexShader);
 				return 0;
 			}

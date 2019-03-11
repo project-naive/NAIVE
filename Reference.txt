@@ -1,0 +1,70 @@
+This file contains links to useful resources found while learning.
+1. General coding
+	1.1 Discussion site, stackoverflow
+		https://stackoverflow.com/
+	1.2 Coding site LeetCode
+		https://leetcode.com/
+	1.3 A problem-solving site recently found Project Euler
+		https://projecteuler.net/
+
+2. C/C++ coding
+	1. Reference site cppreference
+		https://en.cppreference.com/w/
+	2. Reference site cplusplus.com
+		http://www.cplusplus.com/reference/
+	3. CppCon talks (very useful, many can be found on youtube), site found at
+		https://cppcon.org
+		https://www.youtube.com/user/CppCon
+			A very good video from Yubisoft employee
+				https://www.youtube.com/watch?v=qYN6eduU06s
+		https://github.com/CppCon
+	4. C++ specification (following is C++ 11)
+		http://www.open-std.org/JTC1/SC22/WG21/docs/papers/2011/n3242.pdf
+
+3. OpenGL API and GLSL resources
+	3.1 Learn OpenGL tutorial site (offline book available)
+		https://learnopengl.com/
+	3.2 OpenGL Book (offline book available)
+		http://openglbook.com/
+	3.3 OpenGL registry documentation
+		https://khronos.org/registry/OpenGL-Refpages/gl4/
+	3.4 A simple guide to a simple engine
+		http://in2gpu.com/2014/10/15/setting-up-opengl-with-visual-studio/
+
+4. Model tranformations, general computer graphics
+	4.1 Material source from a professor account I found on Github
+		https://github.com/alecjacobson
+
+5. Network socket programming
+	(Not many, not especially good...)
+	5.1 Microsoft's Winsock has documentation here
+		https://docs.microsoft.com/en-us/windows/desktop/WinSock/windows-sockets-start-page-2
+	5.2 recommended material Beej's guide
+		http://beej.us/guide/bgnet/html/single/bgnet.html
+
+6. Possible Audio Library
+	6.1 OpenAL (in a somewhat static situation)
+		https://www.openal.org/
+	6.2 FMOD (expensived despite being powerful... reconsider...?)
+		http://www.fmod.org/
+	6.3 FFmpeg (LGPLed, can be bad for a commercial project in the future, defaut distributed binary is under GPLv3)
+		https://ffmpeg.org
+	(There's not many free or MIT or BSD licensed API or libraries out there... OpenAL may be the most suitable...)
+	(Considering using vorbis as default format)
+	
+7. Video codec
+	(The situation is worse than Audio, and may require calling hardware apis to encode and decode... Software
+	implementation is not fast enough in many cases.)
+	7.1 x264/x265
+	7.2 OpenH264
+		https://github.com/cisco/openh264
+	7.3 VP8 (WebM)
+	7.4 Review on codecs
+		http://gamasutra.com/view/news/170671/Indepth_Playing_with_video.php
+
+7. Usefull tools
+	7.1 APITrace - traces and profiles graphic API calls
+		http://apitrace.github.io/
+	7.2 Open source free and powerful image editor GIMP2
+		https://www.gimp.org/
+	

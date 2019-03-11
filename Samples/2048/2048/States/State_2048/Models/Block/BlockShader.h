@@ -11,8 +11,8 @@ namespace State_2048 {
 				CreateProgram();
 			}
 			GLuint CreateProgram() override final;
-			const char* fragment_shader_path = ".\\2048\\2048\\States\\State_2048\\Models\\Block\\Block.frag";
-			const char* vertex_shader_path = ".\\2048\\2048\\States\\State_2048\\Models\\Block\\Block.vert";
+			const char* fragment_shader_path = ".\\Samples\\2048\\2048\\States\\State_2048\\Models\\Block\\Block.frag";
+			const char* vertex_shader_path = ".\\Samples\\2048\\2048\\States\\State_2048\\Models\\Block\\Block.vert";
 		};
 	}
 }
