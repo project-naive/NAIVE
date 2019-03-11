@@ -22,9 +22,10 @@ int main(int argc, char* argv[], char* env[]) {
 	window.Extended_Info.Display.Window.CreationInfo.maxHeight = INT_MAX;
 	window.Extended_Info.Context.ContextInfo.GL_Version_Major = 3;
 	window.Extended_Info.Context.ContextInfo.GL_Version_Minor = 3;
-	window.Extended_Info.Display.SwapInterval = 1;
+	window.Extended_Info.Display.Window.StartInfo.visible = true;
+	window.Extended_Info.Display.SwapInterval = 0;
 	window.Extended_Info.Context.ContextInfo.debug = false;
-	window.Extended_Info.Context.FramebufferInfo.double_buffer = false;
+	window.Extended_Info.Context.FramebufferInfo.double_buffer = true;
 	{
 		Game_2048 this_game{ window };
 		this_game.MainLoop();

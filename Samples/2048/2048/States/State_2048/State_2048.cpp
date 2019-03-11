@@ -135,8 +135,8 @@ namespace States {
 		while (running) {
 			while (can_continue && running) {
 				input_got = false;
-				glfwWaitEvents();
-				/*
+//				glfwWaitEvents();
+//				/*
 				int input = rand() % 4;
 				switch (input) {
 					case 0:
@@ -155,7 +155,7 @@ namespace States {
 						last_input = 'W';
 						input_got = true;
 						break;
-				}*/
+				}//*/
 				if (input_got) {
 					valid_move = false;
 					Draw();
