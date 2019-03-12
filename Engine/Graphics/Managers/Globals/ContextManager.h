@@ -45,17 +45,20 @@ namespace Engine {
 				glm::mat4 GetProjection() const {
 					return projection;
 				}
-				void Refresh() const {
+				void SwapBuffers() const {
 					glfwSwapBuffers(display.Window);
+				}
+				void FlushPipeline() const {
+					glFlush();
+				}
+				void ToDisplay() const {
+					display.double_buffer ? glfwSwapBuffers(display.Window) : glFlush();
 				}
 				bool Resize(size_t width, size_t height, size_t ID = 0);
 				size_t GenContext(Graphics::WindowInfo& info, size_t shared_ID = -1);
 				size_t GetContext(GLFWwindow* window) const {
-					if (display.Window == window) return current;
-					for (size_t i = 0; i < context_count; i++) {
-						if (Contexts[i] && Contexts[i]->display.Basic_Info.Window == window) return i;
-					}
-					return -1;
+					Graphics::Context& context = *(Graphics::Context*)glfwGetWindowUserPointer(window);
+					return context.ID;
 				}
 				bool noContext() const {
 					return !context_count;
@@ -83,7 +86,7 @@ namespace Engine {
 				size_t context_cache = 0;
 				Graphics::Context** Contexts = nullptr;
 				size_t current = -1;
-				Graphics::Window_Basic_Info display;
+				Graphics::WindowInfo::Window_Basic_Info display;
 				size_t d_width = 0;
 				size_t d_height = 0;
 				glm::mat4 projection{};
