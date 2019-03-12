@@ -13,6 +13,7 @@ namespace Engine {
 				GLFWwindow* Window = nullptr;
 				size_t width = 0;
 				size_t height = 0;
+				bool double_buffer = true;
 				bool fullscreen = false;
 				bool resizable = true;
 			} Window_Basic_Info;
@@ -32,7 +33,6 @@ namespace Engine {
 						bool No_Error = false;
 					} Window_Creation_Context_Info;
 					typedef struct {
-						bool double_buffer = true;
 						bool Stereoscopic = false;
 
 						bool SRGB_Capable = false;

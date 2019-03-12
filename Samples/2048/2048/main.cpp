@@ -25,7 +25,7 @@ int main(int argc, char* argv[], char* env[]) {
 	window.Extended_Info.Display.Window.StartInfo.visible = true;
 	window.Extended_Info.Display.SwapInterval = 0;
 	window.Extended_Info.Context.ContextInfo.debug = false;
-	window.Extended_Info.Context.FramebufferInfo.double_buffer = true;
+	window.Basic_Info.double_buffer = false;
 	{
 		Game_2048 this_game{ window };
 		this_game.MainLoop();

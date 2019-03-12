@@ -48,6 +48,12 @@ namespace Engine {
 				void SwapBuffers() const {
 					glfwSwapBuffers(display.Window);
 				}
+				void FlushPipeline() const {
+					glFlush();
+				}
+				void ToDisplay() const {
+					display.double_buffer ? glfwSwapBuffers(display.Window) : glFlush();
+				}
 				bool Resize(size_t width, size_t height, size_t ID = 0);
 				size_t GenContext(Graphics::WindowInfo& info, size_t shared_ID = -1);
 				size_t GetContext(GLFWwindow* window) const {
