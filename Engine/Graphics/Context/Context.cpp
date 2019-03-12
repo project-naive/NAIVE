@@ -48,7 +48,7 @@ namespace Engine {
 			}
 			{
 				glfwWindowHint(GLFW_DOUBLEBUFFER,
-							   info.Extended_Info.Context.FramebufferInfo.double_buffer);
+							   info.Basic_Info.double_buffer);
 				glfwWindowHint(GLFW_STEREO,
 							   info.Extended_Info.Context.FramebufferInfo.Stereoscopic);
 				glfwWindowHint(GLFW_SRGB_CAPABLE,

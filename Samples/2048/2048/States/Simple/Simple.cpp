@@ -64,7 +64,7 @@ namespace States {
 		info.Extended_Info.Display.Window.title = "Another Window!";
 		info.Extended_Info.Display.SwapInterval = 0;
 		info.Extended_Info.Context.ContextInfo.debug = true;
-		info.Extended_Info.Context.FramebufferInfo.double_buffer = true;
+		info.Basic_Info.double_buffer = true;
 	//	ContextIDs[1] = Managers.ContextManager.GenContext(info, Managers.ContextManager.GetCurrent());
 		//Do stuff with the other context...
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
