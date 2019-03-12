@@ -1,0 +1,14 @@
+Models have to be decoupled from graphics itself. And a model loading part shoud be
+present, so this needs to be finished after the streaming and buffer implementation
+is done.
+
+Models by themselves should be able to contain more info than just mesh and texture.
+
+Models should be able to be subdivided into the major part and smaller sub-parts, 
+forming a tree data structure in the same model space, and subparts may be optional 
+when intensive rendering, and should also be able to specify whether the tree has
+significant parts in the following leaves. An idea is to give a weight to all the
+parts and specify the part's weight and the largest weight of all its successor nodes.
+
+Models parts should be able to be molded and controlled with a skeleton.
+
