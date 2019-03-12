@@ -1,0 +1,19 @@
+Current thoughts on how to implement multi-threading
+
+1. A global thread pool or pool of pools that calls hardware_concurrency() to maximize parallelism
+2. When cannot be detcted or too few, fallback to 1 or 2 thread rendering 
+	(resource streaming requires a sparate thread more than rendering, thus hardware with 2 thread 
+	will be using the same thread for input and rendering while another one do all the decoding and
+	other functions like uploading data to gl and network connection. This should be detected and
+	runtime-adjusted by default.)
+3. On hardware that supports more than 2 threads and defaults to double buffering, main thread will be
+	used for dealing with all the input and outputs, and a separate thread will be used for rendering. 
+	Dynamic upload of gl data may be here or uploaded on a separate thread if needed (if so, a context
+	switch must be able to be automatically performed).
+4. For other realtime data, like sound, consider a syncing mechanism that adjust the buffering and time
+	as needed. Blocking calls with no non-block alternatives should always be on a separate thread.
+5. Thus, the thread pool needs to be able to separate dedicated threads and worker threads, and able to be
+	queried for whether thread was dedicated or worker.
+6. There needs to be a thread manager to delegate all the tasks dispatched to the different threads, and may
+	need to be coupled to the main thread's event processing, since event processing is tightly coupled
+	to game logic and flow.

@@ -1,0 +1,25 @@
+TO-DO:
+
+# Threading framework
+1. Threading support for external API interfaces
+
+# Stream framework
+2. Custom IO streams support
+	(packaging filesystem can be added later)
+	(Note: encryption can be done streamwise, and package filesystem
+		level encryption will not be supported)
+
+# Model framework
+3. Model loading
+4. Model manipulation
+5. Model format and import ability
+6. Native model editor
+
+# Network framework
+5. Network IO support (initialization and sending)
+6. Async network IO
+7. UDP realtime data transfer and verification
+
+DONE:
+
+

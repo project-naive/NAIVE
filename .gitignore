@@ -299,7 +299,8 @@ __pycache__/
 *.xsd.cs
 
 #Project-specific
-[Ii]ntermediates/
+**/[Bb]uild/
+**/[Ii]ntermediates/
 .leu
 *.png
 *.dll
@@ -318,6 +319,7 @@ __pycache__/
 *.dat
 ![Bb]uild/Dependencies/**/*
 ![Dd]epend/**/*
+*RudeBuild*
 
 
 
