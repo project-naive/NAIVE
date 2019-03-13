@@ -8,7 +8,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>glfw3dll.lib;glew32d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vpxmtd.lib;glfw3dll.lib;glew32d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
