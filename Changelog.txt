@@ -25,33 +25,69 @@ Implemented New features:
 	1.1 Fast and safe thread pool implementation
 
 Possible new features list for version 1.1.0
-
-1. Custom model-loading and rendering (!!!)
-	1.1 Model loading (fixed binary format, fast..., conversion may be supported)
-	1.2 Model flags (type and rendering strategy choice)
-	1.3 Model data processing (move skeletons, apply textures, etc. May be partially implemented in shaders)
-	1.4 Model render-layer sequence (e.g. background->bg models->fg models->captions)
-	1.5 Unified rendering logic
-	1.6 Possible decoupling of models and rendering (models still calls rendering part, though)
-	1.7 Faster text render with preloaded single texture (Can add more chars when needed or by setting flags)
-2. Full support for multithreading (!!)
-	2.1 Fast thread pool implementation (x)
-	2.2 Thread-aware managers
-3. Support for realtime network IO
-	3.1 Cross-platform network manager
-	3.2 Unified UDP transfer format and error checking
+1. Full support for multithreading (!!)
+	1.1 Fast thread pool implementation (x)
+	1.2 Thread-aware managers
+	1.3 Wait-free queue implementation when not reallocating (use reference count to wait for queue usage)
+2. Custom Memory Allocator
+	2.1 Cache-aligned allocator that can reallocate movable objects 
+		and allocate on different heaps according to size and thread ownership and sharing
+		(The pointers to heaps are also stored cache aligned)
+		(possibly invalidate data when not using for possible power saving)
+	2.2 Implement allocation wait-free when the current heap is not full 
+		(use a cyclic search with atomic pointer to last allocation+1 for locating (fetch_add(1)).
+		The one that calls fetch_add(1) with return value of offset size (64 word) is responsible for 
+		moving the pointer back)
+3. UI overlay abstraction and scripting language for UI and textboxes, etc.
+	3.1 Simple interface for declaring game overlay layers (bg, models, tabs, UI, etc.)
+	3.2 Impement UI with objects, and prerender parts that do not change frame to frame
+	3.3 Simple scripting and textboxes, scripting may be c-like, textboxes may use a latex-like syntax
+	3.4 Text rendering with character atlas for given size, font and char range (also resource management)
+	3.5 Platform-specific IME (input ) implementations (e.g. textinputframework on Windows) 
+		for better text input experience, and input boxesin fullscreen windows
 4. Audio support (!)
-	4.1 Audio manager with stream (coupled to thread-manager)
-	4.2 Audio coupling with models (doppler effect and distance dampening)
-5. Video support (!)
-	5.1 Support playing video streams (either with software decoding (with decoding threads)
+	4.1 Audio manager with stream (realtime decoding, file loading, etc.
+		effects ar handled by the game objects's methods, and 
+		this manager is resbonsible for mixing, etc...)
+		(opus and flac in repective conatiners currently planned)
+	4.2 Simple generator of ochestral music with given sheet music
+		(with plain text format or custom binary format, 
+		may implement a png and pdf importer with computer vision)
+	4.3 Simple audio effect editor
+5. A more complex 2D game implementation
+	5.1 A simple visual novel game
+6. 3D Model support
+	6.1 Model loading and simple vertex shaders that merely statically draws the model mesh
+	6.2 Manipulation of skeletecal models
+	6.3 Allocate memory of the same model on continuous regions on the allocator heap
+	6.4 Possible custom formats (fixed binary format, may implement new features by versioning, fast..., conversion may be supported)
+	6.5 Model flags (type and rendering strategy choice)
+	6.6 (Tenacles with interpolation!)
+7. Game abstraction and state choices
+	7.1 Game objects that can store arbitrary types of information and chose primitives from a enum and switch
+	7.2 Parameters for game interface calls that can pass extra information when needed.
+8. Video support (!)
+	8.1 Support playing video streams (either with software decoding (with decoding threads)
 		or somehow hardware accerlerated)
-	5.2 Syncronization with audio playbacks and couple with audio manager into a overall
+		(YUV420 vp9 codec in mkv container support planned)
+	8.2 Syncronization with audio playbacks and couple with audio manager into a overall
 		integrated Media player
-6. Resource packaging
-	6.1 Package resource files into packages for faster loading and possible encryption
-7. Engine versioning queries
+	8.3 Hardware decode acceleration on supported hardware (e.g. intel media sdk)
+9. Resource packaging
+	9.1 Package resource files into packages for faster loading and possible encryption
+10. Support for realtime network IO
+	10.1 Cross-platform network manager
+	10.2 Unified UDP transfer format and error checking
+11. Engine versioning queries, hardware capability stores and queries.
 
+Current sample usages:
+
+1. Rendering of a cube with dynamic texture
+2. Simple 2048 game
+
+Planned new sample usages:
+
+1. Simple Visual novel with simple minigames in the middle
 
 Release version 1.0.0 info
 
