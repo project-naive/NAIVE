@@ -23,6 +23,9 @@ namespace States {
 			running = false;
 			return false;
 		};
+		void notifyFBSize(int width, int height, size_t contextID = 0) override final {
+			Refresh(contextID);
+		}
 		void Refresh(size_t ID) override final;
 		void notifyKey(int key, int scancode, int action, int mods, size_t contextID = 0) override final {
 			if (action == GLFW_PRESS) {

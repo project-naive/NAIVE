@@ -33,6 +33,7 @@ namespace Engine {
 			virtual bool notifyContextClose(size_t ID) = 0;
 			virtual void Refresh(size_t ID = 0) = 0;
 			virtual void notifyKey(int key, int scancode, int action, int mods, size_t contextID = 0) = 0;
+			virtual void notifyFBSize(int width, int height, size_t contextID = 0) = 0;
 		private:
 			size_t* ContextIDs = nullptr;
 			size_t context_count = 0;

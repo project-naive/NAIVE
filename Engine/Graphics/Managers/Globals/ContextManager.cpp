@@ -44,7 +44,7 @@ namespace Engine {
 					info.width = width;
 					info.height = height;
 					glfwMakeContextCurrent(info.Window);
-//					glViewport(0, 0, GLsizei(height), GLsizei(width));
+					glViewport(0, 0, GLsizei(height), GLsizei(width));
 					//						glfwSwapBuffers(info.Window);
 					glfwMakeContextCurrent(display.Window);
 				}
