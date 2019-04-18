@@ -6,6 +6,7 @@ A simple c++ multi-purpose (game) engine framework.
 
 This project is primarily aimed at  
 - Contructing a robust engine from scratch to learn more about program design and how stuff actually work within a given engine
+- Optimize and provide a robust extensible framework for games
 - Provide a framework of configurable setup available for future use in other programs including but not limited to GPGPU, etc.
 - An open source, free-to-use and cross-platform game engine, although limited in functionality, may be helpful to indie developers.
 
