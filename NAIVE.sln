@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "License", "License", "{B453
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebMPlayer", "ModuleTests\WebMPlayer\WebMPlayer.vcxproj", "{F0E1B6FE-42B0-4BF7-A006-DC0A8079BD6D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Memory", "Memory\Memory.vcxproj", "{C692DF54-CFEC-402F-BCE9-B2178844E6D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -115,6 +117,14 @@ Global
 		{F0E1B6FE-42B0-4BF7-A006-DC0A8079BD6D}.Release|x64.Build.0 = Release|x64
 		{F0E1B6FE-42B0-4BF7-A006-DC0A8079BD6D}.Release|x86.ActiveCfg = Release|Win32
 		{F0E1B6FE-42B0-4BF7-A006-DC0A8079BD6D}.Release|x86.Build.0 = Release|Win32
+		{C692DF54-CFEC-402F-BCE9-B2178844E6D6}.Debug|x64.ActiveCfg = Debug|x64
+		{C692DF54-CFEC-402F-BCE9-B2178844E6D6}.Debug|x64.Build.0 = Debug|x64
+		{C692DF54-CFEC-402F-BCE9-B2178844E6D6}.Debug|x86.ActiveCfg = Debug|Win32
+		{C692DF54-CFEC-402F-BCE9-B2178844E6D6}.Debug|x86.Build.0 = Debug|Win32
+		{C692DF54-CFEC-402F-BCE9-B2178844E6D6}.Release|x64.ActiveCfg = Release|x64
+		{C692DF54-CFEC-402F-BCE9-B2178844E6D6}.Release|x64.Build.0 = Release|x64
+		{C692DF54-CFEC-402F-BCE9-B2178844E6D6}.Release|x86.ActiveCfg = Release|Win32
+		{C692DF54-CFEC-402F-BCE9-B2178844E6D6}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

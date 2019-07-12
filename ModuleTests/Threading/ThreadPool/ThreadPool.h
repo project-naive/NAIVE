@@ -27,6 +27,154 @@ extern std::atomic<int64_t> all_available;
 unsigned GetThreadIndex(unsigned init_index = -1);
 size_t GetPoolIndex(size_t init_index = -1);
 
+
+/*
+Use ref-count instead of spin-locks for changing allocation
+In this way, resource block when there's a need for allocation
+The ones that noticed the need for reallocating first get one thread
+to actually do the allocation, signalling a spin lock to lock new writing
+(currently also locks reading, but may be implemented better by using 
+a backup pointer for reading before the copying is done, but syncing 
+this will require yet another signalling spin lock)
+previous writes will be waited for, but reads are allowed to continue
+To allow reads to continue, the reads must back-up the buffer pointers
+itself
+*/
+
+
+#include <intrin.h>
+class Waitfree_ReallocatingQueue {
+typedef std::atomic_size_t ref_count;
+typedef std::atomic_bool spin_lock;
+typedef std::atomic<std::function<void()>*> pos_ptr;
+private:
+	//the indicator of a pending or in-progress global change
+	//when global change is actually happening, no thread is allowed to access this object
+	spin_lock reallocating = false;
+	//number of working threads. The global changes must wait for all to finish
+	ref_count writing = 0;
+	ref_count reading = 0;
+	//the total count modulus by 2^31 or 2^63
+	//note that the actual stored number is the index fo the next one
+	std::atomic_size_t reserve_start = 0;
+	std::atomic_size_t reserve_end = 0;
+	//indicator of read or write progress for each of the slots
+	//reading waits for write to finish (if write needs to reallocate, may block)
+	//0 for not ready (the reading thread sets to 0)
+	//1 for ready for reading (the writing thread sets to 1)
+	std::atomic_bool* slot_ready = nullptr;
+	std::function<void()>* buffer = nullptr;
+	//guaranteed to be a power of 2 for fast processing
+	size_t buff_size = 0;
+public:
+	//destructor, can only be called when all other threads
+	//finishes jobs, otherwise may end up in seg-fault or dead-lock
+	~Waitfree_ReallocatingQueue() {
+		while (reallocating.exchange(true, std::memory_order_acquire)) _mm_pause();
+		while (reading.load(std::memory_order_acquire)) _mm_pause();
+		while (writing.load(std::memory_order_acquire)) _mm_pause();
+		delete[] buffer;
+	}
+	//call this function to re-initialize the object, clears all scheduled tasks and also the buffer
+	void clear() {
+		while (reallocating.exchange(true, std::memory_order_acquire)) _mm_pause();
+		while (reading.load(std::memory_order_acquire)) _mm_pause();
+		while (writing.load(std::memory_order_acquire)) _mm_pause();
+		delete[] buffer;
+		buffer = nullptr;
+		reserve_start.store(0, std::memory_order_relaxed);
+		reserve_end.store(0, std::memory_order_relaxed);
+		buff_size = 0;
+		reallocating.store(false, std::memory_order_release);
+	}
+	//quickly checks if the queue is empty, can give false positives
+	bool empty() {
+		while (reallocating.load(std::memory_order_acquire)) _mm_pause();
+		return reserve_end.load(std::memory_order_acquire) <= reserve_start.load(std::memory_order_acquire);
+	};
+	//stops all pushes and pops to check if the queue is empty at given moment
+	bool empty_strict() {
+		while (reallocating.exchange(true, std::memory_order_acquire)) _mm_pause();
+		while (reading.load(std::memory_order_acquire)) _mm_pause();
+		while (writing.load(std::memory_order_acquire)) _mm_pause();
+		bool rtn = reserve_start.load(std::memory_order_relaxed) == reserve_end.load(std::memory_order_relaxed);
+		reallocating.store(false, std::memory_order_release);
+		return rtn;
+	};
+	//stops all pushes and pops to see content of queue  at given moment
+	size_t num_strict() {
+		while (reallocating.exchange(true, std::memory_order_acquire)) _mm_pause();
+		while (reading.load(std::memory_order_acquire)) _mm_pause();
+		while (writing.load(std::memory_order_acquire)) _mm_pause();
+		size_t rtn = reserve_end.load(std::memory_order_relaxed) - reserve_start.load(std::memory_order_relaxed);
+		reallocating.store(false, std::memory_order_release);
+		return rtn;
+	};
+	//number of threads writing the object, does not add to reader count
+	size_t writing() {
+		return writing.load(std::memory_order_acq_rel);
+	};
+	//number of threads reading the object, itself does not count
+	size_t reading() {
+		return reading.load(std::memory_order_acq_rel);
+	};
+	void push(const std::function<void()>& function) {
+		while (true) {
+			size_t id;
+			while (true) {
+				while (true) {
+					writing.fetch_add(1, std::memory_order_acq_rel);
+					if (!reallocating.load(std::memory_order_acquire)) break;
+					writing.fetch_sub(1, std::memory_order_release);
+					while (reallocating.load(std::memory_order_acquire)) _mm_pause();
+				}
+				id = reserve_end.fetch_add(1, std::memory_order_acq_rel);
+#ifdef _M_X64
+				if (id < 0x8000000000000000) break;
+				if (id == 0x8000000000000000) {
+					while (reallocating.exchange(true, std::memory_order_acquire)) _mm_pause();
+					reserve_end.fetch_sub(1, std::memory_order_acq_rel);
+					writing.fetch_sub(1, std::memory_order_release);
+					while (reading.load(std::memory_order_acquire))_mm_pause();
+					while (writing.load(std::memory_order_acquire))_mm_pause();
+					reserve_end.fetch_sub(0x4000000000000000, std::memory_order_relaxed);
+					reserve_start.fetch_sub(0x4000000000000000, std::memory_order_relaxed);
+					reallocating.store(false, std::memory_order_release);
+					continue;
+				}
+				if (id > 0x8000000000000000) {
+					reserve_end.fetch_sub(1, std::memory_order_acq_rel);
+					writing.fetch_sub(1, std::memory_order_release);
+					continue;
+				}
+#else
+				if (id < 0x80000000) break;
+				if (id == 0x80000000) {
+					while (reallocating.exchange(true, std::memory_order_acquire)) _mm_pause();
+					reserve_end.fetch_sub(1, std::memory_order_acq_rel);
+					writing.fetch_sub(1, std::memory_order_release);
+					while (reading.load(std::memory_order_acquire))_mm_pause();
+					while (writing.load(std::memory_order_acquire))_mm_pause();
+					reserve_end.fetch_sub(0x40000000, std::memory_order_relaxed);
+					reserve_start.fetch_sub(0x40000000, std::memory_order_relaxed);
+					reallocating.store(false, std::memory_order_release);
+					continue;
+				}
+				if (id > 0x80000000) {
+					reserve_end.fetch_sub(1, std::memory_order_acq_rel);
+					writing.fetch_sub(1, std::memory_order_release);
+					continue;
+				}
+#endif
+			}
+			if (id - reserve_start.load(std::memory_order_acquire) < buff_size)break;
+
+		}
+
+	}
+	std::function<void()> pop();
+};
+
 class ThreadPool {
 public:
 	//A naive approach for a spin-locked task queue.
