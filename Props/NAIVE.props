@@ -4,13 +4,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <IncludePath>$(SolutionDir)Engine;$(SolutionDir)depend\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)depend\lib\msvc\$(PlatformTarget)_$(library_type)_$(runtime)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)depend\lib\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Build\$(PlatformTarget)-$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Intermediates\$(ProjectName)\$(PlatformTarget)-$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>freetype.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mimalloc-override.lib;opengl32.lib;%(AdditionalDependencies);vpxmd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

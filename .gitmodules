@@ -25,3 +25,12 @@
 [submodule "gperftools"]
 	path = dep-repo/gperftools
 	url = https://github.com/project-naive/gperftools
+[submodule "zlib"]
+	path = dep-repo/zlib
+	url = https://github.com/madler/zlib
+[submodule "SPSCQueue"]
+	path = dep-repo/SPSCQueue
+	url = https://github.com/rigtorp/SPSCQueue
+[submodule "MPSC_Queue"]
+	path = dep-repo/MPSC_Queue
+	url = https://github.com/MengRao/MPSC_Queue

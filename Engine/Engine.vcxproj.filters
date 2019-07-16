@@ -56,6 +56,9 @@
     <Filter Include="Graphics\Containers">
       <UniqueIdentifier>{3ff5bdaa-0be1-4802-9504-13e33ab6edf8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="etc">
+      <UniqueIdentifier>{384505f4-51c1-42aa-ae43-14dcbeaf633c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Game.cpp">
@@ -97,6 +100,7 @@
     <ClCompile Include="Graphics\Containers\ContextContainer.cpp">
       <Filter>Graphics\Containers</Filter>
     </ClCompile>
+    <ClCompile Include="eventloop.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Game.h">
@@ -144,6 +148,7 @@
     <ClInclude Include="Graphics\Containers\ContextContainer.h">
       <Filter>Graphics\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="eventloop.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\Naive\Naive.frag">

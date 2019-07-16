@@ -318,7 +318,6 @@ __pycache__/
 *.ipdb
 *.dat
 ![Bb]uild/Dependencies/**/*
-![Dd]epend/**/*
 *RudeBuild*
 
 
