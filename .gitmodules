@@ -1,0 +1,27 @@
+[submodule "libuv"]
+	path = dep-repo/libuv
+	url = https://github.com/project-naive/libuv
+[submodule "libvpx"]
+	path = dep-repo/libvpx
+	url = https://github.com/project-naive/libvpx
+[submodule "mimalloc"]
+	path = dep-repo/mimalloc
+	url = https://github.com/project-naive/mimalloc
+[submodule "msgpack-c"]
+	path = dep-repo/msgpack-c
+	url = https://github.com/project-naive/msgpack-c
+[submodule "freetype2"]
+	path = dep-repo/freetype2
+	url = git://git.sv.nongnu.org/freetype/freetype2.git
+[submodule "glew"]
+	path = dep-repo/glew
+	url = https://github.com/nigels-com/glew
+[submodule "glfw"]
+	path = dep-repo/glfw
+	url = https://github.com/glfw/glfw
+[submodule "concurrentqueue"]
+	path = dep-repo/concurrentqueue
+	url = https://github.com/project-naive/concurrentqueue
+[submodule "gperftools"]
+	path = dep-repo/gperftools
+	url = https://github.com/project-naive/gperftools
