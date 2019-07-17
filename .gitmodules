@@ -34,3 +34,6 @@
 [submodule "MPSC_Queue"]
 	path = dep-repo/MPSC_Queue
 	url = https://github.com/MengRao/MPSC_Queue
+[submodule "MPMCQueue"]
+	path = dep-repo/MPMCQueue
+	url = https://github.com/rigtorp/MPMCQueue

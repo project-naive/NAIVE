@@ -27,6 +27,8 @@ SOFTWARE.
 #include <stdexcept>
 #include <type_traits>
 
+typedef int64_t ssize_t;
+
 namespace rigtorp {
 
 template <typename T> class SPSCQueue {
