@@ -100,7 +100,7 @@
     <ClCompile Include="Graphics\Containers\ContextContainer.cpp">
       <Filter>Graphics\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="eventloop.cpp" />
+    <ClCompile Include="eventbox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Game.h">
@@ -148,7 +148,7 @@
     <ClInclude Include="Graphics\Containers\ContextContainer.h">
       <Filter>Graphics\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="eventloop.h" />
+    <ClInclude Include="eventbox.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\Naive\Naive.frag">

@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <glm\gtc\matrix_transform.hpp>
 
+//#include <MI/mimalloc.h>
+
 namespace Engine {
 	namespace Graphics {
 		Context::Context(WindowInfo& info, size_t given_ID,GLFWwindow* shared):
@@ -89,6 +91,7 @@ namespace Engine {
 				int(info.Basic_Info.height),
 				info.Extended_Info.Display.Window.title,
 				nullptr, shared);
+//			std::cout << mi_heap_check_owned(mi_heap_get_default(), info.Basic_Info.Window) << '\n';
 			if (!info.Basic_Info.Window) {
 				std::cerr << "Failed creating GLFW window \"" << info.Extended_Info.Display.Window.title
 					<< "\"\nWidth:\t\t" << info.Basic_Info.width << "\nHeight:\t\t" << info.Basic_Info.height

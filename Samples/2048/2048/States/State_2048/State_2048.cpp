@@ -4,6 +4,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <MI/mimalloc.h>
+
 const glm::vec4 number_colors[4][4] = {
 	{
 		glm::vec4(0xF7 / 255.0f, 0xF2 / 255.0f, 0xE0 / 255.0f, 1.0f),
@@ -128,6 +130,7 @@ namespace States {
 		TextureModel->Draw();
 		std::srand(std::chrono::duration_cast<std::chrono::duration<int>>(std::chrono::system_clock::now().time_since_epoch()).count());
 		std::rand();
+//		mi_collect(true);
 	}
 
 	void State_2048::Loop() {

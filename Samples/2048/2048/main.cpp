@@ -4,6 +4,8 @@
 
 #include "Game_2048.h"
 
+#include <MI/mimalloc.h>
+#include <thread>
 int argc_m;
 char** argv_m;
 char** env_m;
@@ -30,7 +32,10 @@ int main(int argc, char* argv[], char* env[]) {
 		Game_2048 this_game{ window };
 		this_game.MainLoop();
 	}
-//	system("pause");
+//	std::this_thread::sleep_for(std::chrono::duration<double>(10));
+	mi_collect(true);
+	mi_stats_print(stdout);
+	system("pause");
 	return 0;
 }
 

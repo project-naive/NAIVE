@@ -32,7 +32,7 @@
     <ClCompile Include="Graphics\Shaders\Shader.cpp" />
     <ClCompile Include="Graphics\Shaders\Text\TextShader.cpp" />
     <ClCompile Include="Graphics\Text\FTF.cpp" />
-    <ClCompile Include="eventloop.cpp">
+    <ClCompile Include="eventbox.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-static|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -55,7 +55,7 @@
     <ClInclude Include="Graphics\Shaders\Shader.h" />
     <ClInclude Include="Graphics\Shaders\Text\TextShader.h" />
     <ClInclude Include="Graphics\Text\FTF.h" />
-    <ClInclude Include="eventloop.h" />
+    <ClInclude Include="eventbox.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\Naive\Naive.frag" />
@@ -71,6 +71,7 @@
     <ProjectGuid>{3C9221F3-0101-43C6-BF19-3BF108004C21}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Engine</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -90,7 +91,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -109,12 +110,14 @@
     <Import Project="..\Props\UTF-8 compiler.props" />
     <Import Project="..\Props\NAIVE.props" />
     <Import Project="..\Props\Naive-dynamic.props" />
+    <Import Project="..\Props\NAIVE-debug.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\Props\UTF-8 compiler.props" />
     <Import Project="..\Props\NAIVE.props" />
     <Import Project="..\Props\Naive-static.props" />
+    <Import Project="..\Props\NAIVE-debug.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -122,6 +125,7 @@
     <Import Project="..\Props\NAIVE.props" />
     <Import Project="..\Props\NoConsole.props" />
     <Import Project="..\Props\Naive-dynamic.props" />
+    <Import Project="..\Props\NAIVE-release.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -129,6 +133,7 @@
     <Import Project="..\Props\NAIVE.props" />
     <Import Project="..\Props\NoConsole.props" />
     <Import Project="..\Props\Naive-static.props" />
+    <Import Project="..\Props\NAIVE-release.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
