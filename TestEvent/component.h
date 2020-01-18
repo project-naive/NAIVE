@@ -87,7 +87,6 @@ protected:
 	bool disconnect_accept(const message& msg, communication& com);
 	void disconnect_done(const message& msg, communication& com);
 	void disconnect_accept_fail(const message& msg, communication& com);
-	int process_single_event(const message& msg, communication& com);
 	uint32_t id_max = 1;	//id = 0 means invalid
 #ifndef NDEBUG
 	void verify_connection_info(const connection_info& info);

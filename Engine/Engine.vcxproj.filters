@@ -147,6 +147,12 @@
     <ClInclude Include="Graphics\Containers\ContextContainer.h">
       <Filter>Graphics\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="Core\component.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\component.ipp">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\Naive\Naive.frag">

@@ -33,7 +33,7 @@ namespace States {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		Managers.TextManager.renderText(message1, glm::vec2(x0, y0), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), scale1);
 		Managers.TextManager.renderText(message2, glm::vec2(x1, y1), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), scale2);
-		glFlush();
+		glFinish();
 	}
 }
 

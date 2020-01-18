@@ -5,10 +5,10 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);freetype_static.lib;glew32s.lib;glfw3.lib;libuv_static.lib;msgpackc.lib;zlibstatic.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);freetype_static.lib;glew32s.lib;glfw3.lib;libuv_static.lib;msgpackc.lib;zlibstatic.lib;libsoundio.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <PreprocessorDefinitions>GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;SOUNDIO_STATIC_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

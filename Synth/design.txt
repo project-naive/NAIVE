@@ -1,0 +1,14 @@
+Note: 
+A sound continuous source that has a start and a end  (start with 0, end with 0)
+Has a play state length, and modifiers (e.g. f,p, ., etc)
+
+SoundSample
+A piece of info use for an instrument to generate the sound.
+Typically there are two types (a enum indicating the type)
+1. A timber represented as a series of combination of sine, pulse, saw, etc waves
+	When represented with double, with 10Hz wave up to 48kHz components, requires 32kb
+2. A typical noise wave unique to the instrument (e.g. the "Clang!" sound)
+	stored in PCM
+
+Instrument
+Assosiated with a sound sample and play state, interface to render notes to a buffer

@@ -56,6 +56,7 @@ public:
 		EVENT_UNREGISTER_FAIL,
 		EVENT_CANNOT_PROCESS_ALL,
 		EVENT_REGISTER_PRIORITY,	//not implemented
+		EVENT_CONTEXT,
 		EVENT_BASE_LAST
 	};
 	rigtorp::MPMCQueue<message> MPSC_data;

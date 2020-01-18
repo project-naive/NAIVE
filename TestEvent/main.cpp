@@ -1,4 +1,4 @@
-#include "../Engine/component.h"
+#include "component.h"
 
 #include <thread>
 

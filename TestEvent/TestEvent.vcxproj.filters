@@ -4,7 +4,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Engine\component.h" />
-    <ClInclude Include="..\Engine\component.ipp" />
+    <ClInclude Include="component.h" />
+    <ClInclude Include="component.ipp" />
   </ItemGroup>
 </Project>

@@ -37,3 +37,24 @@
 [submodule "MPMCQueue"]
 	path = dep-repo/MPMCQueue
 	url = https://github.com/rigtorp/MPMCQueue
+[submodule "spdlog"]
+	path = dep-repo/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "opus"]
+	path = dep-repo/opus
+	url = https://github.com/xiph/opus
+[submodule "flac"]
+	path = dep-repo/flac
+	url = https://github.com/xiph/flac
+[submodule "openal-soft"]
+	path = dep-repo/openal-soft
+	url = https://github.com/kcat/openal-soft
+[submodule "libsoundio"]
+	path = dep-repo/libsoundio
+	url = https://github.com/project-naive/libsoundio
+[submodule "gli"]
+	path = dep-repo/gli
+	url = https://github.com/g-truc/gli
+[submodule "imgui"]
+	path = dep-repo/imgui
+	url = https://github.com/ocornut/imgui

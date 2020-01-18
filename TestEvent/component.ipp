@@ -393,60 +393,6 @@ inline void component<T>::disconnect_accept_fail(const message & msg, communicat
 	com.post->emplace(message{ EVENT_UNREGISTER, msg.type_specific, com.events,com.post });
 }
 
-template<typename T>
-inline int component<T>::process_single_event(const message & msg, communication & com) {
-	switch (msg.type_global) {
-	case EVENT_REGISTER:
-#ifndef NDEBUG
-		std::cout << "EVENT_REGISTER GOT.\n";
-#endif
-		return 0;
-	case EVENT_REGISTER_CANCEL:
-#ifndef NDEBUG
-		std::cout << "EVENT_REGISTER_CANCEL GOT.\n";
-#endif
-		connect_accept_cancel(msg, com);
-		return 2;
-	case EVENT_REGISTER_ACK:
-#ifndef NDEBUG
-		std::cout << "EVENT_REGISTER_ACK GOT.\n";
-#endif
-		connect_establish(msg, com);
-		return 0;
-	case EVENT_REGISTER_FAIL:
-#ifndef NDEBUG
-		std::cout << "EVENT_REGISTER_FAIL GOT.\n";
-#endif
-		connect_accept_fail(msg, com);
-		return 1;
-	case EVENT_UNREGISTER:
-#ifndef NDEBUG
-		std::cout << "EVENT_UNREGISTER GOT.\n";
-#endif
-		disconnect_accept(msg, com);
-		return 2;
-	case EVENT_UNREGISTER_CANCEL:
-#ifndef NDEBUG
-		std::cout << "EVENT_UNREGISTER_CANCEL GOT.\n";
-#endif
-		abort();
-		break;
-	case EVENT_UNREGISTER_ACK:
-#ifndef NDEBUG
-		std::cout << "EVENT_UNREGISTER_ACK GOT.\n";
-#endif
-		disconnect_done(msg, com);
-		return 2;
-	case EVENT_UNREGISTER_FAIL:
-#ifndef NDEBUG
-		std::cout << "EVENT_UNREGISTER_FAIL GOT.\n";
-#endif
-		disconnect_accept_fail(msg, com);
-		return 1;
-	}
-	return static_cast<T*>(this)->process_specific_event(msg, com);
-}
-
 #ifndef NDEBUG
 template<typename T>
 inline void component<T>::verify_connection_info(const connection_info & info) {

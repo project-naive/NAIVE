@@ -231,7 +231,7 @@ namespace States {
 				drawBlock(num + 1, x*0.5f - 0.75f, y*0.5f - 0.75f);
 			}
 		}
-		glFlush();
+		glFinish();
 	};
 
 	bool State_2048::move_down() {
@@ -290,7 +290,7 @@ namespace States {
 						}
 					}
 				}
-				glFlush();
+				glFinish();
 			}
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 4; j++) {
@@ -373,7 +373,7 @@ namespace States {
 						}
 					}
 				}
-				glFlush();
+				glFinish();
 			}
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 3; j++) {
@@ -456,7 +456,7 @@ namespace States {
 						}
 					}
 				}
-				glFlush();
+				glFinish();
 			}
 			for (int i = 0; i < 4; i++) {
 				for (int j = 2; j >= 0; j--) {
@@ -538,7 +538,7 @@ namespace States {
 						}
 					}
 				}
-				glFlush();
+				glFinish();
 			}
 			for (int i = 2; i >=0; i--) {
 				for (int j = 0; j < 4; j++) {
@@ -618,7 +618,7 @@ namespace States {
 		if (!quit_key) {
 			renderExitText();
 		}
-		glFlush();
+		glFinish();
 	}
 
 	void State_2048::renderExitText() {

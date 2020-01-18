@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Decoder.cpp" />
+    <ClCompile Include="Win32Processor.cpp" />
+    <ClCompile Include="DX9Globals.cpp" />
+    <ClCompile Include="H264Decoder.cpp" />
+    <ClCompile Include="Win32Decoder.cpp" />
+    <ClCompile Include="BitStream.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Decoder.h" />
+    <ClInclude Include="Win32Processor.h" />
+    <ClInclude Include="DX9Globals.h" />
+    <ClInclude Include="H264Decoder.h" />
+    <ClInclude Include="Win32Decoder.h" />
+    <ClInclude Include="BitStream.h" />
+    <ClInclude Include="InStream.h" />
+    <ClInclude Include="Intrinsics.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BitStream.inl" />
+  </ItemGroup>
+</Project>

@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);freetype.lib;glew32.lib;glfw3dll.lib;libuv.lib;msgpackc_import.lib;zlib.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);freetype.lib;glew32.lib;glfw3dll.lib;libuv.lib;msgpackc_import.lib;zlib.lib;libopusd.lib;libsoundiodll.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="imgui.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="examples\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="examples\imgui_impl_glfw.cpp" />
+    <ClCompile Include="imgui_demo.cpp" />
+    <ClCompile Include="imgui_draw.cpp" />
+    <ClCompile Include="imgui_widgets.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="imgui.h" />
+    <ClInclude Include="imconfig.h" />
+  </ItemGroup>
+</Project>
